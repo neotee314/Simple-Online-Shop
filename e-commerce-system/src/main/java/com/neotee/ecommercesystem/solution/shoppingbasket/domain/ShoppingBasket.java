@@ -1,0 +1,161 @@
+package com.neotee.ecommercesystem.solution.shoppingbasket.domain;
+
+import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.domainprimitives.Email;
+import com.neotee.ecommercesystem.domainprimitives.Money;
+import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class ShoppingBasket {
+
+    @Id
+    private UUID id;
+
+    private Email clientEmail;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<ShoppingBasketPart> parts = new ArrayList<>();
+
+    public ShoppingBasket(Email clientEmail) {
+        this.id = UUID.randomUUID();
+        this.clientEmail = clientEmail;
+    }
+
+    // Add a new part to the shopping basket
+    private void addPart(ShoppingBasketPart newPart) {
+        if (newPart == null || newPart.getQuantity() <= 0) {
+            throw new ShopException("Quantity must be greater than zero.");
+        }
+
+        for (ShoppingBasketPart existingPart : parts) {
+            if (existingPart.equals(newPart)) {
+                existingPart.increaseQuantity(newPart.getQuantity());
+                return;
+            }
+        }
+
+        parts.add(newPart);
+    }
+
+    // Remove a part from the shopping basket
+    private void removePart(ShoppingBasketPart partToRemove) {
+        if (partToRemove == null) {
+            throw new ShopException("Cannot remove null part.");
+        }
+
+        for (ShoppingBasketPart existingPart : parts) {
+            if (existingPart.equals(partToRemove)) {
+                int newQuantity = existingPart.getQuantity() - partToRemove.getQuantity();
+                if (newQuantity > 0) {
+                    existingPart.decreaseQuantity(partToRemove.getQuantity());
+                } else {
+                    parts.remove(existingPart);
+                }
+                return;
+            }
+        }
+
+        throw new ShopException("Part not found in shopping basket.");
+    }
+
+    // Check if the shopping basket is empty
+    public boolean isEmpty() {
+        return parts.isEmpty();
+    }
+
+    // Get the total quantity of items in the shopping basket
+    public int getTotalQuantity() {
+        return parts.stream()
+                .mapToInt(ShoppingBasketPart::getQuantity)
+                .sum();
+    }
+
+
+    public Integer getReservedQuantityForThing(UUID thingId) {
+        if (thingId == null) {
+            throw new ShopException("thingId cannot be null");
+        }
+        return parts.stream()
+                .filter(part -> part.contains(thingId))
+                .mapToInt(ShoppingBasketPart::getQuantity)
+                .sum();
+    }
+
+    // Clear all items from the shopping basket
+    public void clear() {
+        parts.clear();
+    }
+
+    public void addItem(UUID thingId, int quantity, Money price) {
+        // Add item to the shopping basket
+        ShoppingBasketPart part = new ShoppingBasketPart(thingId, quantity, price);
+        addPart(part);
+    }
+
+    public Boolean removeItem(UUID thingId, int quantity) {
+        if (thingId == null || quantity <= 0)
+            throw new ShopException("Invalid thing ID or quantity must be greater than 0");
+
+        for (ShoppingBasketPart existingPart : parts) {
+            if (existingPart.contains(thingId)) {
+                int newQuantity = existingPart.getQuantity() - quantity;
+                if (newQuantity > 0) {
+                    existingPart.decreaseQuantity(quantity);
+                    return true;
+                } else if (newQuantity == 0) {
+                    parts.remove(existingPart);
+                    return true;
+                } else throw new ShopException("Cannot remove more than existing quantity.");
+
+            }
+        }
+        return false;
+    }
+
+    public Map<UUID, Integer> getAsMap() {
+        return parts.stream()
+                .collect(Collectors.toMap(ShoppingBasketPart::getThingId, ShoppingBasketPart::getQuantity));
+    }
+
+    public Money getAsMoneyValue() {
+        MoneyType totalValue = Money.of(0f, "EUR");
+        Money.of(0f, "EUR");
+        for (ShoppingBasketPart part : parts) {
+            Money price = part.getSalesPrice();
+            totalValue = totalValue.add(price.multiplyBy(part.getQuantity()));
+        }
+        return (Money) totalValue;
+    }
+
+    public void checkout() {
+        parts.clear();
+    }
+
+    public Map<UUID, Integer> getPartsAsMapValue() {
+        // Create and return a map where the key is the thingId (UUID) and the value is the quantity of the part
+        return parts.stream()
+                .collect(Collectors.toMap(ShoppingBasketPart::getThingId, ShoppingBasketPart::getQuantity));
+    }
+
+    public boolean contains(UUID thingId) {
+        if (thingId == null) throw new ShopException("Thing ID must not be null");
+        return parts.stream()
+                .anyMatch(p -> p.contains(thingId));
+    }
+}
