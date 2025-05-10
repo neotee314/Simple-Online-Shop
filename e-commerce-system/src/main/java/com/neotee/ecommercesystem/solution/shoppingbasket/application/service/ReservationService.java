@@ -1,15 +1,14 @@
-package com.neotee.ecommercesystem.solution.shoppingbasket.application;
+package com.neotee.ecommercesystem.solution.shoppingbasket.application.service;
 
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasket;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasketRepository;
-import com.neotee.ecommercesystem.solution.storageunit.application.ReservationServiceInterface;
-import com.neotee.ecommercesystem.solution.thing.application.ReservationCatalogServiceInterface;
+import com.neotee.ecommercesystem.solution.storageunit.application.service.ReservationServiceInterface;
+import com.neotee.ecommercesystem.solution.thing.application.service.ReservationCatalogServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 

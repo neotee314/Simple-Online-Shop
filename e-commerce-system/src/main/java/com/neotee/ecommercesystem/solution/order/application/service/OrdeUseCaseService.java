@@ -1,6 +1,6 @@
-package com.neotee.ecommercesystem.solution.order.application;
+package com.neotee.ecommercesystem.solution.order.application.service;
 
-import com.neotee.ecommercesystem.solution.client.application.ClientService;
+import com.neotee.ecommercesystem.solution.client.application.service.ClientService;
 import com.neotee.ecommercesystem.solution.order.domain.Order;
 import com.neotee.ecommercesystem.solution.order.domain.OrderPart;
 import com.neotee.ecommercesystem.solution.order.domain.OrderRepository;

@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.solution.thing.application;
+package com.neotee.ecommercesystem.solution.thing.application.service;
 
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Money;

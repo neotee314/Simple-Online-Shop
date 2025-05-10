@@ -1,8 +1,8 @@
-package com.neotee.ecommercesystem.solution.thing.application;
+package com.neotee.ecommercesystem.solution.thing.application.service;
 
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Money;
-import com.neotee.ecommercesystem.solution.storageunit.application.StockServiceInterface;
+import com.neotee.ecommercesystem.solution.storageunit.application.service.StockServiceInterface;
 import com.neotee.ecommercesystem.solution.thing.domain.Thing;
 import com.neotee.ecommercesystem.solution.thing.domain.ThingRepository;
 import jakarta.transaction.Transactional;
@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Service

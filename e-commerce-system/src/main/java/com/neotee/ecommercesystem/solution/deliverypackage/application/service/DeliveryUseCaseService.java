@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.solution.deliverypackage.application;
+package com.neotee.ecommercesystem.solution.deliverypackage.application.service;
 
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.solution.deliverypackage.domain.DeliveryPackage;

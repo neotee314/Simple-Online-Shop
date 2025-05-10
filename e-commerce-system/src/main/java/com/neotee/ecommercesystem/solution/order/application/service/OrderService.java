@@ -1,13 +1,12 @@
-package com.neotee.ecommercesystem.solution.order.application;
+package com.neotee.ecommercesystem.solution.order.application.service;
 
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
-import com.neotee.ecommercesystem.solution.client.application.ClientService;
+import com.neotee.ecommercesystem.solution.client.application.service.ClientService;
 import com.neotee.ecommercesystem.solution.order.domain.Order;
-import com.neotee.ecommercesystem.solution.order.domain.OrderPart;
 import com.neotee.ecommercesystem.solution.order.domain.OrderRepository;
-import com.neotee.ecommercesystem.solution.thing.application.OrderedItemsServiceInterface;
+import com.neotee.ecommercesystem.solution.thing.application.service.OrderedItemsServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

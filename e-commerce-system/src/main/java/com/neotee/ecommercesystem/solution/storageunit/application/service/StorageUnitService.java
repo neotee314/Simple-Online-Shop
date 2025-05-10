@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.solution.storageunit.application;
+package com.neotee.ecommercesystem.solution.storageunit.application.service;
 
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;

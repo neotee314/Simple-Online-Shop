@@ -1,12 +1,11 @@
-package com.neotee.ecommercesystem.solution.deliverypackage.application;
+package com.neotee.ecommercesystem.solution.deliverypackage.application.service;
 
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
 import com.neotee.ecommercesystem.solution.deliverypackage.domain.DeliveryPackage;
 import com.neotee.ecommercesystem.solution.deliverypackage.domain.DeliveryPackageRepository;
-import com.neotee.ecommercesystem.solution.order.application.OrderService;
-import com.neotee.ecommercesystem.solution.storageunit.application.StorageUnitService;
+import com.neotee.ecommercesystem.solution.order.application.service.OrderService;
+import com.neotee.ecommercesystem.solution.storageunit.application.service.StorageUnitService;
 import com.neotee.ecommercesystem.solution.storageunit.domain.StorageUnit;
-import com.neotee.ecommercesystem.solution.thing.application.ThingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

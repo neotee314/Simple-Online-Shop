@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.solution.client.application;
+package com.neotee.ecommercesystem.solution.client.application.service;
 
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;

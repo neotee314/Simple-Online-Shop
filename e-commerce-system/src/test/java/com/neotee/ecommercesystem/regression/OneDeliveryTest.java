@@ -1,10 +1,5 @@
 package com.neotee.ecommercesystem.regression;
 
-import com.neotee.ecommercesystem.domainprimitives.ZipCode;
-import com.neotee.ecommercesystem.solution.order.application.OrderService;
-import com.neotee.ecommercesystem.solution.storageunit.application.StorageUnitService;
-import com.neotee.ecommercesystem.solution.storageunit.domain.StorageUnit;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

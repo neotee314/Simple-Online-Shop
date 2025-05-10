@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.solution.deliverypackage.application;
+package com.neotee.ecommercesystem.solution.deliverypackage.application.rest;
 
 import lombok.Data;
 import lombok.Getter;

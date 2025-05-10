@@ -1,12 +1,12 @@
-package com.neotee.ecommercesystem.solution.shoppingbasket.application;
+package com.neotee.ecommercesystem.solution.shoppingbasket.application.service;
 
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.Money;
-import com.neotee.ecommercesystem.solution.deliverypackage.application.DeliveryPackageService;
-import com.neotee.ecommercesystem.solution.order.application.OrderService;
+import com.neotee.ecommercesystem.solution.deliverypackage.application.service.DeliveryPackageService;
+import com.neotee.ecommercesystem.solution.order.application.service.OrderService;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasketRepository;
-import com.neotee.ecommercesystem.solution.thing.application.ThingService;
+import com.neotee.ecommercesystem.solution.thing.application.service.ThingService;
 import com.neotee.ecommercesystem.usecases.ShoppingBasketUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;

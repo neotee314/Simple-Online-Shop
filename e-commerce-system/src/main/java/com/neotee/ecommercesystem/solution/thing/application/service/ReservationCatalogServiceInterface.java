@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.solution.thing.application;
+package com.neotee.ecommercesystem.solution.thing.application.service;
 
 
 import java.util.UUID;

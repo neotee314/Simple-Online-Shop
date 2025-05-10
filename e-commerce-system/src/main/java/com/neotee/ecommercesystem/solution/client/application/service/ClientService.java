@@ -1,11 +1,10 @@
-package com.neotee.ecommercesystem.solution.client.application;
+package com.neotee.ecommercesystem.solution.client.application.service;
 
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
 import com.neotee.ecommercesystem.solution.client.domain.Client;
 import com.neotee.ecommercesystem.solution.client.domain.ClientRepository;
-import com.neotee.ecommercesystem.solution.order.domain.Order;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.solution.storageunit.application;
+package com.neotee.ecommercesystem.solution.storageunit.application.service;
 
 import java.util.UUID;
 

@@ -1,7 +1,5 @@
-package com.neotee.ecommercesystem.solution.thing.application;
+package com.neotee.ecommercesystem.solution.thing.application.service;
 
-
-import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
