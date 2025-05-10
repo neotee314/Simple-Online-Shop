@@ -44,8 +44,8 @@ When an order is placed, the system analyzes which storage units can fulfill the
 
 ## Database Schema
 
-1. **Products**:
-    - ProductID (Primary Key)
+1. **Thing**:
+    - ThingID (Primary Key)
     - Name
     - Description
     - Size
@@ -77,11 +77,15 @@ When an order is placed, the system analyzes which storage units can fulfill the
     - Address (Street, City, Zip Code)
 
 6. **DeliveryPackages**:
-    - PackageID (Primary Key)
+    - DeliveryPackageID (Primary Key)
     - OrderID (Foreign Key)
     - StorageUnitID (Foreign Key)
-    - ProductID (Foreign Key)
-    - Quantity
+    -
+7. **DeliveryPackagePart**:
+    - DeliveryPackagePartID (Primary Key)
+    - OrderID (Foreign Key)
+    - ThingID (Foreign Key)
+
 
 
 ### 🔁 Business Rules
