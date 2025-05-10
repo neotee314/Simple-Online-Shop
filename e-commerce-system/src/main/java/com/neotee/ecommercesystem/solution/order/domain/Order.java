@@ -9,12 +9,11 @@ import lombok.Setter;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "MY_FANTASTIC_ORDER")
+@Table(name = "MY_FANTASTIC_ORDER_TABLE")
 @NoArgsConstructor
 public class Order {
 
@@ -27,12 +26,12 @@ public class Order {
     @Embedded
     private Email clientEmail;
 
-    private LocalDate orderDate;
+    private LocalDate submissionDate;
 
     public Order(Email clientEmail) {
         if (clientEmail == null) throw new ShopException("Client email must not be null");
         orderId = UUID.randomUUID();
-        orderDate = LocalDate.now();
+        submissionDate = LocalDate.now();
         this.clientEmail = clientEmail;
     }
 
@@ -59,7 +58,6 @@ public class Order {
         }
     }
 
-    // افزودن یا افزایش مقدار یک کالا
     public void addOrderPart(OrderPart newPart) {
         if (newPart == null || newPart.getOrderQuantity() <= 0) {
             throw new ShopException("Order quantity must be greater than zero.");
@@ -75,25 +73,6 @@ public class Order {
         this.orderParts.add(newPart);
     }
 
-    public void removeOrderPart(OrderPart partToRemove) {
-        if (partToRemove == null) {
-            throw new ShopException("Cannot remove null OrderPart.");
-        }
-
-        for (OrderPart existingPart : orderParts) {
-            if (existingPart.equals(partToRemove)) {
-                int quantityToRemove = partToRemove.getOrderQuantity();
-                existingPart.decreaseQuantity(quantityToRemove);
-                // اگه بعد از کم کردن، صفر شد => حذف کامل
-                if (existingPart.getOrderQuantity() == 0) {
-                    orderParts.remove(existingPart);
-                }
-                return;
-            }
-        }
-        throw new ShopException("Cannot remove non-existing OrderPart.");
-    }
-
 
     // مجموع تعداد کالاها
     public int getTotalQuantity() {
@@ -107,28 +86,8 @@ public class Order {
         return orderParts.isEmpty();
     }
 
-    // حذف همه آیتم‌ها
-    public void clearOrderParts() {
-        orderParts.clear();
-    }
 
-    public boolean contains(UUID thingId) {
-        if (thingId == null) throw new ShopException("Thing ID must not be null");
-        return orderParts.stream()
-                .anyMatch(p -> p.getThingId().equals(thingId));
-    }
-
-    public List<UUID> getUnfulfilledItems() {
-        return orderParts.stream().map(OrderPart::getThingId).collect(Collectors.toList());
-    }
-
-    public Integer getOrderQuantityOf(UUID thingId) {
-        return orderParts.stream()
-                .filter(p -> p.contains(thingId))
-                .findFirst().map(OrderPart::getOrderQuantity).orElse(0);
-    }
-
-    public Map<UUID, Integer> getPartsWithQuantity() {
+    public Map<UUID, Integer> getOrderLineItemsMap() {
         Map<UUID, Integer> partsWithQuantity = new HashMap<>();
         for (OrderPart orderPart : orderParts) {
             partsWithQuantity.put(orderPart.getThingId(), orderPart.getOrderQuantity());
@@ -136,11 +95,10 @@ public class Order {
         return partsWithQuantity;
     }
 
-    public int getQuantity() {
-        int quantity = 0;
-        for (OrderPart orderPart : orderParts) {
-            quantity += orderPart.getOrderQuantity();
-        }
-        return quantity;
+
+    public boolean contains(UUID thingId) {
+        if (thingId == null) throw new ShopException("Thing ID must not be null");
+        return orderParts.stream()
+                .anyMatch(p -> p.contains(thingId));
     }
 }

@@ -4,7 +4,7 @@ package com.neotee.ecommercesystem.solution.thing.application;
 import java.util.UUID;
 
 
-public interface ReservationServiceInterface {
+public interface ReservationCatalogServiceInterface {
 
     boolean isReservedInBasket(UUID thingId);
 }

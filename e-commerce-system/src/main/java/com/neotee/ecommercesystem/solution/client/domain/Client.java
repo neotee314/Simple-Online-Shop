@@ -33,6 +33,9 @@ public class Client {
     private List<UUID> shoppingBasket = new ArrayList<>();
 
     public Client(String name, Email email, HomeAddress homeAddress) {
+        if (name == null || name.isBlank()) throw new ShopException("Invalid name");
+        if (email == null || homeAddress == null) throw new ShopException("Email/address cannot be null");
+
         this.name = name;
         this.email = email;
         this.homeAddress = homeAddress;

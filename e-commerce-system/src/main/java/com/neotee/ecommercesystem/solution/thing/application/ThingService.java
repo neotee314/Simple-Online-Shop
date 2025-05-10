@@ -48,12 +48,6 @@ public class ThingService implements StockServiceInterface {
     }
 
 
-    public int getAvailableStock(UUID thingId) {
-        ThingValidator.validateThingId(thingId);
-        Thing thing = findById(thingId);
-        if (thing == null) throw new ShopException("Thing dose not exist");
-        return thing.getStockQuantity();
-    }
 
     public Money getSalesPrice(UUID thingId) {
         ThingValidator.validateThingId(thingId);
@@ -80,13 +74,5 @@ public class ThingService implements StockServiceInterface {
         thingRepository.save(thing);
     }
 
-    @Transactional
-    public void removeAllFromStock(Map<UUID, Integer> partsWithQuantity) {
-        for (Map.Entry<UUID, Integer> entry : partsWithQuantity.entrySet()) {
-            UUID thingId = entry.getKey();
-            int quantity = entry.getValue();
-            removeFromStock(thingId, quantity);
-        }
-    }
 }
 

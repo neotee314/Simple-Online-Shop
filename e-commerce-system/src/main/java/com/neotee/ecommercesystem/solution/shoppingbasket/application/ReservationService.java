@@ -2,14 +2,12 @@ package com.neotee.ecommercesystem.solution.shoppingbasket.application;
 
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasket;
-import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasketPart;
-import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasketPartRepository;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasketRepository;
-import com.neotee.ecommercesystem.solution.thing.application.ReservationServiceInterface;
+import com.neotee.ecommercesystem.solution.storageunit.application.ReservationServiceInterface;
+import com.neotee.ecommercesystem.solution.thing.application.ReservationCatalogServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -17,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ReservationService implements ReservationServiceInterface {
+public class ReservationService implements ReservationCatalogServiceInterface, ReservationServiceInterface {
     private final ShoppingBasketRepository shoppingBasketRepository;
 
     public int getTotalReservedInAllBaskets(UUID thingId) {

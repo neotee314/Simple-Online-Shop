@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 public class StorageUnitService {
 
     private final StorageUnitRepository storageUnitRepository;
-    private final OrderService orderService;
+
 
 
     public StorageUnit findById(UUID storageUnitId) {
@@ -56,18 +55,15 @@ public class StorageUnitService {
 
 
     @Transactional
-    public List<UUID> getContributingStorageUnit(UUID orderId) {
-        Map<UUID, Integer> remainingItems = new HashMap<>(orderService.getOrderPartWithQuantity(orderId));
-        ZipCode clientZipCode = orderService.findClientZipCode(orderId);
+    public List<UUID> getContributingStorageUnit(Map<UUID,Integer> items, ZipCode clientZipCode
+    ) {
+        Map<UUID, Integer> remainingItems = new HashMap<>(items);
 
-        Order order = orderService.findById(orderId);
-        if (order == null) throw new ShopException("Order does not exist");
         Map<UUID, Boolean> contributorMap = new LinkedHashMap<>();
-
 
         while (!remainingItems.isEmpty()) {
             List<StorageUnit> storageUnits = new ArrayList<>(findAll());
-            List<UUID> sortedStorageUnitIds = sortStorageUnits(storageUnits, remainingItems, clientZipCode,order);
+            List<UUID> sortedStorageUnitIds = sortStorageUnits(storageUnits, remainingItems, clientZipCode);
             if (sortedStorageUnitIds.isEmpty()) break;
 
             UUID storageId = sortedStorageUnitIds.getFirst();
@@ -95,25 +91,27 @@ public class StorageUnitService {
 
 
     @Transactional
-    public List<UUID> sortStorageUnits(List<StorageUnit> storageUnits, Map<UUID, Integer> unfulfilledItems, ZipCode clientZipCode
-    ,Order order) {
+    public List<UUID> sortStorageUnits(List<StorageUnit> storageUnits, Map<UUID, Integer> unfulfilledItems, ZipCode clientZipCode)
+    {
+        int totalquantity = unfulfilledItems.values().stream().mapToInt(Integer::intValue).sum();
 
         storageUnits.sort((su1, su2) -> {
-            int compareItemCount = Integer.compare(su2.getTotalContributingItems(unfulfilledItems).size(),
+            int compare = Integer.compare(su2.getTotalContributingItems(unfulfilledItems).size(),
                     su1.getTotalContributingItems(unfulfilledItems).size());
-            if (compareItemCount == 0 || su2.getDistanceToClient(clientZipCode) < su1.getDistanceToClient(clientZipCode)) {
-                compareItemCount = Integer.compare(su1.getDistanceToClient(clientZipCode),
+
+            if (compare == 0 || su2.getDistanceToClient(clientZipCode) < su1.getDistanceToClient(clientZipCode)) {
+                compare = Integer.compare(su1.getDistanceToClient(clientZipCode),
                         su2.getDistanceToClient(clientZipCode));
-                if (compareItemCount == 0 ||
-                        su2.getAvailableStocks(unfulfilledItems) < order.getQuantity() ||
-                        su1.getAvailableStocks(unfulfilledItems) < order.getQuantity()
+                if (compare == 0 ||
+                        su2.getAvailableStocks(unfulfilledItems) < totalquantity||
+                        su1.getAvailableStocks(unfulfilledItems) < totalquantity
                 )     {
                     return Integer.compare(su2.getAvailableStocks(unfulfilledItems),
                             su1.getAvailableStocks(unfulfilledItems));
                 }
 
             }
-            return compareItemCount;
+            return compare;
         });
         return storageUnits.stream().map(StorageUnit::getStorageId).toList();
     }

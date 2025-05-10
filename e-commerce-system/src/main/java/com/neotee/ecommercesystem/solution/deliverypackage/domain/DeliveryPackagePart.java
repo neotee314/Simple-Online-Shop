@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-
 import java.util.UUID;
 
 @Entity
@@ -16,11 +15,12 @@ import java.util.UUID;
 @NoArgsConstructor
 public class DeliveryPackagePart {
     @Id
-    private UUID id = UUID.randomUUID();
+    private UUID id;
     private UUID thingId;
     private int quantity;
 
     public DeliveryPackagePart(UUID thingId, int quantity) {
+        this.id = UUID.randomUUID();
         this.thingId = thingId;
         this.quantity = quantity;
     }

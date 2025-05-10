@@ -22,8 +22,6 @@ public class ClientRegistrationService implements ClientRegistrationUseCases {
 
     @Override
     public void register(String name, EmailType email, HomeAddressType address) {
-        if (name == null || name.isBlank()) throw new ShopException("Invalid name");
-        if (email == null || address == null) throw new ShopException("Email/address cannot be null");
 
         if (clientRepository.findByEmail((Email) email) != null) {
             throw new ShopException("Client already exists");
@@ -35,9 +33,7 @@ public class ClientRegistrationService implements ClientRegistrationUseCases {
 
     @Override
     public void changeAddress(EmailType email, HomeAddressType address) {
-        if (email == null || address == null) throw new ShopException("Invalid input");
-
-        Client client = clientRepository.findByEmail((Email) email);
+       Client client = clientRepository.findByEmail((Email) email);
         if (client == null) throw new ShopException("Client not found");
 
         client.changeAddress((HomeAddress) address);
@@ -46,9 +42,6 @@ public class ClientRegistrationService implements ClientRegistrationUseCases {
 
     @Override
     public ClientType getClientData(EmailType clientEmail) {
-        if (clientEmail == null || clientEmail.toString().isBlank()) {
-            throw new ShopException("Email is invalid");
-        }
         Client client = clientService.getClient((Email) clientEmail);
         if (client == null) {
             throw new ShopException("Client with email " + clientEmail + " does not exist");

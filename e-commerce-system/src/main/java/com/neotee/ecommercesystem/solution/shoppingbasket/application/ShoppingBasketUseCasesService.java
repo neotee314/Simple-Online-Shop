@@ -5,8 +5,6 @@ import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.Money;
 import com.neotee.ecommercesystem.solution.deliverypackage.application.DeliveryPackageService;
 import com.neotee.ecommercesystem.solution.order.application.OrderService;
-import com.neotee.ecommercesystem.solution.order.domain.OrderPart;
-import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasketPart;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasketRepository;
 import com.neotee.ecommercesystem.solution.storageunit.application.StorageUnitService;
 import com.neotee.ecommercesystem.solution.thing.application.ThingService;
@@ -18,8 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 import java.util.List;
@@ -60,13 +56,10 @@ public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
 
     @Override
     public Map<UUID, Integer> getShoppingBasketAsMap(EmailType clientEmail) {
-
         // Find the shopping basket for the client
         ShoppingBasket shoppingBasket = shoppingBasketRepository.findByClientEmail(clientEmail)
                 .orElseThrow(() -> new ShopException("ShoppingBasket does not exist"));
-
         // Convert shopping basket parts to map
-
         return shoppingBasket.getAsMap();
     }
 
@@ -76,7 +69,6 @@ public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
         ShoppingBasket shoppingBasket = shoppingBasketRepository.findByClientEmail(clientEmail)
                 .orElseThrow(() -> new ShopException("ShoppingBasket does not exist"));
         // Calculate total price for the items in the shopping basket
-
         return shoppingBasket.getAsMoneyValue();
     }
 
@@ -108,20 +100,17 @@ public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
             throw new ShopException("Shopping basket is empty");
         }
         // Create a new order
-        Map<UUID, Integer> partsWithQuantity = basket.getPartsAsMapValue();
-        UUID orderId = orderService.createOrder(partsWithQuantity, (Email) clientEmail);
+        Map<UUID, Integer> shoppingPartMap = basket.getPartsAsMapValue();
+        UUID orderId = orderService.createOrder(shoppingPartMap, (Email) clientEmail);
 
         //create Delievery packages
         deliveryPackageService.createDeliveryPackage(orderId);
 
-        //checkout basket
         basket.checkout();
         shoppingBasketRepository.save(basket);
 
         return orderId;
     }
-
-
 
     @Override
     public void emptyAllShoppingBaskets() {

@@ -32,8 +32,7 @@ public class ClientService {
     }
 
     public List<UUID> getOrderHistory(EmailType clientEmail) {
-        if( clientEmail == null || clientEmail.toString().isBlank() ) throw new ShopException("Email is invalid");
-        Client client = getClient((Email) clientEmail);
+       Client client = getClient((Email) clientEmail);
         if (client == null) {
             throw new ShopException("client does not exist");
         }

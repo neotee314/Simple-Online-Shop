@@ -4,9 +4,6 @@ import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.solution.deliverypackage.domain.DeliveryPackage;
 import com.neotee.ecommercesystem.solution.deliverypackage.domain.DeliveryPackagePart;
 import com.neotee.ecommercesystem.solution.deliverypackage.domain.DeliveryPackageRepository;
-import com.neotee.ecommercesystem.solution.order.application.OrderService;
-import com.neotee.ecommercesystem.solution.storageunit.application.StorageUnitService;
-import com.neotee.ecommercesystem.solution.storageunit.domain.StorageUnit;
 import com.neotee.ecommercesystem.usecases.DeliveryPackageUseCases;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,24 +16,22 @@ import java.util.*;
 public class DeliveryUseCaseService implements DeliveryPackageUseCases {
 
     private final DeliveryPackageRepository deliveryPackageRepository;
-    private final StorageUnitService storageUnitService;
-
 
     @Override
     @Transactional
     public List<UUID> getContributingStorageUnitsForOrder(UUID orderId) {
-        // گرفتن همه DeliveryPackageهایی که مربوط به orderId هستند
+        // Retrieve all DeliveryPackages related to the given orderId
         List<DeliveryPackage> deliveryPackages = deliveryPackageRepository.findByOrderId(orderId);
-        if (deliveryPackages.isEmpty()) throw new ShopException("Order does not exist");
+        if (deliveryPackages.isEmpty()) throw new ShopException("Delivery package does not exist");
 
-        // ایجاد لیست برای ذخیره ID انبارهایی که در این سفارش مشارکت دارند
+        // List to store IDs of storage units contributing to this order
         List<UUID> contributingStorageUnits = new ArrayList<>();
 
-        // برای هر DeliveryPackage که پیدا شده، ID انبار را اضافه می‌کنیم
+        // Add the storage unit ID of each DeliveryPackage to the list
         for (DeliveryPackage deliveryPackage : deliveryPackages) {
             UUID storageUnitId = deliveryPackage.getStorageUnitId();
 
-            // فقط انبارهایی که قبلا افزوده نشده‌اند به لیست اضافه می‌کنیم
+            // Add only if not already in the list
             if (!contributingStorageUnits.contains(storageUnitId)) {
                 contributingStorageUnits.add(storageUnitId);
             }
@@ -45,20 +40,19 @@ public class DeliveryUseCaseService implements DeliveryPackageUseCases {
         return contributingStorageUnits;
     }
 
-
     @Override
     @Transactional
     public Map<UUID, Integer> getDeliveryPackageForOrderAndStorageUnit(UUID orderId, UUID storageUnitId) {
-        // گرفتن DeliveryPackage مربوط به orderId و storageUnitId
+        // Retrieve DeliveryPackages for the given orderId
         List<DeliveryPackage> deliveryPackages = deliveryPackageRepository.findByOrderId(orderId);
-        if (deliveryPackages.isEmpty()) throw new ShopException("Order does not exist");
+        if (deliveryPackages.isEmpty()) throw new ShopException("Delivery package does not exist");
 
         Map<UUID, Integer> deliveryPackageMap = new HashMap<>();
 
-        // پیدا کردن DeliveryPackageهایی که مربوط به انبار و سفارش داده‌شده هستند
+        // Find the DeliveryPackages related to the given storage unit and order
         for (DeliveryPackage deliveryPackage : deliveryPackages) {
             if (deliveryPackage.hasStorage(storageUnitId)) {
-                // برای هر بسته تحویل، قسمت‌های آن را به Map اضافه می‌کنیم
+                // Add each part of the delivery package to the map
                 for (DeliveryPackagePart part : deliveryPackage.getParts()) {
                     deliveryPackageMap.put(part.getThingId(), part.getQuantity());
                 }

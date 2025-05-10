@@ -37,14 +37,9 @@ public class OrderPart {
         this.orderQuantity += amount;
     }
 
-    public void decreaseQuantity(int amount) {
-        if (amount <= 0) {
-            throw new ShopException("Decrease amount must be greater than zero.");
-        }
-        if (amount > this.orderQuantity) {
-            throw new ShopException("Cannot decrease more than existing quantity.");
-        }
-        this.orderQuantity -= amount;
+    public boolean contains(UUID thingId) {
+        if (thingId == null) throw new ShopException("Thing ID must not be null");
+        return this.thingId.equals(thingId);
     }
 
 
@@ -60,8 +55,5 @@ public class OrderPart {
         return Objects.hashCode(getThingId());
     }
 
-    public boolean contains(UUID thingId) {
-        if (thingId == null) throw new ShopException("Thing ID must not be null");
-        return this.thingId.equals(thingId);
-    }
+
 }

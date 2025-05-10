@@ -1,5 +1,6 @@
 package com.neotee.ecommercesystem.solution.deliverypackage.application;
 
+import com.neotee.ecommercesystem.domainprimitives.ZipCode;
 import com.neotee.ecommercesystem.solution.deliverypackage.domain.DeliveryPackage;
 import com.neotee.ecommercesystem.solution.deliverypackage.domain.DeliveryPackageRepository;
 import com.neotee.ecommercesystem.solution.order.application.OrderService;
@@ -19,49 +20,37 @@ public class DeliveryPackageService {
 
     private final DeliveryPackageRepository deliveryPackageRepository;
     private final StorageUnitService storageUnitService;
-    private final ThingService thingService;
-
     private final OrderService orderService;
 
     @Transactional
     public List<DeliveryPackage> createDeliveryPackage(UUID orderId) {
+        Map<UUID, Integer> remainingItems = orderService.getOrderLineItemsMap(orderId);
+        ZipCode clientZipCode = orderService.findClientZipCode(orderId);
 
-        List<UUID> storageIds = storageUnitService.getContributingStorageUnit(orderId);
+        List<UUID> storageIds = storageUnitService.getContributingStorageUnit(remainingItems, clientZipCode);
         List<DeliveryPackage> deliveryPackages = new ArrayList<>();
-        Map<UUID, Integer> remainingItems = orderService.getOrderPartWithQuantity(orderId);
-
 
         for (UUID storageId : storageIds) {
             StorageUnit storageUnit = storageUnitService.findById(storageId);
-            Map<UUID, Integer> contributingPart = storageUnit.getServableItems(remainingItems);
+            Map<UUID, Integer> partItems = storageUnit.getServableItems(remainingItems);
 
-            if (contributingPart.isEmpty()) continue;
+            if (partItems.isEmpty()) continue;
 
-            // Create delivery package
             DeliveryPackage deliveryPackage = new DeliveryPackage(storageId, orderId);
-            deliveryPackage.createParts(contributingPart);
+            deliveryPackage.createParts(partItems);
+
+            storageUnitService.removeFromStock(partItems);
 
 
-            // Remove served items from remaining
-            remainingItems.keySet().removeAll(contributingPart.keySet());
+            remainingItems.keySet().removeAll(partItems.keySet());
 
-            // Save the delivery package
-            deliveryPackages.add(deliveryPackage);
             deliveryPackageRepository.save(deliveryPackage);
+            deliveryPackages.add(deliveryPackage);
 
-            thingService.removeAllFromStock(contributingPart);
-            storageUnitService.removeFromStock(contributingPart);
-            // Stop if all items are served
             if (remainingItems.isEmpty()) break;
         }
 
         return deliveryPackages;
-
     }
-
-
-
-
-
 
 }

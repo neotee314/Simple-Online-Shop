@@ -7,7 +7,6 @@ import com.neotee.ecommercesystem.solution.thing.domain.ThingRepository;
 import com.neotee.ecommercesystem.usecases.ThingCatalogUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +17,7 @@ import java.util.UUID;
 public class ThingCatalogService implements ThingCatalogUseCases {
 
     private final ThingService thingService;
-    private final ReservationServiceInterface reservationService;
+    private final ReservationCatalogServiceInterface reservationService;
     private final OrderedItemsServiceInterface orderedItemsService;
     private final ThingRepository thingRepository;
 

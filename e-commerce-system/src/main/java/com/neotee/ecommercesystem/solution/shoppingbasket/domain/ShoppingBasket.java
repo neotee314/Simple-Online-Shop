@@ -53,37 +53,10 @@ public class ShoppingBasket {
         parts.add(newPart);
     }
 
-    // Remove a part from the shopping basket
-    private void removePart(ShoppingBasketPart partToRemove) {
-        if (partToRemove == null) {
-            throw new ShopException("Cannot remove null part.");
-        }
-
-        for (ShoppingBasketPart existingPart : parts) {
-            if (existingPart.equals(partToRemove)) {
-                int newQuantity = existingPart.getQuantity() - partToRemove.getQuantity();
-                if (newQuantity > 0) {
-                    existingPart.decreaseQuantity(partToRemove.getQuantity());
-                } else {
-                    parts.remove(existingPart);
-                }
-                return;
-            }
-        }
-
-        throw new ShopException("Part not found in shopping basket.");
-    }
 
     // Check if the shopping basket is empty
     public boolean isEmpty() {
         return parts.isEmpty();
-    }
-
-    // Get the total quantity of items in the shopping basket
-    public int getTotalQuantity() {
-        return parts.stream()
-                .mapToInt(ShoppingBasketPart::getQuantity)
-                .sum();
     }
 
 
@@ -95,11 +68,6 @@ public class ShoppingBasket {
                 .filter(part -> part.contains(thingId))
                 .mapToInt(ShoppingBasketPart::getQuantity)
                 .sum();
-    }
-
-    // Clear all items from the shopping basket
-    public void clear() {
-        parts.clear();
     }
 
     public void addItem(UUID thingId, int quantity, Money price) {

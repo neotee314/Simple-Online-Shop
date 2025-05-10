@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import jakarta.persistence.*;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -48,19 +49,7 @@ public class ShoppingBasketPart {
         this.quantity += quantity;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        ShoppingBasketPart that = (ShoppingBasketPart) o;
-        return Objects.equals(getThingId(), that.getThingId());
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getThingId());
-    }
-
-    // Decrease the quantity of the part by the given amount
     public void decreaseQuantity(int quantity) {
         if (this.quantity - quantity >= 0) {
             this.quantity -= quantity;
@@ -72,5 +61,17 @@ public class ShoppingBasketPart {
     public boolean contains(UUID thingId) {
         if (thingId == null) throw new ShopException("Thing ID must not be null");
         return this.thingId.equals(thingId);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ShoppingBasketPart that = (ShoppingBasketPart) o;
+        return Objects.equals(getThingId(), that.getThingId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getThingId());
     }
 }

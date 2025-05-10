@@ -30,7 +30,6 @@ public class DeliveryPackage {
         if (storageUnitId == null || orderId == null) throw new ShopException("Invalid storage unit ID or order ID");
         this.storageUnitId = storageUnitId;
         this.orderId = orderId;
-        //create parts.  st22222 st111111 orderid xxxxx
     }
 
 
@@ -43,17 +42,19 @@ public class DeliveryPackage {
     public Map<UUID, Integer> createParts(Map<UUID, Integer> inputItems) {
         Map<UUID, Integer> usedItems = new HashMap<>();
 
-        for (Map.Entry<UUID, Integer> entry : new HashMap<>(inputItems).entrySet()) {
+        Map<UUID, Integer> itemsCopy = new HashMap<>(inputItems);
+
+        for (Map.Entry<UUID, Integer> entry : itemsCopy.entrySet()) {
             UUID thingId = entry.getKey();
             int quantity = entry.getValue();
 
             parts.add(new DeliveryPackagePart(thingId, quantity));
             usedItems.put(thingId, quantity);
-            inputItems.remove(thingId); // از ورودی حذف می‌کنیم تا بشه remaining
         }
 
         return usedItems;
     }
+
 
 
 }

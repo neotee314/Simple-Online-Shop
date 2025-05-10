@@ -2,10 +2,8 @@ package com.neotee.ecommercesystem.solution.storageunit.application;
 
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
-import com.neotee.ecommercesystem.solution.shoppingbasket.application.ReservationService;
 import com.neotee.ecommercesystem.solution.storageunit.domain.StorageUnit;
 import com.neotee.ecommercesystem.solution.storageunit.domain.StorageUnitRepository;
-import com.neotee.ecommercesystem.solution.thing.application.ThingService;
 import com.neotee.ecommercesystem.usecases.StorageUnitUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +19,8 @@ import java.util.UUID;
 public class StorageUnitUseCasesService implements StorageUnitUseCases {
 
     private final StorageUnitRepository storageUnitRepository;
-    private final ThingService thingService;
-    private final ReservationService reservationService;
-
+    private final ReservationServiceInterface reservationService;
+    private final StockServiceInterface stockServiceInterface;
     @Override
     public UUID addNewStorageUnit(HomeAddressType address, String name) {
         StorageUnit storageUnit = new StorageUnit((HomeAddress) address, name);
@@ -39,7 +36,7 @@ public class StorageUnitUseCasesService implements StorageUnitUseCases {
     @Override
     @Transactional
     public void addToStock(UUID storageUnitId, UUID thingId, int addedQuantity) {
-        thingService.addToStock(thingId, addedQuantity);
+        stockServiceInterface.addToStock(thingId, addedQuantity);
         StorageUnit storageUnit = storageUnitRepository.findById(storageUnitId).orElseThrow(() -> new ShopException("Storage with Id " + storageUnitId + " does not exist"));
         storageUnit.addToStock(thingId, addedQuantity);
         storageUnitRepository.save(storageUnit);
@@ -63,13 +60,13 @@ public class StorageUnitUseCasesService implements StorageUnitUseCases {
         int removeFromStock = Math.min(currentStock, removedQuantity);
         if (removeFromStock > 0) {
             storageUnit.removeFromStock(thingId, removeFromStock);
-            thingService.removeFromStock(thingId, removeFromStock);
+            stockServiceInterface.removeFromStock(thingId, removeFromStock);
         }
 
         int removeFromReserved = removedQuantity - removeFromStock;
         if (removeFromReserved > 0) {
             reservationService.removeFromReservedQuantity(thingId, removeFromReserved);
-            thingService.removeFromStock(thingId, removeFromReserved);
+            stockServiceInterface.removeFromStock(thingId, removeFromReserved);
         }
 
         storageUnitRepository.save(storageUnit);
@@ -80,7 +77,7 @@ public class StorageUnitUseCasesService implements StorageUnitUseCases {
     public void changeStockTo(UUID storageUnitId, UUID thingId, int newTotalQuantity) {
         StorageUnitValidator.validateStorageUnitId(storageUnitId);
         StorageUnitValidator.validateQuantityNotNegative(newTotalQuantity);
-        if(!thingService.existsById(thingId)) throw new ShopException("Thing does not exist");
+        if(!stockServiceInterface.existsById(thingId)) throw new ShopException("Thing does not exist");
 
         StorageUnit storageUnit = storageUnitRepository.findById(storageUnitId).orElseThrow(() -> new ShopException("Storage with Id " + storageUnitId + " does not exist"));
         int reserved = reservationService.getTotalReservedInAllBaskets(thingId);
@@ -91,7 +88,7 @@ public class StorageUnitUseCasesService implements StorageUnitUseCases {
         }
 
         storageUnit.changeStockTo(thingId, newTotalQuantity);
-        thingService.changeStockTo(thingId,newTotalQuantity);
+        stockServiceInterface.changeStockTo(thingId,newTotalQuantity);
         storageUnitRepository.save(storageUnit);
     }
 
