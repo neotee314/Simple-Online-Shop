@@ -42,6 +42,48 @@ When an order is placed, the system analyzes which storage units can fulfill the
 
 ---
 
+## Database Schema
+
+1. **Products**:
+    - ProductID (Primary Key)
+    - Name
+    - Description
+    - Size
+    - PurchasePrice
+    - SalesPrice
+    - StockQuantity
+
+2. **Clients**:
+    - ClientID (Primary Key)
+    - Name
+    - Email (Unique)
+    - Address (Street, City, Zip Code)
+
+3. **Orders**:
+    - OrderID (Primary Key)
+    - ClientID (Foreign Key)
+    - Date
+    - Status (e.g., pending, completed)
+
+4. **OrderParts**:
+    - OrderPartID (Primary Key)
+    - OrderID (Foreign Key)
+    - ProductID (Foreign Key)
+    - Quantity
+
+5. **StorageUnits**:
+    - StorageUnitID (Primary Key)
+    - Name
+    - Address (Street, City, Zip Code)
+
+6. **DeliveryPackages**:
+    - PackageID (Primary Key)
+    - OrderID (Foreign Key)
+    - StorageUnitID (Foreign Key)
+    - ProductID (Foreign Key)
+    - Quantity
+
+
 ### 🔁 Business Rules
 
 - **Stock availability**: Products can only be purchased if their stock > 0.
