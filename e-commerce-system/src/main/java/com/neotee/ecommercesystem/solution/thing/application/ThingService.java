@@ -59,12 +59,12 @@ public class ThingService implements StockServiceInterface {
                 .map(Thing::getThingId)
                 .toList();
     }
-
+    @Override
     public boolean existsById(UUID thingId) {
         ThingValidator.validateThingId(thingId);
         return thingRepository.existsById(thingId);
     }
-
+    @Override
     public void changeStockTo(UUID thingId, int newTotalQuantity) {
         ThingValidator.validateThingId(thingId);
         Thing thing = findById(thingId);

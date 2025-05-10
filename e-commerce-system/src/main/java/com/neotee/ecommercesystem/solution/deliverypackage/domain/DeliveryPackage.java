@@ -33,7 +33,6 @@ public class DeliveryPackage {
     }
 
 
-
     public boolean hasStorage(UUID storageUnitId) {
         if(storageUnitId == null) throw new ShopException("Storage unit ID must not be null");
         return this.storageUnitId.equals(storageUnitId);
@@ -54,7 +53,4 @@ public class DeliveryPackage {
 
         return usedItems;
     }
-
-
-
 }

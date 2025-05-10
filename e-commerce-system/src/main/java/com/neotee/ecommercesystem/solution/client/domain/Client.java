@@ -3,6 +3,7 @@ package com.neotee.ecommercesystem.solution.client.domain;
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
+import com.neotee.ecommercesystem.domainprimitives.ZipCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -78,5 +79,9 @@ public class Client {
     @Override
     public int hashCode() {
         return Objects.hash(clientId);
+    }
+
+    public ZipCode findZipCode() {
+        return homeAddress.getZipCode();
     }
 }

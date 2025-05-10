@@ -1,8 +1,7 @@
 package com.neotee.ecommercesystem.usecases.domainprimitivetypes;
-
-
 import com.neotee.ecommercesystem.ShopException;
 
+@SuppressWarnings("PMD.ImplicitFunctionalInterface")
 public interface ZipCodeType {
     /**
      * @return the zip code as a string

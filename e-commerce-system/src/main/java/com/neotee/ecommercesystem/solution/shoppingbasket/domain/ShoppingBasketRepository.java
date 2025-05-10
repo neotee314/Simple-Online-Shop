@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @Repository
 public interface ShoppingBasketRepository extends CrudRepository<ShoppingBasket, UUID> {
+    @Override
     List<ShoppingBasket> findAll();
 
     Optional<ShoppingBasket> findByClientEmail(EmailType clientEmail);

@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReservationService implements ReservationCatalogServiceInterface, ReservationServiceInterface {
     private final ShoppingBasketRepository shoppingBasketRepository;
-
+    @Override
     public int getTotalReservedInAllBaskets(UUID thingId) {
         // Get all shopping baskets from the repository
         List<ShoppingBasket> allBaskets = shoppingBasketRepository.findAll();
@@ -29,7 +29,7 @@ public class ReservationService implements ReservationCatalogServiceInterface, R
         return total;
     }
 
-
+    @Override
     public void removeFromReservedQuantity(UUID thingId, int quantityToRemove) {
         List<UUID> basketIds = getAllBasketContaining(thingId);
 

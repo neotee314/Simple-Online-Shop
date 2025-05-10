@@ -8,6 +8,7 @@ import java.util.UUID;
 
 @Repository
 public interface ThingRepository extends CrudRepository<Thing, UUID> {
+    @Override
     List<Thing> findAll();
     Thing findByThingId(UUID id);
 }

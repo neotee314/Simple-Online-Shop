@@ -44,7 +44,7 @@ public class ClientService {
         if (client == null) {
             throw new ShopException("client does not exist");
         }
-        return client.getHomeAddress().getZipCode();
+        return client.findZipCode();
     }
 
     @Transactional

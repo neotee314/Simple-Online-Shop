@@ -127,7 +127,6 @@ public class ShoppingBasket {
     }
 
     public Map<UUID, Integer> getPartsAsMapValue() {
-        // Create and return a map where the key is the thingId (UUID) and the value is the quantity of the part
         return parts.stream()
                 .collect(Collectors.toMap(ShoppingBasketPart::getThingId, ShoppingBasketPart::getQuantity));
     }

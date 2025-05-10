@@ -51,9 +51,8 @@ public class StorageUnitService {
 
 
     @Transactional
-    public List<UUID> getContributingStorageUnit(Map<UUID,Integer> items, ZipCode clientZipCode) {
+    public List<UUID> getContributingStorageUnit(Map<UUID, Integer> items, ZipCode clientZipCode) {
         Map<UUID, Integer> remainingItems = new HashMap<>(items);
-
         Map<UUID, Boolean> contributorMap = new LinkedHashMap<>();
 
         while (!remainingItems.isEmpty()) {
@@ -63,19 +62,19 @@ public class StorageUnitService {
 
             UUID storageId = sortedStorageUnitIds.getFirst();
             StorageUnit unit = findById(storageId);
-
             if (unit == null) continue;
 
             Map<UUID, Integer> servableItems = unit.getServableItems(remainingItems);
-            if (!servableItems.isEmpty()) {
-                servableItems.keySet().forEach(remainingItems::remove);
-                contributorMap.put(storageId, true); // this unit contributed
+            if (servableItems.isEmpty()) {
+                contributorMap.putIfAbsent(storageId, false);
             } else {
-                contributorMap.putIfAbsent(storageId, false); // track as non-contributing for now
+                servableItems.keySet().forEach(remainingItems::remove);
+                contributorMap.put(storageId, true);
             }
 
             storageUnits.removeIf(su -> su.getStorageId().equals(storageId));
         }
+
         return contributorMap.entrySet().stream()
                 .filter(Map.Entry::getValue)
                 .map(Map.Entry::getKey)
