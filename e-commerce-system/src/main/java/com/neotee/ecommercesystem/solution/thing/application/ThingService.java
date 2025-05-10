@@ -47,15 +47,14 @@ public class ThingService implements StockServiceInterface {
         thingRepository.save(thing);
     }
 
-
-
     public Money getSalesPrice(UUID thingId) {
         ThingValidator.validateThingId(thingId);
         Thing thing = findById(thingId);
         if (thing == null) throw new ShopException("Thing does not exist");
         return thing.getSalesPrice();
     }
-    public List<UUID> findAll(){
+
+    public List<UUID> findAll() {
         return thingRepository.findAll().stream()
                 .map(Thing::getThingId)
                 .toList();

@@ -30,44 +30,30 @@ public class ReservationService implements ReservationCatalogServiceInterface, R
     }
 
 
-    public void removeFromReservedQuantity(UUID thingId, int removedQuantity) {
+    public void removeFromReservedQuantity(UUID thingId, int quantityToRemove) {
+        List<UUID> basketIds = getAllBasketContaining(thingId);
 
-        // Get all baskets containing the item identified by thingId
-        List<UUID> basketsContainingThing = getAllBasketContaining(thingId);
+        if (basketIds.isEmpty()) throw new ShopException("No baskets contain the item");
 
-        // If no baskets contain the item, return early
-        if (basketsContainingThing.isEmpty()) throw new ShopException("No baskets contain the item");
+        int totalRemoved = 0;
 
-        Random random = new Random();
-        int totalReserved = 0;
+        for (UUID basketId : basketIds) {
+            ShoppingBasket basket = shoppingBasketRepository.findById(basketId)
+                    .orElseThrow(() -> new ShopException("ShoppingBasket does not exist"));
 
-        // Calculate the total reserved quantity for the specified thingId in all baskets
-        for (UUID basketId : basketsContainingThing) {
-            ShoppingBasket basket = shoppingBasketRepository.findById(basketId).orElseThrow(() -> new ShopException("ShoppingBasket does not exist"));
-            totalReserved += basket.getReservedQuantityForThing(thingId);  // Assuming this method exists
-        }
+            int removed = basket.removeReservedItems(thingId, quantityToRemove - totalRemoved);
+            totalRemoved += removed;
 
-        // Ensure we cannot remove more than what is reserved
-        if (totalReserved < removedQuantity) {
-            throw new ShopException("Cannot remove more than the reserved quantity of the item in baskets");
-        }
-
-        // Randomly remove the quantity from the baskets
-        while (removedQuantity > 0) {
-            int randomIndex = random.nextInt(basketsContainingThing.size());
-            UUID basketId = basketsContainingThing.get(randomIndex);
-            ShoppingBasket basket = shoppingBasketRepository.findById(basketId).orElseThrow(() -> new ShopException("ShoppingBasket does not exist"));
-
-            // Attempt to remove one item from the basket
-            boolean isRemoved = basket.removeItem(thingId, 1);
-
-            // Save the basket after modification
             shoppingBasketRepository.save(basket);
 
-            // If successfully removed, decrease the quantity left to remove
-            if (isRemoved) removedQuantity -= 1;
+            if (totalRemoved >= quantityToRemove) break;
+        }
+
+        if (totalRemoved < quantityToRemove) {
+            throw new ShopException("Cannot remove more than the reserved quantity");
         }
     }
+
 
     private List<UUID> getAllBasketContaining(UUID thingId) {
         // Get all shopping baskets

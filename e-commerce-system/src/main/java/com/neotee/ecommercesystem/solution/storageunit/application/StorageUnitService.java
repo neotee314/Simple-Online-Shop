@@ -2,8 +2,6 @@ package com.neotee.ecommercesystem.solution.storageunit.application;
 
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
-import com.neotee.ecommercesystem.solution.order.application.OrderService;
-import com.neotee.ecommercesystem.solution.order.domain.Order;
 import com.neotee.ecommercesystem.solution.storageunit.domain.StorageUnit;
 import com.neotee.ecommercesystem.solution.storageunit.domain.StorageUnitRepository;
 import jakarta.transaction.Transactional;
@@ -19,8 +17,6 @@ import java.util.*;
 public class StorageUnitService {
 
     private final StorageUnitRepository storageUnitRepository;
-
-
 
     public StorageUnit findById(UUID storageUnitId) {
         Optional<StorageUnit> storageUnitOptional = storageUnitRepository.findById(storageUnitId);
@@ -55,8 +51,7 @@ public class StorageUnitService {
 
 
     @Transactional
-    public List<UUID> getContributingStorageUnit(Map<UUID,Integer> items, ZipCode clientZipCode
-    ) {
+    public List<UUID> getContributingStorageUnit(Map<UUID,Integer> items, ZipCode clientZipCode) {
         Map<UUID, Integer> remainingItems = new HashMap<>(items);
 
         Map<UUID, Boolean> contributorMap = new LinkedHashMap<>();
@@ -81,8 +76,6 @@ public class StorageUnitService {
 
             storageUnits.removeIf(su -> su.getStorageId().equals(storageId));
         }
-
-        // only return contributors who actually delivered something
         return contributorMap.entrySet().stream()
                 .filter(Map.Entry::getValue)
                 .map(Map.Entry::getKey)

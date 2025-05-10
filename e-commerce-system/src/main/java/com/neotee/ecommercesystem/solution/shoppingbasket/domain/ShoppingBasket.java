@@ -52,6 +52,17 @@ public class ShoppingBasket {
 
         parts.add(newPart);
     }
+    public int removeReservedItems(UUID thingId, int quantityToRemove) {
+        int reserved = getReservedQuantityForThing(thingId);
+        int removed = Math.min(reserved, quantityToRemove);
+
+        for (int i = 0; i < removed; i++) {
+            removeItem(thingId, 1);
+        }
+
+        return removed;
+    }
+
 
 
     // Check if the shopping basket is empty

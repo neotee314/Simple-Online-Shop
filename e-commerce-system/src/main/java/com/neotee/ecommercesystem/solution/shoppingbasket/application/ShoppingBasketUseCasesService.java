@@ -6,7 +6,6 @@ import com.neotee.ecommercesystem.domainprimitives.Money;
 import com.neotee.ecommercesystem.solution.deliverypackage.application.DeliveryPackageService;
 import com.neotee.ecommercesystem.solution.order.application.OrderService;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasketRepository;
-import com.neotee.ecommercesystem.solution.storageunit.application.StorageUnitService;
 import com.neotee.ecommercesystem.solution.thing.application.ThingService;
 import com.neotee.ecommercesystem.usecases.ShoppingBasketUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
@@ -27,7 +26,6 @@ public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
     private final ShoppingBasketRepository shoppingBasketRepository;
     private final ThingService thingService;
     private final OrderService orderService;
-    private final StorageUnitService storageUnitService;
     private final DeliveryPackageService deliveryPackageService;
 
     @Override

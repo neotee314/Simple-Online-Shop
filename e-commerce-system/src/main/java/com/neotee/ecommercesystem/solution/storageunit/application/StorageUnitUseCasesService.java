@@ -2,6 +2,7 @@ package com.neotee.ecommercesystem.solution.storageunit.application;
 
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
+import com.neotee.ecommercesystem.solution.storageunit.domain.RemovalPlan;
 import com.neotee.ecommercesystem.solution.storageunit.domain.StorageUnit;
 import com.neotee.ecommercesystem.solution.storageunit.domain.StorageUnitRepository;
 import com.neotee.ecommercesystem.usecases.StorageUnitUseCases;
@@ -10,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,8 +19,9 @@ import java.util.UUID;
 public class StorageUnitUseCasesService implements StorageUnitUseCases {
 
     private final StorageUnitRepository storageUnitRepository;
-    private final ReservationServiceInterface reservationService;
+    private final ReservationServiceInterface reservationServiceInterface;
     private final StockServiceInterface stockServiceInterface;
+
     @Override
     public UUID addNewStorageUnit(HomeAddressType address, String name) {
         StorageUnit storageUnit = new StorageUnit((HomeAddress) address, name);
@@ -36,37 +37,30 @@ public class StorageUnitUseCasesService implements StorageUnitUseCases {
     @Override
     @Transactional
     public void addToStock(UUID storageUnitId, UUID thingId, int addedQuantity) {
-        stockServiceInterface.addToStock(thingId, addedQuantity);
-        StorageUnit storageUnit = storageUnitRepository.findById(storageUnitId).orElseThrow(() -> new ShopException("Storage with Id " + storageUnitId + " does not exist"));
+        StorageUnit storageUnit = storageUnitRepository.findById(storageUnitId)
+                .orElseThrow(() -> new ShopException("Storage with Id " + storageUnitId + " does not exist"));
         storageUnit.addToStock(thingId, addedQuantity);
+        stockServiceInterface.addToStock(thingId, addedQuantity);
         storageUnitRepository.save(storageUnit);
     }
 
     @Override
     @Transactional
     public void removeFromStock(UUID storageUnitId, UUID thingId, int removedQuantity) {
-        StorageUnitValidator.validateStorageUnitId(storageUnitId);
-        StorageUnitValidator.validateQuantityNotNegative(removedQuantity);
+        StorageUnit storageUnit =storageUnitRepository.findById(storageUnitId)
+                .orElseThrow(() -> new ShopException("Storage with Id " + storageUnitId + " does not exist"));
+        int reserved = reservationServiceInterface.getTotalReservedInAllBaskets(thingId);
 
-        StorageUnit storageUnit = storageUnitRepository.findById(storageUnitId).orElseThrow(() -> new ShopException("Storage with Id " + storageUnitId + " does not exist"));
-        int currentStock = storageUnit.getAvailableStock(thingId);
-        int reserved = reservationService.getTotalReservedInAllBaskets(thingId);
-        int totalRemovable = currentStock + reserved;
+        RemovalPlan removalPlan = storageUnit.planRemoval(thingId, removedQuantity, reserved);
 
-        if (removedQuantity > totalRemovable) {
-            throw new ShopException("The removed quantity exceeds available and reserved stock.");
+        if (removalPlan.fromStock() > 0) {
+            storageUnit.removeFromStock(thingId, removalPlan.fromStock());
+            stockServiceInterface.removeFromStock(thingId, removalPlan.fromStock());
         }
 
-        int removeFromStock = Math.min(currentStock, removedQuantity);
-        if (removeFromStock > 0) {
-            storageUnit.removeFromStock(thingId, removeFromStock);
-            stockServiceInterface.removeFromStock(thingId, removeFromStock);
-        }
-
-        int removeFromReserved = removedQuantity - removeFromStock;
-        if (removeFromReserved > 0) {
-            reservationService.removeFromReservedQuantity(thingId, removeFromReserved);
-            stockServiceInterface.removeFromStock(thingId, removeFromReserved);
+        if (removalPlan.fromReserved() > 0) {
+            reservationServiceInterface.removeFromReservedQuantity(thingId, removalPlan.fromReserved());
+            stockServiceInterface.removeFromStock(thingId, removalPlan.fromReserved());
         }
 
         storageUnitRepository.save(storageUnit);
@@ -75,40 +69,45 @@ public class StorageUnitUseCasesService implements StorageUnitUseCases {
     @Override
     @Transactional
     public void changeStockTo(UUID storageUnitId, UUID thingId, int newTotalQuantity) {
-        StorageUnitValidator.validateStorageUnitId(storageUnitId);
-        StorageUnitValidator.validateQuantityNotNegative(newTotalQuantity);
-        if(!stockServiceInterface.existsById(thingId)) throw new ShopException("Thing does not exist");
+        if (!stockServiceInterface.existsById(thingId)) {
+            throw new ShopException("Thing does not exist");
+        }
 
-        StorageUnit storageUnit = storageUnitRepository.findById(storageUnitId).orElseThrow(() -> new ShopException("Storage with Id " + storageUnitId + " does not exist"));
-        int reserved = reservationService.getTotalReservedInAllBaskets(thingId);
+        StorageUnit storageUnit = storageUnitRepository.findById(storageUnitId)
+                .orElseThrow(() -> new ShopException("Storage with Id " + storageUnitId + " does not exist"));
+        int reserved = reservationServiceInterface.getTotalReservedInAllBaskets(thingId);
 
         if (newTotalQuantity < reserved) {
             int toRemove = reserved - newTotalQuantity;
-            reservationService.removeFromReservedQuantity(thingId, toRemove);
+            reservationServiceInterface.removeFromReservedQuantity(thingId, toRemove);
         }
 
         storageUnit.changeStockTo(thingId, newTotalQuantity);
-        stockServiceInterface.changeStockTo(thingId,newTotalQuantity);
+        stockServiceInterface.changeStockTo(thingId, newTotalQuantity);
         storageUnitRepository.save(storageUnit);
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public int getAvailableStock(UUID storageUnitId, UUID thingId) {
         StorageUnitValidator.validateStorageUnitId(storageUnitId);
-        StorageUnit storageUnit = storageUnitRepository.findById(storageUnitId).orElseThrow(() -> new ShopException("Storage with Id " + storageUnitId + " does not exist"));
+        StorageUnit storageUnit = storageUnitRepository.findById(storageUnitId)
+                .orElseThrow(() -> new ShopException("Storage with Id " + storageUnitId + " does not exist"));
         return storageUnit.getAvailableStock(thingId);
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public int getAvailableStock(UUID thingId) {
-        List<StorageUnit> storageUnits = new ArrayList<>();
-        storageUnitRepository.findAll().forEach(storageUnits::add);
-        if (storageUnits.isEmpty()) throw new ShopException("No storage units exist");
+        List<StorageUnit> storageUnits = storageUnitRepository.findAll();
+
+        if (storageUnits.isEmpty()) {
+            throw new ShopException("No storage units exist");
+        }
 
         return storageUnits.stream()
-                .mapToInt(storageUnit -> storageUnit.getAvailableStock(thingId))
+                .mapToInt(unit -> unit.getAvailableStock(thingId))
                 .sum();
     }
+
 }

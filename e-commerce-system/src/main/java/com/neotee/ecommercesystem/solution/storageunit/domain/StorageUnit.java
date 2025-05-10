@@ -45,6 +45,24 @@ public class StorageUnit {
         stockLevels.put(thingId, current + quantity);
     }
 
+    public RemovalPlan planRemoval(UUID thingId, int quantityToRemove, int reservedQuantity) {
+        if (thingId == null || quantityToRemove < 0 || reservedQuantity < 0)
+            throw new ShopException("Invalid thing ID or quantity to remove must be greater than 0");
+        int currentStock = getAvailableStock(thingId);
+        int totalAvailable = currentStock + reservedQuantity;
+
+        if (quantityToRemove > totalAvailable) {
+            throw new ShopException("The removed quantity exceeds available and reserved stock.");
+        }
+
+        int fromStock = Math.min(currentStock, quantityToRemove);
+        int fromReserved = quantityToRemove - fromStock;
+
+        return new RemovalPlan(fromStock, fromReserved);
+    }
+
+
+
     public void removeFromStock(UUID thingId, Integer removeQuantity) {
         if (thingId == null || removeQuantity == null || removeQuantity <= 0) {
             throw new ShopException("Invalid thing ID or quantity to remove must be greater than 0");
