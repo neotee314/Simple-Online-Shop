@@ -42,7 +42,7 @@ public class ThingCatalogService implements ThingCatalogUseCases {
         if (thing.isInStock())
             throw new ShopException("Thing still has inventory");
 
-        if (reservationService.isReservedInBasket(thingId))
+        if (reservationService.isReservedInAnyBasket(thingId))
             throw new ShopException("Thing is still reserved in a shopping basket");
 
         if (orderedItemsService.isPartOfCompletedOrder(thingId))

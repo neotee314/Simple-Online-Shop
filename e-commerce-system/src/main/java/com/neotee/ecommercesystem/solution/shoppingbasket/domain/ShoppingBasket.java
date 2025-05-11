@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.neotee.ecommercesystem.solution.shoppingbasket.domain.BasketState.*;
+
 @Entity
 @Getter
 @Setter
@@ -28,6 +30,8 @@ public class ShoppingBasket {
     private UUID id;
 
     private Email clientEmail;
+
+    private BasketState basketState;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ShoppingBasketPart> parts = new ArrayList<>();
@@ -42,6 +46,7 @@ public class ShoppingBasket {
         if (newPart == null || newPart.getQuantity() <= 0) {
             throw new ShopException("Quantity must be greater than zero.");
         }
+        this.setBasketState(FILLED);
 
         for (ShoppingBasketPart existingPart : parts) {
             if (existingPart.equals(newPart)) {
@@ -67,7 +72,7 @@ public class ShoppingBasket {
 
     // Check if the shopping basket is empty
     public boolean isEmpty() {
-        return parts.isEmpty();
+        return parts.stream().allMatch(part -> part.getQuantity() == 0) || basketState == EMPTY;
     }
 
 
@@ -137,4 +142,10 @@ public class ShoppingBasket {
         return parts.stream()
                 .anyMatch(p -> p.contains(thingId));
     }
+
+    public void clear() {
+        parts.clear();
+        this.basketState = EMPTY;
+    }
+
 }

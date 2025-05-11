@@ -67,7 +67,7 @@ public class ReservationService implements ReservationCheckServiceInterface, Res
 
 
     @Override
-    public boolean isReservedInBasket(UUID thingId) {
+    public boolean isReservedInAnyBasket(UUID thingId) {
        return getTotalReservedInAllBaskets(thingId) > 0;
     }
 

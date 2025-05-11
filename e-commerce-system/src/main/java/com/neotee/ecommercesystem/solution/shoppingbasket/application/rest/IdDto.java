@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.solution.shoppingbasket.application;
+package com.neotee.ecommercesystem.solution.shoppingbasket.application.rest;
 
 import lombok.*;
 

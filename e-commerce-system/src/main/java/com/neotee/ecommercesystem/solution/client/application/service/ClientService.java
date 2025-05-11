@@ -67,4 +67,10 @@ public class ClientService {
         List<Client> clients = clientRepository.findAll();
         clients.forEach(Client::deleteBasket);
     }
+
+    public List<Email> findAll() {
+        return clientRepository.findAll().stream()
+                .map(Client::getEmail)
+                .toList();
+    }
 }

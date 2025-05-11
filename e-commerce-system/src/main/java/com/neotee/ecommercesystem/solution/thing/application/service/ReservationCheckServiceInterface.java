@@ -6,5 +6,5 @@ import java.util.UUID;
 @FunctionalInterface
 public interface ReservationCheckServiceInterface {
 
-    boolean isReservedInBasket(UUID thingId);
+    boolean isReservedInAnyBasket(UUID thingId);
 }

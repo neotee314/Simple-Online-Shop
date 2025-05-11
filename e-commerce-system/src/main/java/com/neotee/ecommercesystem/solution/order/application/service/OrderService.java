@@ -77,8 +77,4 @@ public class OrderService implements OrderedItemsServiceInterface {
         return order.getOrderLineItemsMap();
     }
 
-    public Order findById(UUID orderId) {
-        if (orderId == null) throw new ShopException("orderId is null");
-        return orderRepository.findById(orderId).orElse(null);
-    }
 }
