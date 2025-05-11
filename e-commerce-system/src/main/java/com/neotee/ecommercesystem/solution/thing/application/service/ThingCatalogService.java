@@ -17,7 +17,7 @@ import java.util.UUID;
 public class ThingCatalogService implements ThingCatalogUseCases {
 
     private final ThingService thingService;
-    private final ReservationCatalogServiceInterface reservationService;
+    private final ReservationCheckServiceInterface reservationService;
     private final OrderedItemsServiceInterface orderedItemsService;
     private final ThingRepository thingRepository;
 

@@ -19,7 +19,7 @@ import java.util.UUID;
 public class StorageUnitUseCasesService implements StorageUnitUseCases {
 
     private final StorageUnitRepository storageUnitRepository;
-    private final ReservationServiceInterface reservationServiceInterface;
+    private final ReservedQuantityService reservationServiceInterface;
     private final StockServiceInterface stockServiceInterface;
 
     @Override

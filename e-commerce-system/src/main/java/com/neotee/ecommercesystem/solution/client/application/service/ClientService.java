@@ -30,8 +30,8 @@ public class ClientService {
         clientRepository.deleteAll();
     }
 
-    public List<UUID> getOrderHistory(EmailType clientEmail) {
-       Client client = getClient((Email) clientEmail);
+    public List<UUID> getOrderHistory(Email clientEmail) {
+        Client client = getClient(clientEmail);
         if (client == null) {
             throw new ShopException("client does not exist");
         }
@@ -39,7 +39,7 @@ public class ClientService {
     }
 
     public ZipCode findClientZipCode(Email clientEmail) {
-        Client client = getClient((Email) clientEmail);
+        Client client = getClient(clientEmail);
         if (client == null) {
             throw new ShopException("client does not exist");
         }
@@ -48,11 +48,23 @@ public class ClientService {
 
     @Transactional
     public void addToOrderHistory(Email clientEmail, UUID orderId) {
-        Client client = getClient((Email) clientEmail);
+        Client client = getClient(clientEmail);
         if (client == null) {
             throw new ShopException("client does not exist");
         }
         client.addToOrderHistory(orderId);
         clientRepository.save(client);
+    }
+
+    @Transactional
+    public void addBasket(Email clientEmail, UUID shoppingBasketId) {
+        Client client = getClient(clientEmail);
+        client.addBasket(shoppingBasketId);
+        clientRepository.save(client);
+    }
+
+    public void emptyBasket() {
+        List<Client> clients = clientRepository.findAll();
+        clients.forEach(Client::deleteBasket);
     }
 }

@@ -3,8 +3,8 @@ package com.neotee.ecommercesystem.solution.shoppingbasket.application.service;
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasket;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasketRepository;
-import com.neotee.ecommercesystem.solution.storageunit.application.service.ReservationServiceInterface;
-import com.neotee.ecommercesystem.solution.thing.application.service.ReservationCatalogServiceInterface;
+import com.neotee.ecommercesystem.solution.storageunit.application.service.ReservedQuantityService;
+import com.neotee.ecommercesystem.solution.thing.application.service.ReservationCheckServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ReservationService implements ReservationCatalogServiceInterface, ReservationServiceInterface {
+public class ReservationService implements ReservationCheckServiceInterface, ReservedQuantityService {
     private final ShoppingBasketRepository shoppingBasketRepository;
     @Override
     public int getTotalReservedInAllBaskets(UUID thingId) {

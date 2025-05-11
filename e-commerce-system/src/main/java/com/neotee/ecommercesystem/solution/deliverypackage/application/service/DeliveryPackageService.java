@@ -23,15 +23,15 @@ public class DeliveryPackageService {
 
     @Transactional
     public List<DeliveryPackage> createDeliveryPackage(UUID orderId) {
-        Map<UUID, Integer> remainingItems = orderService.getOrderLineItemsMap(orderId);
+        Map<UUID, Integer> items = orderService.getOrderLineItemsMap(orderId);
         ZipCode clientZipCode = orderService.findClientZipCode(orderId);
 
-        List<UUID> storageIds = storageUnitService.getContributingStorageUnit(remainingItems, clientZipCode);
+        List<UUID> storageIds = storageUnitService.getContributingStorageUnit(items, clientZipCode);
         List<DeliveryPackage> deliveryPackages = new ArrayList<>();
 
         for (UUID storageId : storageIds) {
             StorageUnit storageUnit = storageUnitService.findById(storageId);
-            Map<UUID, Integer> partItems = storageUnit.getServableItems(remainingItems);
+            Map<UUID, Integer> partItems = storageUnit.getServableItems(items);
 
             if (partItems.isEmpty()) continue;
 
@@ -41,12 +41,12 @@ public class DeliveryPackageService {
             storageUnitService.removeFromStock(partItems);
 
 
-            remainingItems.keySet().removeAll(partItems.keySet());
+            items.keySet().removeAll(partItems.keySet());
 
             deliveryPackageRepository.save(deliveryPackage);
             deliveryPackages.add(deliveryPackage);
 
-            if (remainingItems.isEmpty()) break;
+            if (items.isEmpty()) break;
         }
 
         return deliveryPackages;

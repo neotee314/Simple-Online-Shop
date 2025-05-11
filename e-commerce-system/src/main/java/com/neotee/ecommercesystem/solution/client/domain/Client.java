@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,8 +31,7 @@ public class Client {
     @ElementCollection
     private List<UUID> orderHistory = new ArrayList<>();
 
-    @ElementCollection
-    private List<UUID> shoppingBasket = new ArrayList<>();
+    private UUID shoppingBasket;
 
     public Client(String name, Email email, HomeAddress homeAddress) {
         if (name == null || name.isBlank()) throw new ShopException("Invalid name");
@@ -42,15 +42,11 @@ public class Client {
         this.homeAddress = homeAddress;
     }
 
-    public void addToShoppingBasket(UUID thingId) {
-        if (!shoppingBasket.contains(thingId)) {
-            shoppingBasket.add(thingId);
-        }
+    public void addBasket(UUID shoppingBasketId) {
+        if (shoppingBasketId == null) throw new ShopException("Shopping basket ID must not be null");
+        this.shoppingBasket = shoppingBasketId;
     }
 
-    public void removeFromShoppingBasket(UUID thingId) {
-        shoppingBasket.remove(thingId);
-    }
 
     public void addToOrderHistory(UUID orderId) {
         if (!orderHistory.contains(orderId)) {
@@ -62,6 +58,10 @@ public class Client {
     public void changeAddress(HomeAddress address) {
         if (address == null) throw new ShopException("Address cannot be null");
         this.setHomeAddress(address);
+    }
+
+    public ZipCode findZipCode() {
+        return homeAddress.getZipCode();
     }
 
     public void updateName(String newName) {
@@ -81,7 +81,8 @@ public class Client {
         return Objects.hash(clientId);
     }
 
-    public ZipCode findZipCode() {
-        return homeAddress.getZipCode();
+
+    public void deleteBasket() {
+        this.shoppingBasket = null;
     }
 }

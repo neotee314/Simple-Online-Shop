@@ -1,5 +1,6 @@
 package com.neotee.ecommercesystem.solution.order.application.service;
 
+import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.solution.client.application.service.ClientService;
 import com.neotee.ecommercesystem.solution.order.domain.Order;
 import com.neotee.ecommercesystem.solution.order.domain.OrderPart;
@@ -22,7 +23,7 @@ public class OrdeUseCaseService implements OrderUseCases {
     @Override
     @Transactional
     public Map<UUID, Integer> getOrderHistory(EmailType clientEmail) {
-        List<UUID> orderHistory = clientService.getOrderHistory(clientEmail);
+        List<UUID> orderHistory = clientService.getOrderHistory((Email) clientEmail);
         if (orderHistory.isEmpty()) return new HashMap<>();
 
         Map<UUID, Integer> orderHistoryMap = new HashMap<>();
@@ -34,7 +35,7 @@ public class OrdeUseCaseService implements OrderUseCases {
             for (OrderPart orderPart : orderParts) {
                 UUID thingId = orderPart.getThingId();
                 int quantity = orderPart.getOrderQuantity();
-                orderHistoryMap.merge(thingId, quantity,Integer::sum);
+                orderHistoryMap.merge(thingId, quantity, Integer::sum);
             }
         }
 

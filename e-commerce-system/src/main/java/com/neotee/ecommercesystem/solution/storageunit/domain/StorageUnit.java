@@ -152,7 +152,7 @@ public class StorageUnit {
 
         // Sort entries by descending quantity
         List<Map.Entry<UUID, Integer>> sortedEntries = new ArrayList<>(remainingItems.entrySet());
-        sortedEntries.sort((e1, e2) -> Integer.compare(e2.getValue(), e1.getValue()));
+        sortedEntries.stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).forEach(sortedEntries::add);
 
         for (Map.Entry<UUID, Integer> entry : sortedEntries) {
             UUID thingId = entry.getKey();
