@@ -3,7 +3,6 @@ package com.neotee.ecommercesystem.solution.storageunit.domain;
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
-import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -108,13 +107,13 @@ public class StorageUnit {
         return stock == null ? 0 : stock;
     }
 
-    public List<UUID> getTotalContributingItems(Map<UUID, Integer> items) {
-        List<UUID> availableItems = new ArrayList<>();
+    public  Integer getTotalContributingItems(Map<UUID, Integer> items) {
+        Integer totalContributingItems = 0;
         for (UUID thingId : items.keySet()) {
             if (stockLevels.containsKey(thingId))
-                availableItems.add(thingId);
+                totalContributingItems += 1;
         }
-        return availableItems;
+        return totalContributingItems;
     }
 
     public Integer getTotalCount(Map<UUID, Integer> items) {
@@ -127,9 +126,9 @@ public class StorageUnit {
     }
 
 
-    public boolean contains(UUID itemId) {
-        if (itemId == null) throw new ShopException("Thing ID must not be null");
-        return stockLevels.containsKey(itemId);
+    public boolean contains(UUID thingId) {
+        if (thingId == null) throw new ShopException("Thing ID must not be null");
+        return stockLevels.containsKey(thingId);
     }
 
     public Integer getDistanceToClient(ZipCode clientZipCode) {
@@ -138,7 +137,7 @@ public class StorageUnit {
     }
 
 
-    private boolean containsWithQuantity(UUID thingId, int requiredQuantity) {
+    private boolean canServeItem(UUID thingId, int requiredQuantity) {
         if (requiredQuantity < 0) return false;
         if (thingId == null) throw new ShopException("Thing ID must not be null");
         if (!stockLevels.containsKey(thingId)) return false;
@@ -158,7 +157,7 @@ public class StorageUnit {
             UUID thingId = entry.getKey();
             int requiredQuantity = entry.getValue();
 
-            if (this.containsWithQuantity(thingId, requiredQuantity)) {
+            if (this.canServeItem(thingId, requiredQuantity)) {
                 canServeItems.put(thingId, requiredQuantity);
                 if (requiredQuantity >= 10) break;
             }
@@ -173,24 +172,37 @@ public class StorageUnit {
         int availableStocks = 0;
         for (UUID thingId : items.keySet()) {
             int quantity = items.get(thingId);
-            if (this.containsWithQuantity(thingId, quantity)) {
+            if (this.canServeItem(thingId, quantity)) {
                 availableStocks += stockLevels.get(thingId);
             }
         }
         return availableStocks;
     }
 
-    public boolean unsufficient(Map<UUID, Integer> items) {
+    public int getAvailableStockss(Map<UUID, Integer> items) {
         if (items == null) throw new ShopException("Items must not be null");
-        int requiredStocks = 0;
         int availableStocks = 0;
         for (UUID thingId : items.keySet()) {
-            int quantity = items.get(thingId);
-            requiredStocks += quantity;
-            if (this.containsWithQuantity(thingId, quantity)) {
+            if (this.contains(thingId)) {
                 availableStocks += stockLevels.get(thingId);
             }
         }
-        return availableStocks >= requiredStocks;
+        return availableStocks;
     }
+
+    public boolean canFullfillAll(Map<UUID, Integer> unfulfilledItems) {
+        if (unfulfilledItems == null) throw new ShopException("Unfulfilled items must not be null");
+
+        for (Map.Entry<UUID, Integer> entry : unfulfilledItems.entrySet()) {
+            UUID thingId = entry.getKey();
+            int requiredQuantity = entry.getValue();
+
+            // If the item is missing or quantity is not enough, return false
+            if (!stockLevels.containsKey(thingId) || stockLevels.get(thingId) < requiredQuantity) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

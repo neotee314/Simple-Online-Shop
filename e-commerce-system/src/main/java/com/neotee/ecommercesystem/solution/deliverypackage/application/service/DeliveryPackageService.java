@@ -4,7 +4,7 @@ import com.neotee.ecommercesystem.domainprimitives.ZipCode;
 import com.neotee.ecommercesystem.solution.deliverypackage.domain.DeliveryPackage;
 import com.neotee.ecommercesystem.solution.deliverypackage.domain.DeliveryPackageRepository;
 import com.neotee.ecommercesystem.solution.order.application.service.OrderService;
-import com.neotee.ecommercesystem.solution.storageunit.application.service.StorageUnitService;
+import com.neotee.ecommercesystem.solution.storageunit.application.service.InventoryFulfillmentService;
 import com.neotee.ecommercesystem.solution.storageunit.domain.StorageUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.util.*;
 public class DeliveryPackageService {
 
     private final DeliveryPackageRepository deliveryPackageRepository;
-    private final StorageUnitService storageUnitService;
+    private final InventoryFulfillmentService storageUnitService;
     private final OrderService orderService;
 
     @Transactional

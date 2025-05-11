@@ -3,7 +3,7 @@ package com.neotee.ecommercesystem.regression;
 
 import com.neotee.ecommercesystem.*;
 import com.neotee.ecommercesystem.solution.order.application.service.OrderService;
-import com.neotee.ecommercesystem.solution.storageunit.application.service.StorageUnitService;
+import com.neotee.ecommercesystem.solution.storageunit.application.service.InventoryFulfillmentService;
 import com.neotee.ecommercesystem.solution.storageunit.domain.StorageUnit;
 import com.neotee.ecommercesystem.usecases.masterdata.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -143,9 +143,6 @@ public class MultipleDeliverysTest {
         // but only 7 has enough capacity
         UUID orderId = shoppingBasketUseCases.checkout( clientEmail3 );
 
-
-
-
         // when
         List<UUID> storageUnits = deliveryPackageUseCases
                 .getContributingStorageUnitsForOrder( orderId );
@@ -165,7 +162,7 @@ public class MultipleDeliverysTest {
     @Autowired
     private OrderService orderService;
     @Autowired
-    private StorageUnitService storageUnitService;
+    private InventoryFulfillmentService storageUnitService;
     private Integer[] orderIds = new Integer[]{5, 6, 7, 8, 9, 10, 11, 12};
     @Test
     public void testTwoDeliveryPackages() {

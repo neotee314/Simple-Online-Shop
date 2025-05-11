@@ -14,7 +14,7 @@ import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class StorageUnitService {
+public class InventoryFulfillmentService {
 
     private final StorageUnitRepository storageUnitRepository;
 
@@ -53,62 +53,71 @@ public class StorageUnitService {
     @Transactional
     public List<UUID> getContributingStorageUnit(Map<UUID, Integer> items, ZipCode clientZipCode) {
         Map<UUID, Integer> remainingItems = new HashMap<>(items);
-        Map<UUID, Boolean> contributorMap = new LinkedHashMap<>();
-
+        List<UUID> contributorMap = new ArrayList<>();
+        List<StorageUnit> storageUnits = new ArrayList<>(findAll());
         while (!remainingItems.isEmpty()) {
-            List<StorageUnit> storageUnits = new ArrayList<>(findAll());
+
             List<UUID> sortedStorageUnitIds = sortStorageUnits(storageUnits, remainingItems, clientZipCode);
             if (sortedStorageUnitIds.isEmpty()) break;
 
             UUID storageId = sortedStorageUnitIds.getFirst();
-            StorageUnit unit = findById(storageId);
-            if (unit == null) continue;
+            StorageUnit storageUnit = findById(storageId);
+            if (storageUnit == null) continue;
 
-            Map<UUID, Integer> servableItems = unit.getServableItems(remainingItems);
-            if (servableItems.isEmpty()) {
-                contributorMap.putIfAbsent(storageId, false);
-            } else {
+            Map<UUID, Integer> servableItems = storageUnit.getServableItems(remainingItems);
+            if (!servableItems.isEmpty()) {
                 servableItems.keySet().forEach(remainingItems::remove);
-                contributorMap.put(storageId, true);
+                contributorMap.add(storageId);
             }
+            storageUnits.remove(storageUnit);
 
-            storageUnits.removeIf(su -> su.getStorageId().equals(storageId));
         }
 
-        return contributorMap.entrySet().stream()
-                .filter(Map.Entry::getValue)
-                .map(Map.Entry::getKey)
+        return contributorMap;
+    }
+
+    public List<UUID> sortStorageUnits(List<StorageUnit> storageUnits,
+                                       Map<UUID, Integer> unfulfilledItems,
+                                       ZipCode clientZipCode) {
+
+        // Step 1: Define comparators
+        Comparator<StorageUnit> byContributingItems = Comparator
+                .comparingInt((StorageUnit su) -> su.getTotalContributingItems(unfulfilledItems))
+                .reversed();
+
+        Comparator<StorageUnit> byAvailableStock = Comparator
+                .comparingInt((StorageUnit su) -> su.getAvailableStocks(unfulfilledItems))
+                .reversed();
+
+        Comparator<StorageUnit> byDistance = Comparator
+                .comparingInt(su -> su.getDistanceToClient(clientZipCode));
+
+        // Step 2: Check if any storage unit can fulfill all items
+        List<StorageUnit> fullCoverageUnits = storageUnits.stream()
+                .filter(su -> su.canFullfillAll(unfulfilledItems))
+                .toList();
+
+        if (!fullCoverageUnits.isEmpty()) {
+            // If at least one unit can fulfill all items, sort them only by distance (closer is better)
+            return fullCoverageUnits.stream()
+                    .sorted(byDistance)
+                    .map(StorageUnit::getStorageId)
+                    .toList();
+        }
+
+        // Step 3: Otherwise, sort all units based on:
+        // 1. Contributing items count (more is better)
+        // 2. Available stock for those items (more is better)
+        // 3. Distance to client (less is better)
+        return storageUnits.stream()
+                .sorted(byContributingItems
+                        .thenComparing(byAvailableStock)
+                        .thenComparing(byDistance))
+                .map(StorageUnit::getStorageId)
                 .toList();
     }
 
-
-    @Transactional
-    public List<UUID> sortStorageUnits(List<StorageUnit> storageUnits, Map<UUID, Integer> unfulfilledItems, ZipCode clientZipCode)
-    {
-        int totalquantity = unfulfilledItems.values().stream().mapToInt(Integer::intValue).sum();
-
-        storageUnits.sort((su1, su2) -> {
-            int compare = Integer.compare(su2.getTotalContributingItems(unfulfilledItems).size(),
-                    su1.getTotalContributingItems(unfulfilledItems).size());
-
-            if (compare == 0 || su2.getDistanceToClient(clientZipCode) < su1.getDistanceToClient(clientZipCode)) {
-                compare = Integer.compare(su1.getDistanceToClient(clientZipCode),
-                        su2.getDistanceToClient(clientZipCode));
-                if (compare == 0 ||
-                        su2.getAvailableStocks(unfulfilledItems) < totalquantity||
-                        su1.getAvailableStocks(unfulfilledItems) < totalquantity
-                )     {
-                    return Integer.compare(su2.getAvailableStocks(unfulfilledItems),
-                            su1.getAvailableStocks(unfulfilledItems));
-                }
-
-            }
-            return compare;
-        });
-        return storageUnits.stream().map(StorageUnit::getStorageId).toList();
-    }
-
-    }
+}
 
 
 

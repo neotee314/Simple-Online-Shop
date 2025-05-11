@@ -52,6 +52,7 @@ public class ShoppingBasket {
 
         parts.add(newPart);
     }
+
     public int removeReservedItems(UUID thingId, int quantityToRemove) {
         int reserved = getReservedQuantityForThing(thingId);
         int removed = Math.min(reserved, quantityToRemove);
@@ -62,7 +63,6 @@ public class ShoppingBasket {
 
         return removed;
     }
-
 
 
     // Check if the shopping basket is empty
@@ -82,12 +82,14 @@ public class ShoppingBasket {
     }
 
     public void addItem(UUID thingId, int quantity, Money price) {
+        if (thingId == null || quantity < 0 || price == null || price.getAmount() < 0)
+            throw new ShopException("Invalid thing ID or quantity must be greater than 0");
         // Add item to the shopping basket
         ShoppingBasketPart part = new ShoppingBasketPart(thingId, quantity, price);
         addPart(part);
     }
 
-    public Boolean removeItem(UUID thingId, int quantity) {
+    public void removeItem(UUID thingId, int quantity) {
         if (thingId == null || quantity <= 0)
             throw new ShopException("Invalid thing ID or quantity must be greater than 0");
 
@@ -96,15 +98,14 @@ public class ShoppingBasket {
                 int newQuantity = existingPart.getQuantity() - quantity;
                 if (newQuantity > 0) {
                     existingPart.decreaseQuantity(quantity);
-                    return true;
+                    return;
                 } else if (newQuantity == 0) {
                     parts.remove(existingPart);
-                    return true;
+                    return;
                 } else throw new ShopException("Cannot remove more than existing quantity.");
 
             }
         }
-        return false;
     }
 
     public Map<UUID, Integer> getAsMap() {
