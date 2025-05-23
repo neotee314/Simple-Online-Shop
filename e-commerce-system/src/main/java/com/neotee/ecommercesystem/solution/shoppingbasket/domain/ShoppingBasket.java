@@ -6,7 +6,6 @@ import com.neotee.ecommercesystem.domainprimitives.Money;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import jakarta.persistence.*;
@@ -23,7 +22,7 @@ import static com.neotee.ecommercesystem.solution.shoppingbasket.domain.BasketSt
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
+@Table(name = "SHOPPING_BASKET")
 public class ShoppingBasket {
 
     @Id
@@ -36,9 +35,10 @@ public class ShoppingBasket {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ShoppingBasketPart> parts = new ArrayList<>();
 
-    public ShoppingBasket(Email clientEmail) {
+
+
+    public ShoppingBasket() {
         this.id = UUID.randomUUID();
-        this.clientEmail = clientEmail;
     }
 
     // Add a new part to the shopping basket
@@ -54,7 +54,6 @@ public class ShoppingBasket {
                 return;
             }
         }
-
         parts.add(newPart);
     }
 

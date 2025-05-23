@@ -4,6 +4,7 @@ import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
+import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasket;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,7 +32,8 @@ public class Client {
     @ElementCollection
     private List<UUID> orderHistory = new ArrayList<>();
 
-    private UUID shoppingBasket;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private ShoppingBasket shoppingBasket;
 
     public Client(String name, Email email, HomeAddress homeAddress) {
         if (name == null || name.isBlank()) throw new ShopException("Invalid name");
@@ -40,11 +42,7 @@ public class Client {
         this.name = name;
         this.email = email;
         this.homeAddress = homeAddress;
-    }
-
-    public void addBasket(UUID shoppingBasketId) {
-        if (shoppingBasketId == null) throw new ShopException("Shopping basket ID must not be null");
-        this.shoppingBasket = shoppingBasketId;
+        this.shoppingBasket = new ShoppingBasket();
     }
 
 
@@ -68,6 +66,10 @@ public class Client {
         this.name = newName;
     }
 
+    public void deleteBasket() {
+        this.shoppingBasket = null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -82,7 +84,4 @@ public class Client {
     }
 
 
-    public void deleteBasket() {
-        this.shoppingBasket = null;
-    }
 }

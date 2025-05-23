@@ -159,14 +159,9 @@ public class MultipleDeliverysTest {
     /**
      * Hint: (see comment on the first test)
      */
-    @Autowired
-    private OrderService orderService;
-    @Autowired
-    private InventoryFulfillmentService storageUnitService;
     private Integer[] orderIds = new Integer[]{5, 6, 7, 8, 9, 10, 11, 12};
     @Test
     public void testTwoDeliveryPackages() {
-        List<StorageUnit> storageUnitss = storageUnitService.findAll();
         // given
         EmailType clientEmail6 = CLIENT_EMAIL[6];
         shoppingBasketUseCases.addThingToShoppingBasket(

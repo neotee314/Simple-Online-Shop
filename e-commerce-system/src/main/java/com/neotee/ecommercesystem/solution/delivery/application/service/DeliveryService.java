@@ -1,8 +1,7 @@
-package com.neotee.ecommercesystem.solution.delivery.application;
+package com.neotee.ecommercesystem.solution.delivery.application.service;
 
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
-import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
 import com.neotee.ecommercesystem.solution.delivery.domain.Delivery;
 import com.neotee.ecommercesystem.solution.delivery.domain.DeliveryRepository;
 import com.neotee.ecommercesystem.usecases.ClientType;

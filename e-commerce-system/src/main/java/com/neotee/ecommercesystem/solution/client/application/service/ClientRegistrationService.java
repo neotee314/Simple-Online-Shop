@@ -10,6 +10,7 @@ import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
 import com.neotee.ecommercesystem.usecases.ClientType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class ClientRegistrationService implements ClientRegistrationUseCases {
     private final ClientRepository clientRepository;
 
     @Override
+    @Transactional
     public void register(String name, EmailType email, HomeAddressType address) {
 
         if (clientRepository.findByEmail((Email) email) != null) {

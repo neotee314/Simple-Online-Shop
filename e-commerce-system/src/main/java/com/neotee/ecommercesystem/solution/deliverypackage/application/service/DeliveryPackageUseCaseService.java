@@ -13,7 +13,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class DeliveryUseCaseService implements DeliveryPackageUseCases {
+public class DeliveryPackageUseCaseService implements DeliveryPackageUseCases {
 
     private final DeliveryPackageRepository deliveryPackageRepository;
 

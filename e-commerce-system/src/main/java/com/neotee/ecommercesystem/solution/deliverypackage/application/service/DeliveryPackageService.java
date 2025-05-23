@@ -40,7 +40,6 @@ public class DeliveryPackageService {
 
             storageUnitService.removeFromStock(partItems);
 
-
             items.keySet().removeAll(partItems.keySet());
 
             deliveryPackageRepository.save(deliveryPackage);

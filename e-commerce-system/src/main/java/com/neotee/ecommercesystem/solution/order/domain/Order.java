@@ -35,26 +35,20 @@ public class Order {
         this.clientEmail = clientEmail;
     }
 
-    // Method to add order parts
     public void addOrderParts(Map<UUID, Integer> partsWithQuantity) {
-        // Check if the partsWithQuantity map is null or empty
         if (partsWithQuantity == null || partsWithQuantity.isEmpty()) {
             throw new ShopException("Order parts cannot be null or empty");
         }
-
-        // Iterate through the parts in the map
         for (Map.Entry<UUID, Integer> entry : partsWithQuantity.entrySet()) {
             UUID partId = entry.getKey();
             Integer quantity = entry.getValue();
 
-            // Check if the quantity is greater than zero
             if (quantity <= 0) {
                 throw new ShopException("Quantity must be greater than zero for part: " + partId);
             }
 
-            // Create an OrderPart for the item and its quantity
             OrderPart part = new OrderPart(partId, quantity);
-            addOrderPart(part); // Add the OrderPart to the order
+            addOrderPart(part);
         }
     }
 
@@ -74,14 +68,12 @@ public class Order {
     }
 
 
-    // مجموع تعداد کالاها
     public int getTotalQuantity() {
         return orderParts.stream()
                 .mapToInt(OrderPart::getOrderQuantity)
                 .sum();
     }
 
-    // آیا سفارش خالی است؟
     public boolean isEmpty() {
         return orderParts.isEmpty();
     }

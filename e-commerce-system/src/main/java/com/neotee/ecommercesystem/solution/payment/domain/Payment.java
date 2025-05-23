@@ -24,9 +24,7 @@ public class Payment {
 
     @Embedded
     private Money money;
-
-    String currency;
-
+    
     public Payment(Email clientEmail, Money money) {
         this.clientEmail = clientEmail;
         this.money = money;

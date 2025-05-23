@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.solution.order.application.rest;
+package com.neotee.ecommercesystem.solution.order.application.dto;
 
 import lombok.*;
 

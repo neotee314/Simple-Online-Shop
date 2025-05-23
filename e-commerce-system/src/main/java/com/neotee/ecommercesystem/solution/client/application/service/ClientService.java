@@ -5,6 +5,7 @@ import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
 import com.neotee.ecommercesystem.solution.client.domain.Client;
 import com.neotee.ecommercesystem.solution.client.domain.ClientRepository;
+import com.neotee.ecommercesystem.solution.shoppingbasket.application.service.ClientBasketServiceInterface;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ClientService {
+public class ClientService implements ClientBasketServiceInterface {
 
     private final ClientRepository clientRepository;
 
@@ -56,21 +57,20 @@ public class ClientService {
         clientRepository.save(client);
     }
 
-    @Transactional
-    public void addBasket(Email clientEmail, UUID shoppingBasketId) {
-        Client client = getClient(clientEmail);
-        client.addBasket(shoppingBasketId);
-        clientRepository.save(client);
-    }
 
-    public void emptyBasket() {
+    public void emptyAllBasket() {
         List<Client> clients = clientRepository.findAll();
         clients.forEach(Client::deleteBasket);
+        clientRepository.saveAll(clients);
     }
 
     public List<Email> findAll() {
         return clientRepository.findAll().stream()
                 .map(Client::getEmail)
                 .toList();
+    }
+
+    public Client findById(UUID clientId) {
+        return clientRepository.findById(clientId).orElse(null);
     }
 }

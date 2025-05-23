@@ -3,7 +3,6 @@ package com.neotee.ecommercesystem.solution.shoppingbasket.application.service;
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.Money;
-import com.neotee.ecommercesystem.solution.client.application.service.ClientService;
 import com.neotee.ecommercesystem.solution.deliverypackage.application.service.DeliveryPackageService;
 import com.neotee.ecommercesystem.solution.order.application.service.OrderService;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasketRepository;
@@ -28,18 +27,14 @@ public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
     private final ThingService thingService;
     private final OrderService orderService;
     private final DeliveryPackageService deliveryPackageService;
-    private final ClientService clientService;
+    private final ClientBasketServiceInterface clientBasketServiceInterface;
 
     @Override
     @Transactional
     public void addThingToShoppingBasket(EmailType clientEmail, UUID thingId, int quantity) {
         // Find the shopping basket for the client
         ShoppingBasket shoppingBasket = shoppingBasketRepository.findByClientEmail(clientEmail)
-                .orElse(null);
-        if (shoppingBasket == null) {
-            shoppingBasket = new ShoppingBasket((Email) clientEmail);
-            clientService.addBasket((Email) clientEmail, shoppingBasket.getId());
-        }
+                .orElseThrow(()-> new ShopException("Shopping basket not found"));
         Money price = thingService.getSalesPrice(thingId);
         shoppingBasket.addItem(thingId, quantity, price);
         shoppingBasketRepository.save(shoppingBasket);
@@ -118,7 +113,7 @@ public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
 
     @Override
     public void emptyAllShoppingBaskets() {
-        clientService.emptyBasket();
+        clientBasketServiceInterface.emptyAllBasket();
         shoppingBasketRepository.deleteAll();
     }
 }
