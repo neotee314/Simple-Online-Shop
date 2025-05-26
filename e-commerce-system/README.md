@@ -1,16 +1,16 @@
-## 🚀 Project: eCommerce Platform
+##  Project: eCommerce Platform
 
 This project represents the backend system of a modular and scalable online shop. The system is designed and implemented from scratch by myself, simulating a real-world scenario where a software company (me, as a developer) is contracted to deliver an eCommerce platform for a small shop that sells non-fragile, non-perishable items.
 
 ---
 
-## 🌌 System Overview
+##  System Overview
 
 The platform allows clients to browse products (called "things"), add them to a shopping basket, and place orders. These orders are fulfilled by a smart delivery system using one or more storage units (warehouses). The design follows Domain-Driven Design (DDD) patterns, ensuring business logic is cleanly separated and encapsulated.
 
 ---
 
-### 🧩 Domain Structure
+###  Domain Structure
 
 #### `Thing` – Products
 
@@ -88,7 +88,7 @@ When an order is placed, the system analyzes which storage units can fulfill the
 
 
 
-### 🔁 Business Rules
+###  Business Rules
 
 - **Stock availability**: Products can only be purchased if their stock > 0.
 - **Reservation**: Items in shopping baskets are reserved and hidden from others.
@@ -98,11 +98,11 @@ When an order is placed, the system analyzes which storage units can fulfill the
 
 ---
 
-## 🛠 System Architecture
+##  System Architecture
 
 - ![System Architeture](images/uml_structure.bmp)
 
-### 🧠 Example Flow
+###  Example Flow
 
 1. A client registers with name, email, and address.
 2. They search for products and add items to their shopping basket.
@@ -113,20 +113,20 @@ When an order is placed, the system analyzes which storage units can fulfill the
 
 ---
 
-### 📚 Development Principles
+###  Development Principles
 
-- ✅ Domain-Driven Design (DDD)
-- ✅ Clean Code practices
-- ✅ SOLID principles (SRP, OCP, DIP)
-- ✅ Layered architecture (domain, application, infrastructure, interface)
-- ✅ Full unit and integration testing
-- ✅ RESTful API design
+-  Domain-Driven Design (DDD)
+-  Clean Code practices
+-  SOLID principles (SRP, OCP, DIP)
+-  Layered architecture (domain, application, infrastructure, interface)
+-  Full unit and integration testing
+-  RESTful API design
 
 ---
 
-## 🌐 REST API Overview
+##  REST API Overview
 
-### 🛒 Shopping System
+###  Shopping System
 
 | Endpoint                                        | Method | Description                          |
 | ----------------------------------------------- | ------ | ------------------------------------ |
@@ -139,7 +139,7 @@ When an order is placed, the system analyzes which storage units can fulfill the
 | `/orders?clientId=...&filter=latest`            | GET    | Get latest order of client           |
 | `/deliveryPackages?orderId=...`                 | GET    | Get delivery packages for an order   |
 
-### 🧱 Catalog & Stock Management
+###  Catalog & Stock Management
 
 | Endpoint                                         | Method | Description                                          |
 | ------------------------------------------------ | ------ | ---------------------------------------------------- |
@@ -150,7 +150,7 @@ When an order is placed, the system analyzes which storage units can fulfill the
 | `/stockLevels?thingId=...`                       | GET    | Get stock levels of a thing across all storage units |
 | `/storageUnits/{unit-id}`                        | PATCH  | Change storage unit name                             |
 
-### 👤 Client Management
+###  Client Management
 
 | Endpoint               | Method | Description           |
 | ---------------------- | ------ | --------------------- |
@@ -159,7 +159,7 @@ When an order is placed, the system analyzes which storage units can fulfill the
 
 ---
 
-## 🧪 Tech Stack
+##  Tech Stack
 
 - Java 21 • Spring Boot • JPA (Hibernate)
 - REST (JSON over HTTP)
@@ -170,7 +170,7 @@ When an order is placed, the system analyzes which storage units can fulfill the
 
 ---
 
-## 🧱 Entity Relationships
+##  Entity Relationships
 
 - `Client` → owns → `ShoppingBasket`
 - `ShoppingBasket` → contains → `ShoppingBasketParts`
@@ -183,7 +183,7 @@ When an order is placed, the system analyzes which storage units can fulfill the
 
 ---
 
-## 📈 Scalability & Extensibility
+##  Scalability & Extensibility
 
 This project is highly modular and can be extended with:
 
@@ -196,9 +196,9 @@ It is also ready for containerization using Docker and Kubernetes.
 
 ---
 
-## 🔗 Contact
+##  Contact
 
-- ✉️ Email: abheidari99@gmail.com
+- ✉ Email: abheidari99@gmail.com
 
 ---
 
