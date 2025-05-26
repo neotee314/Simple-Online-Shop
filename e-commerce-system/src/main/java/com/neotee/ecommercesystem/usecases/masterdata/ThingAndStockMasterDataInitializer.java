@@ -1,6 +1,8 @@
 package com.neotee.ecommercesystem.usecases.masterdata;
 
-import com.neotee.ecommercesystem.usecases.*;
+
+import com.neotee.ecommercesystem.usecases.StorageUnitUseCases;
+import com.neotee.ecommercesystem.usecases.ThingCatalogUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 import lombok.extern.slf4j.Slf4j;

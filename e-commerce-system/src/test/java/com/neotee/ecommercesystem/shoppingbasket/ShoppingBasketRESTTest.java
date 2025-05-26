@@ -14,20 +14,20 @@ import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.neotee.ecommercesystem.ThingAndStockTestHelper.*;
-import static com.neotee.ecommercesystem.usecases.masterdata.ClientMasterDataInitializer.CLIENT_EMAIL;
-import static com.neotee.ecommercesystem.usecases.masterdata.FactoryMethodInvoker.instantiateEmail;
+import static com.neotee.ecommercesystem.usecases.masterdata.ThingAndStockMasterDataInitializer.*;
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static com.neotee.ecommercesystem.usecases.masterdata.ClientMasterDataInitializer.CLIENT_EMAIL;
+import static com.neotee.ecommercesystem.usecases.masterdata.FactoryMethodInvoker.instantiateEmail;
+
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
 
 import javax.transaction.Transactional;
-
-
 
 
 @SpringBootTest

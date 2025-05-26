@@ -36,7 +36,6 @@ public class ShoppingBasket {
     private List<ShoppingBasketPart> parts = new ArrayList<>();
 
 
-
     public ShoppingBasket() {
         this.id = UUID.randomUUID();
     }
@@ -57,7 +56,7 @@ public class ShoppingBasket {
         parts.add(newPart);
     }
 
-    public int removeReservedItems(UUID thingId, int quantityToRemove) {
+    public int removeReservedItems(UUID thingId, Integer quantityToRemove) {
         int reserved = getReservedQuantityForThing(thingId);
         int removed = Math.min(reserved, quantityToRemove);
 
@@ -85,7 +84,7 @@ public class ShoppingBasket {
                 .sum();
     }
 
-    public void addItem(UUID thingId, int quantity, Money price) {
+    public void addItem(UUID thingId, Integer quantity, Money price) {
         if (thingId == null || quantity < 0 || price == null || price.getAmount() < 0)
             throw new ShopException("Invalid thing ID or quantity must be greater than 0");
         // Add item to the shopping basket
@@ -93,7 +92,7 @@ public class ShoppingBasket {
         addPart(part);
     }
 
-    public void removeItem(UUID thingId, int quantity) {
+    public void removeItem(UUID thingId, Integer quantity) {
         if (thingId == null || quantity <= 0)
             throw new ShopException("Invalid thing ID or quantity must be greater than 0");
 
@@ -108,6 +107,18 @@ public class ShoppingBasket {
                     return;
                 } else throw new ShopException("Cannot remove more than existing quantity.");
 
+            }
+        }
+    }
+
+    public void removeItem(UUID thingId) {
+        if (thingId == null)
+            throw new ShopException("Invalid thing ID or quantity must be greater than 0");
+
+        for (ShoppingBasketPart existingPart : parts) {
+            if (existingPart.contains(thingId)) {
+                parts.remove(existingPart);
+                return;
             }
         }
     }
@@ -139,7 +150,7 @@ public class ShoppingBasket {
     public boolean contains(UUID thingId) {
         if (thingId == null) throw new ShopException("Thing ID must not be null");
         return parts.stream()
-                .anyMatch(p -> p.contains(thingId));
+                .anyMatch(part -> part.contains(thingId));
     }
 
     public void clear() {
@@ -147,4 +158,12 @@ public class ShoppingBasket {
         this.basketState = EMPTY;
     }
 
+    public Money getTotalSalesPrice() {
+        MoneyType totalSalesPrice = Money.of(0f, "EUR");
+        for (ShoppingBasketPart part : parts) {
+            Money price = part.getSalesPrice();
+            totalSalesPrice = totalSalesPrice.add(price.multiplyBy(part.getQuantity()));
+        }
+        return (Money) totalSalesPrice;
+    }
 }

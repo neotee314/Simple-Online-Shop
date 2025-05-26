@@ -4,6 +4,7 @@ import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
+import com.neotee.ecommercesystem.solution.shoppingbasket.domain.BasketState;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasket;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,6 +34,7 @@ public class Client {
     private List<UUID> orderHistory = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "shopping_basket_id", referencedColumnName = "id")
     private ShoppingBasket shoppingBasket;
 
     public Client(String name, Email email, HomeAddress homeAddress) {
@@ -43,6 +45,8 @@ public class Client {
         this.email = email;
         this.homeAddress = homeAddress;
         this.shoppingBasket = new ShoppingBasket();
+        shoppingBasket.setClientEmail(email);
+        shoppingBasket.setBasketState(BasketState.EMPTY);
     }
 
 

@@ -19,35 +19,42 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ShoppingBasketApplicationService {
     private final ShoppingBasketRepository shoppingBasketRepository;
-    private final ClientService clientService;
+    private final ClientBasketServiceInterface clientBasketServiceInterface;
     private final ShoppingBasketMapper basketMapper;
     private final ShoppingBasketPartMapper partMapper;
     private final ShoppingBasketUseCasesService shoppingBasketUseCasesService;
 
     public ShoppingBasketDto getBasketByClientId(UUID clientId) {
-        Client client = clientService.findById(clientId);
-        if (client == null) throw new ShopException("Client not found");
+        if (clientId == null) return null;
+        Client client = clientBasketServiceInterface.findById(clientId);
+        if (client == null) return null;
         ShoppingBasket shoppingBasket = shoppingBasketRepository.findByClientEmail( client.getEmail()).orElse(null);
-        ShoppingBasketDto shoppingBasketDto = basketMapper.toDto(shoppingBasket);
-        return shoppingBasketDto;
+        return basketMapper.toDto(shoppingBasket);
     }
 
     public void addThingToBasket(UUID basketId, ShoppingBasketPartDto request) {
         ShoppingBasket shoppingBasket = shoppingBasketRepository.findById(basketId).orElseThrow(() -> new ShopException("ShoppingBasket does not exist"));
-        if(request==null || request.getThingId()==null || request.getQuantity()<=0) throw new ShopException("ThingId is null");
+        if(request==null || request.getThingId()==null) throw new ShopException("ThingId is null");
+        if(request.getQuantity()<0) throw new ShopException("Thing quantity is less than or equal to zero");
         ShoppingBasketPart part = partMapper.toEntity(request);
         shoppingBasketUseCasesService.addThingToShoppingBasket(shoppingBasket.getClientEmail(),part.getThingId(),part.getQuantity());
     }
-    public void removeThingFromBasket(UUID basketId, ShoppingBasketPartDto request) {
-        ShoppingBasket shoppingBasket = shoppingBasketRepository.findById(basketId).orElseThrow(() -> new ShopException("ShoppingBasket does not exist"));
-        if(request==null || request.getThingId()==null || request.getQuantity()<=0) throw new ShopException("ThingId is null");
-        ShoppingBasketPart part = partMapper.toEntity(request);
-        shoppingBasketUseCasesService.removeThingFromShoppingBasket(shoppingBasket.getClientEmail(),part.getThingId(),part.getQuantity());
-    }
 
-    public void checkoutBasket(UUID basketId) {
+    public UUID checkoutBasket(UUID basketId) {
         ShoppingBasket shoppingBasket = shoppingBasketRepository.findById(basketId).orElseThrow(() -> new ShopException("ShoppingBasket does not exist"));
         if (shoppingBasket.isEmpty()) throw new ShopException("Shopping basket is empty");
-        shoppingBasketUseCasesService.checkout(shoppingBasket.getClientEmail());
+        return shoppingBasketUseCasesService.checkout(shoppingBasket.getClientEmail());
+    }
+
+
+    public ShoppingBasket findById(UUID shoppingBasketId) {
+        return shoppingBasketRepository.findById(shoppingBasketId)
+                .orElse(null);
+    }
+
+    public void removeThingFromShoppingBasket(ShoppingBasket shoppingBasket,UUID thingId) {
+        shoppingBasket.removeItem(thingId);
+        shoppingBasketRepository.save(shoppingBasket);
+
     }
 }

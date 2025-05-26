@@ -1,7 +1,10 @@
 package com.neotee.ecommercesystem;
 
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.neotee.ecommercesystem.restdtos.IdDTO;
 import com.neotee.ecommercesystem.restdtos.QuantityDTO;
 import com.neotee.ecommercesystem.usecases.*;
@@ -133,6 +136,9 @@ public class ShoppingBasketRESTHelper {
                                          ResultMatcher expectedStatus) throws Exception {
         ResultMatcher status = expectedStatus == null ? CREATED : expectedStatus;
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
         QuantityDTO dto = new QuantityDTO(thingId, quantity);
         String quantityJson = objectMapper.writeValueAsString(dto);
         mockMvc.perform(post("/shoppingBaskets/" + shoppingBasketId + "/parts")

@@ -11,6 +11,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ShoppingBasketPartDto {
     private UUID thingId ;
-    private Integer quantity = 0;
+    private Integer quantity;
 
 }

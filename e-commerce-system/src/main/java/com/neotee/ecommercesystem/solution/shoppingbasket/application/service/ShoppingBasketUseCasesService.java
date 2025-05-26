@@ -35,6 +35,9 @@ public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
         // Find the shopping basket for the client
         ShoppingBasket shoppingBasket = shoppingBasketRepository.findByClientEmail(clientEmail)
                 .orElseThrow(()-> new ShopException("Shopping basket not found"));
+        int currentInventory = thingService.getAvailableInventory(thingId);
+        if (currentInventory < quantity)
+            throw new ShopException("Thing is not available in the requested quantity");
         Money price = thingService.getSalesPrice(thingId);
         shoppingBasket.addItem(thingId, quantity, price);
         shoppingBasketRepository.save(shoppingBasket);
@@ -72,6 +75,7 @@ public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
     }
 
     @Override
+    @Transactional
     public int getReservedStockInShoppingBaskets(UUID thingId) {
         List<ShoppingBasket> allBaskets = shoppingBasketRepository.findAll();
         return allBaskets.stream()

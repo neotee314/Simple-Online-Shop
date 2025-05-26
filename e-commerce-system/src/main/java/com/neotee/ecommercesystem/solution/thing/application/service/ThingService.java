@@ -72,5 +72,11 @@ public class ThingService implements StockServiceInterface {
         thingRepository.save(thing);
     }
 
+    public int getAvailableInventory(UUID thingId) {
+        if(thingId==null) throw new ShopException("thingid cannot be null");
+        Thing thing = thingRepository.findByThingId(thingId);
+        if(thing==null) throw new ShopException("Thing not found");
+        return thing.getStockQuantity();
+    }
 }
 
