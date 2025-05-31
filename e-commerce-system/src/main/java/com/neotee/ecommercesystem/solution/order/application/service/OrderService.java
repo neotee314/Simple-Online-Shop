@@ -3,7 +3,6 @@ package com.neotee.ecommercesystem.solution.order.application.service;
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
-import com.neotee.ecommercesystem.solution.client.application.service.ClientService;
 import com.neotee.ecommercesystem.solution.order.domain.Order;
 import com.neotee.ecommercesystem.solution.order.domain.OrderRepository;
 import com.neotee.ecommercesystem.solution.thing.application.service.OrderedItemsServiceInterface;
@@ -19,7 +18,7 @@ import java.util.UUID;
 public class OrderService implements OrderedItemsServiceInterface {
 
     private final OrderRepository orderRepository;
-    private final ClientService clientService;
+    private final ClientOrderServiceInterface clientOrderServiceInterface;
 
     // 1. Create a new order
     @Transactional
@@ -31,7 +30,7 @@ public class OrderService implements OrderedItemsServiceInterface {
         order.addOrderParts(partsWithQuantity);
 
         //Add Order to OrderHistory of Client
-        clientService.addToOrderHistory(clientEmail,order.getOrderId());
+        clientOrderServiceInterface.addToOrderHistory(clientEmail,order.getOrderId());
 
         // Save the order
         orderRepository.save(order);
@@ -65,7 +64,7 @@ public class OrderService implements OrderedItemsServiceInterface {
     public ZipCode findClientZipCode(UUID orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new ShopException("Order not found"));
         Email clientEmail = order.getClientEmail();
-        ZipCode zipCode = clientService.findClientZipCode(clientEmail);
+        ZipCode zipCode = clientOrderServiceInterface.findClientZipCode(clientEmail);
         return zipCode;
 
     }

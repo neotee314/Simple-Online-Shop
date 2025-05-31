@@ -18,12 +18,12 @@ import java.util.*;
 public class OrdeUseCaseService implements OrderUseCases {
 
     private final OrderRepository orderRepository;
-    private final ClientService clientService;
+    private final ClientOrderServiceInterface clientOrderServiceInterface;
 
     @Override
     @Transactional
     public Map<UUID, Integer> getOrderHistory(EmailType clientEmail) {
-        List<UUID> orderHistory = clientService.getOrderHistory((Email) clientEmail);
+        List<UUID> orderHistory = clientOrderServiceInterface.getOrderHistory((Email) clientEmail);
         if (orderHistory.isEmpty()) return new HashMap<>();
 
         Map<UUID, Integer> orderHistoryMap = new HashMap<>();

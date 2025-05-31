@@ -1,7 +1,8 @@
 package com.neotee.ecommercesystem.solution.client.application.service;
 
-import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
+import com.neotee.ecommercesystem.exception.EntityNotFoundException;
+import com.neotee.ecommercesystem.exception.ValueObjectNullOrEmptyException;
 import com.neotee.ecommercesystem.solution.client.application.dto.ClientDTO;
 import com.neotee.ecommercesystem.solution.client.application.mapper.ClientMapper;
 import com.neotee.ecommercesystem.solution.client.domain.Client;
@@ -16,9 +17,10 @@ public class ClientApplicationService {
     private final ClientMapper clientMapper;
 
     public ClientDTO findClientDTOByEmail(String emailaddress) {
+        if (emailaddress == null || emailaddress.isEmpty()) throw new ValueObjectNullOrEmptyException();
         Email email = Email.of(emailaddress);
         Client client = clientRepository.findByEmail(email);
-        if (client == null) return null;
+        if (client == null) throw new EntityNotFoundException();
         return clientMapper.toDto(client);
     }
 }

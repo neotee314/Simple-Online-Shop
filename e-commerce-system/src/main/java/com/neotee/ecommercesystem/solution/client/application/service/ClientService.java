@@ -3,10 +3,12 @@ package com.neotee.ecommercesystem.solution.client.application.service;
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
+import com.neotee.ecommercesystem.exception.EntityNotFoundException;
+import com.neotee.ecommercesystem.exception.EntityIdNullException;
 import com.neotee.ecommercesystem.solution.client.domain.Client;
 import com.neotee.ecommercesystem.solution.client.domain.ClientRepository;
+import com.neotee.ecommercesystem.solution.order.application.service.ClientOrderServiceInterface;
 import com.neotee.ecommercesystem.solution.shoppingbasket.application.service.ClientBasketServiceInterface;
-import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +19,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ClientService implements ClientBasketServiceInterface {
+public class ClientService implements ClientBasketServiceInterface, ClientOrderServiceInterface {
 
     private final ClientRepository clientRepository;
 
@@ -72,5 +74,14 @@ public class ClientService implements ClientBasketServiceInterface {
 
     public Client findById(UUID clientId) {
         return clientRepository.findById(clientId).orElse(null);
+    }
+
+    public Email findClientEmail(UUID clientId) {
+        if (clientId == null) throw new EntityIdNullException();
+        Client client = findById(clientId);
+        if (client == null) throw new EntityNotFoundException();
+        Email email = client.getEmail();
+        if (email == null) throw new EntityNotFoundException();
+        return client.getEmail();
     }
 }

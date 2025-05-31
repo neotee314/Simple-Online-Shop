@@ -27,18 +27,12 @@ public class ShoppingBasketPart {
     @Embedded
     private Money salesPrice;
 
-    public ShoppingBasketPart(UUID thingId, int quantity) {
-        if (thingId == null || quantity <= 0)
-            throw new ShopException("Invalid thing ID or quantity must be greater than 0");
-        this.id = thingId;
-        this.thingId = thingId;
-        this.quantity = quantity;
-    }
+
 
     public ShoppingBasketPart(UUID thingId, int quantity, Money price) {
         if (thingId == null || quantity <= 0 || price == null)
             throw new ShopException("Invalid thing ID or quantity must be greater than 0");
-        this.id = thingId;
+        this.id = UUID.randomUUID();
         this.thingId = thingId;
         this.quantity = quantity;
         this.salesPrice = price;

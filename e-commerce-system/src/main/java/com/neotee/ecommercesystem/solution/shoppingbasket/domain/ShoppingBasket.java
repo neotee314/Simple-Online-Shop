@@ -32,7 +32,7 @@ public class ShoppingBasket {
 
     private BasketState basketState;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<ShoppingBasketPart> parts = new ArrayList<>();
 
 

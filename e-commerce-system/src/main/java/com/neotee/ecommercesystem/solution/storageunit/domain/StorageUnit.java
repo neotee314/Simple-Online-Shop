@@ -63,13 +63,13 @@ public class StorageUnit {
 
 
     public void removeFromStock(UUID thingId, Integer removeQuantity) {
-        if (thingId == null || removeQuantity == null || removeQuantity <= 0) {
+        if (thingId == null || removeQuantity == null || removeQuantity < 0) {
             throw new ShopException("Invalid thing ID or quantity to remove must be greater than 0");
         }
 
         Integer currentQuantity = stockLevels.get(thingId);
         if (currentQuantity == null) {
-            throw new ShopException("Thing not found in stock");
+           return;
         }
 
         if (currentQuantity < removeQuantity) {
@@ -205,4 +205,8 @@ public class StorageUnit {
         return true;
     }
 
+    public int getQuantityOf(UUID thingId) {
+        if (thingId == null) throw new ShopException("Thing ID must not be null");
+        return stockLevels.getOrDefault(thingId, 0);
+    }
 }

@@ -1,7 +1,7 @@
 package com.neotee.ecommercesystem.solution.shoppingbasket.application.mapper;
 
 import com.neotee.ecommercesystem.domainprimitives.Email;
-import com.neotee.ecommercesystem.solution.shoppingbasket.application.dto.ShoppingBasketDto;
+import com.neotee.ecommercesystem.solution.shoppingbasket.application.dto.ShoppingBasketDTO;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.BasketState;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasket;
 import org.mapstruct.Mapper;
@@ -9,6 +9,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -19,22 +21,21 @@ public abstract class ShoppingBasketMapper {
     @Mapping(target = "clientEmail", source = "clientEmail", qualifiedByName = "mapEmailToString")
     @Mapping(target = "totalSalesPrice", source = ".", qualifiedByName = "getTotalSalesPrice")
     @Mapping(target = "shoppingBasketParts", source = "parts")
-    public abstract ShoppingBasketDto toDto(ShoppingBasket shoppingBasket);
+    public abstract ShoppingBasketDTO toDto(ShoppingBasket shoppingBasket);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "basketState", source = "basketState", qualifiedByName = "mapEnumBasketStateToString")
     @Mapping(target = "clientEmail", source = "clientEmail", qualifiedByName = "mapStringToEmail")
     @Mapping(target = "parts", source = "shoppingBasketParts")
-    public abstract ShoppingBasket toEntity(ShoppingBasketDto shoppingBasketDto);
+    public abstract ShoppingBasket toEntity(ShoppingBasketDTO shoppingBasketDto);
 
 
     @Named("getTotalSalesPrice")
     public String getTotalSalesPrice(ShoppingBasket shoppingBasket) {
-        NumberFormat currencyFormat = NumberFormat.getNumberInstance(Locale.GERMANY);
-        currencyFormat.setMinimumFractionDigits(2);
-        currencyFormat.setMaximumFractionDigits(2);
+        DecimalFormat df = new DecimalFormat("0.00");
+        df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.GERMANY));
 
-        String formatted = currencyFormat.format(shoppingBasket.getTotalSalesPrice().getAmount());
+        String formatted = df.format(shoppingBasket.getTotalSalesPrice().getAmount());
         return formatted + " €";
     }
 

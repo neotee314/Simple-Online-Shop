@@ -5,6 +5,8 @@ import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
 import com.neotee.ecommercesystem.solution.storageunit.domain.RemovalPlan;
 import com.neotee.ecommercesystem.solution.storageunit.domain.StorageUnit;
 import com.neotee.ecommercesystem.solution.storageunit.domain.StorageUnitRepository;
+import com.neotee.ecommercesystem.solution.thing.application.service.ThingService;
+import com.neotee.ecommercesystem.solution.thing.domain.Thing;
 import com.neotee.ecommercesystem.usecases.StorageUnitUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ public class StorageUnitUseCasesService implements StorageUnitUseCases {
     private final StorageUnitRepository storageUnitRepository;
     private final ReservedQuantityService reservationServiceInterface;
     private final StockServiceInterface stockServiceInterface;
+    private final ThingService thingService;
 
     @Override
     public UUID addNewStorageUnit(HomeAddressType address, String name) {
@@ -47,23 +50,26 @@ public class StorageUnitUseCasesService implements StorageUnitUseCases {
     @Override
     @Transactional
     public void removeFromStock(UUID storageUnitId, UUID thingId, int removedQuantity) {
-        StorageUnit storageUnit =storageUnitRepository.findById(storageUnitId)
+        if (removedQuantity < 0) throw new ShopException("Removed quantity must not be negative");
+        StorageUnit storageUnit = storageUnitRepository.findById(storageUnitId)
                 .orElseThrow(() -> new ShopException("Storage with Id " + storageUnitId + " does not exist"));
         int reserved = reservationServiceInterface.getTotalReservedInAllBaskets(thingId);
+        Thing thing = thingService.findById(thingId);
+        int currentInventory = storageUnit.getQuantityOf(thingId);
 
-        RemovalPlan removalPlan = storageUnit.planRemoval(thingId, removedQuantity, reserved);
+        if (removedQuantity > currentInventory + reserved)
+            throw new ShopException("The removed quantity is greater than the available quantity");
 
-        if (removalPlan.fromStock() > 0) {
-            storageUnit.removeFromStock(thingId, removalPlan.fromStock());
-            stockServiceInterface.removeFromStock(thingId, removalPlan.fromStock());
+        int stockAfter = currentInventory - removedQuantity;
+
+        if (stockAfter < reserved) {
+            reservationServiceInterface.removeFromReservedQuantity(thingId, removedQuantity);
+            return;
         }
 
-        if (removalPlan.fromReserved() > 0) {
-            reservationServiceInterface.removeFromReservedQuantity(thingId, removalPlan.fromReserved());
-            stockServiceInterface.removeFromStock(thingId, removalPlan.fromReserved());
-        }
-
+        storageUnit.removeFromStock(thingId, removedQuantity);
         storageUnitRepository.save(storageUnit);
+
     }
 
     @Override

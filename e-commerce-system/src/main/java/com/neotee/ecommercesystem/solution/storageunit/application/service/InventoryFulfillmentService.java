@@ -117,6 +117,12 @@ public class InventoryFulfillmentService {
                 .toList();
     }
 
+    public int getAvailableInventory(UUID thingId) {
+        List<StorageUnit> storageUnits = findAll();
+        return storageUnits.stream()
+                .mapToInt(unit -> unit.getAvailableStock(thingId))
+                .sum();
+    }
 }
 
 

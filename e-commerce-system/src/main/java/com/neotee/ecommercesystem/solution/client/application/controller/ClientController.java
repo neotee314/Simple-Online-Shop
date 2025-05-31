@@ -21,11 +21,7 @@ public class ClientController {
     @Operation(summary = "Get Client by Id", description = "Returns the client for the given Email")
     @GetMapping
     public ResponseEntity<ClientDTO> getClientByEmail(@RequestParam(required = false) String email) {
-        if (email == null || email.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();
-        }
         ClientDTO clientDTO = clientApplicationService.findClientDTOByEmail(email);
-        if (clientDTO == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         return new ResponseEntity<>(clientDTO, HttpStatus.OK);
     }
 }
