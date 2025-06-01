@@ -8,9 +8,12 @@ import com.neotee.ecommercesystem.solution.client.application.mapper.ClientMappe
 import com.neotee.ecommercesystem.solution.client.domain.Client;
 import com.neotee.ecommercesystem.solution.client.domain.ClientId;
 import com.neotee.ecommercesystem.solution.client.domain.ClientRepository;
+import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -18,6 +21,7 @@ import java.util.UUID;
 public class ClientApplicationService {
     private final ClientRepository clientRepository;
     private final ClientMapper clientMapper;
+    private final ClientRegistrationUseCases clientRegistrationUseCases;
 
     public ClientDTO findClientDTOByEmail(String emailaddress) {
         if (emailaddress == null || emailaddress.isEmpty()) throw new ValueObjectNullOrEmptyException();
@@ -31,5 +35,23 @@ public class ClientApplicationService {
         ClientId clientId = new ClientId(id);
         Client client = clientRepository.findById(clientId).orElseThrow(EntityNotFoundException::new);
         return clientMapper.toDto(client);
+    }
+
+    public List<ClientDTO> getAll() {
+        List<ClientDTO> clientDTOS = new ArrayList<>();
+        clientRepository.findAll().forEach(client -> clientDTOS.add(clientMapper.toDto(client)));
+        return clientDTOS;
+    }
+
+    public void register(ClientDTO clientDTO) {
+        if (clientDTO == null) throw new EntityNotFoundException();
+        Client client = clientMapper.toEntity(clientDTO);
+        clientRegistrationUseCases.register(client.getName(), client.getEmail(), client.getHomeAddress());
+    }
+
+    public void updateAddress(ClientDTO clientDTO) {
+        if (clientDTO == null) throw new EntityNotFoundException();
+        Client client = clientMapper.toEntity(clientDTO);
+        clientRegistrationUseCases.changeAddress(client.getEmail(), client.getHomeAddress());
     }
 }

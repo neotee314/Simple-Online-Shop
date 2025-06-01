@@ -24,7 +24,6 @@ public class ClientRegistrationService implements ClientRegistrationUseCases {
     @Override
     @Transactional
     public void register(String name, EmailType email, HomeAddressType address) {
-
         if (clientRepository.findByEmail((Email) email) != null) {
             throw new ShopException("Client already exists");
         }
