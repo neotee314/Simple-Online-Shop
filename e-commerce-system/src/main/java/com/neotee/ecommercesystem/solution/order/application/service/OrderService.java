@@ -1,14 +1,16 @@
 package com.neotee.ecommercesystem.solution.order.application.service;
 
-import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
+import com.neotee.ecommercesystem.exception.EntityNotFoundException;
 import com.neotee.ecommercesystem.solution.order.domain.Order;
+import com.neotee.ecommercesystem.solution.order.domain.OrderId;
 import com.neotee.ecommercesystem.solution.order.domain.OrderRepository;
 import com.neotee.ecommercesystem.solution.thing.application.service.OrderedItemsServiceInterface;
+import com.neotee.ecommercesystem.solution.thing.domain.Thing;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import jakarta.transaction.Transactional;
 
 import java.util.Map;
 import java.util.UUID;
@@ -22,15 +24,15 @@ public class OrderService implements OrderedItemsServiceInterface {
 
     // 1. Create a new order
     @Transactional
-    public UUID createOrder(Map<UUID, Integer> partsWithQuantity, Email clientEmail) {
+    public OrderId createOrder(Map<Thing, Integer> thingQuantityMap, Email clientEmail) {
         // Create a new order
         Order order = new Order(clientEmail);
 
         // Add order parts to the order
-        order.addOrderParts(partsWithQuantity);
+        order.addOrderParts(thingQuantityMap);
 
         //Add Order to OrderHistory of Client
-        clientOrderServiceInterface.addToOrderHistory(clientEmail,order.getOrderId());
+        clientOrderServiceInterface.addToOrderHistory(clientEmail,order.getOrderId().getId());
 
         // Save the order
         orderRepository.save(order);
@@ -40,9 +42,9 @@ public class OrderService implements OrderedItemsServiceInterface {
 
 
     // 4. Check if an item exists in the order
-    public boolean contains(UUID orderId, UUID thingId) {
+    public boolean contains(OrderId orderId, UUID thingId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new ShopException("Order not found"));
+                .orElseThrow(EntityNotFoundException::new);
 
         return order.contains(thingId);
     }
@@ -61,8 +63,9 @@ public class OrderService implements OrderedItemsServiceInterface {
 
 
 
-    public ZipCode findClientZipCode(UUID orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new ShopException("Order not found"));
+    public ZipCode findClientZipCode(OrderId orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(EntityNotFoundException::new);
         Email clientEmail = order.getClientEmail();
         ZipCode zipCode = clientOrderServiceInterface.findClientZipCode(clientEmail);
         return zipCode;
@@ -71,9 +74,14 @@ public class OrderService implements OrderedItemsServiceInterface {
 
 
     @Transactional
-    public Map<UUID, Integer> getOrderLineItemsMap(UUID orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> new ShopException("Order not found"));
+    public Map<Thing, Integer> getOrderLineItemsMap(OrderId orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(EntityNotFoundException::new);
         return order.getOrderLineItemsMap();
     }
 
+    public Order findById(OrderId orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(EntityNotFoundException::new);
+    }
 }

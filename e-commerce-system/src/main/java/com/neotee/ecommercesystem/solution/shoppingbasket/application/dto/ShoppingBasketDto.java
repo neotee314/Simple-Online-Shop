@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class ShoppingBasketDTO {
     private UUID id;
     private String totalSalesPrice;

@@ -26,6 +26,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(ex.getMessage());
     }
 
+
     @ExceptionHandler(QuantityNegativeException.class)
     public ResponseEntity<String> handleQuantityNegative(QuantityNegativeException ex) {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(ex.getMessage());

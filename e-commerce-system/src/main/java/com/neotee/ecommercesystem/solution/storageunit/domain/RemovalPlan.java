@@ -9,13 +9,6 @@ public class RemovalPlan {
         this.fromReserved = fromReserved;
     }
 
-    public int fromStock() {
-        return fromStock;
-    }
-
-    public int fromReserved() {
-        return fromReserved;
-    }
 
 }
 

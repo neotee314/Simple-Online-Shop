@@ -2,6 +2,8 @@ package com.neotee.ecommercesystem.solution.shoppingbasket.domain;
 
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Money;
+import com.neotee.ecommercesystem.solution.thing.domain.Thing;
+import com.neotee.ecommercesystem.solution.thing.domain.ThingId;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,23 +19,25 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ShoppingBasketPart {
 
+
     @Id
-    private UUID id;
+    private ShoppingBasketPartId id;
 
-    private UUID thingId;
+    @ManyToOne
+    private Thing thing;
 
-    private int quantity;
+    private Integer quantity;
 
     @Embedded
     private Money salesPrice;
 
 
 
-    public ShoppingBasketPart(UUID thingId, int quantity, Money price) {
-        if (thingId == null || quantity <= 0 || price == null)
+    public ShoppingBasketPart(Thing thing, int quantity, Money price) {
+        if (thing == null || quantity <= 0 || price == null)
             throw new ShopException("Invalid thing ID or quantity must be greater than 0");
-        this.id = UUID.randomUUID();
-        this.thingId = thingId;
+        this.id = new ShoppingBasketPartId();
+        this.thing = thing;
         this.quantity = quantity;
         this.salesPrice = price;
     }
@@ -49,23 +53,30 @@ public class ShoppingBasketPart {
             this.quantity -= quantity;
         }
 
-
+    }
+    public UUID getThingId() {
+        return thing.getThingId().getId() ;
+    }
+    public boolean contains(ThingId thingId) {
+        if (thingId == null) throw new ShopException("Thing ID must not be null");
+        return this.thing.getThingId().equals(thingId);
     }
 
     public boolean contains(UUID thingId) {
         if (thingId == null) throw new ShopException("Thing ID must not be null");
-        return this.thingId.equals(thingId);
+        return this.thing.getThingId().getId().equals(thingId);
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         ShoppingBasketPart that = (ShoppingBasketPart) o;
-        return Objects.equals(getThingId(), that.getThingId());
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getThingId());
+        return Objects.hashCode(getId());
     }
+
 }

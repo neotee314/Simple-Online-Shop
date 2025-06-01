@@ -1,21 +1,23 @@
 package com.neotee.ecommercesystem.solution.shoppingbasket.application.service;
 
-import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.Money;
 import com.neotee.ecommercesystem.exception.*;
 import com.neotee.ecommercesystem.solution.deliverypackage.application.service.DeliveryPackageService;
 import com.neotee.ecommercesystem.solution.order.application.service.OrderService;
+import com.neotee.ecommercesystem.solution.order.domain.OrderId;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasketRepository;
 import com.neotee.ecommercesystem.solution.storageunit.application.service.InventoryFulfillmentService;
 import com.neotee.ecommercesystem.solution.thing.application.service.ThingService;
+import com.neotee.ecommercesystem.solution.thing.domain.Thing;
+import com.neotee.ecommercesystem.solution.thing.domain.ThingId;
 import com.neotee.ecommercesystem.usecases.ShoppingBasketUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasket;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.UUID;
@@ -44,7 +46,8 @@ public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
         if (currentInventory < quantity + currentReserved)
             throw new ThingQuantityNotAvailableException();
         Money price = thingService.getSalesPrice(thingId);
-        shoppingBasket.addItem(thingId, quantity, price);
+        Thing thing = thingService.findById(thingId);
+        shoppingBasket.addItem(thing, quantity, price);
         shoppingBasketRepository.save(shoppingBasket);
     }
 
@@ -57,17 +60,18 @@ public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
         if (!thingService.existsById(thingId)) throw new EntityNotFoundException();
         if (!shoppingBasket.contains(thingId)) throw new ThingNotInShoppingBasketException();
         // Remove item from the shopping basket
-        shoppingBasket.removeItem(thingId, quantity);
+        shoppingBasket.removeItem(new ThingId(thingId), quantity);
         shoppingBasketRepository.save(shoppingBasket);
     }
 
     @Override
+    @Transactional
     public Map<UUID, Integer> getShoppingBasketAsMap(EmailType clientEmail) {
         // Find the shopping basket for the client
         ShoppingBasket shoppingBasket = shoppingBasketRepository.findByClientEmail(clientEmail)
                 .orElseThrow(EntityNotFoundException::new);
         // Convert shopping basket parts to map
-        return shoppingBasket.getAsMap();
+        return shoppingBasket.getBasketAsMapOfThingIdAndQuantities();
     }
 
     @Override
@@ -84,7 +88,7 @@ public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
     public int getReservedStockInShoppingBaskets(UUID thingId) {
         List<ShoppingBasket> allBaskets = shoppingBasketRepository.findAll();
         return allBaskets.stream()
-                .mapToInt(basket -> basket.getReservedQuantityForThing(thingId))
+                .mapToInt(basket -> basket.getReservedQuantityForThing(new ThingId(thingId)))
                 .sum();
     }
 
@@ -107,8 +111,8 @@ public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
         if (basket.isEmpty()) throw new ShoppingBasketEmptyException();
 
         // Create a new order
-        Map<UUID, Integer> shoppingPartMap = basket.getPartsAsMapValue();
-        UUID orderId = orderService.createOrder(shoppingPartMap, (Email) clientEmail);
+        Map<Thing, Integer> bastketPartQuantityMap = basket.getPartsQuantityMap();
+        OrderId orderId = orderService.createOrder(bastketPartQuantityMap, (Email) clientEmail);
 
         //create Delievery packages
         deliveryPackageService.createDeliveryPackage(orderId);
@@ -116,7 +120,7 @@ public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
         basket.checkout();
         shoppingBasketRepository.save(basket);
 
-        return orderId;
+        return orderId.getId();
     }
 
     @Override

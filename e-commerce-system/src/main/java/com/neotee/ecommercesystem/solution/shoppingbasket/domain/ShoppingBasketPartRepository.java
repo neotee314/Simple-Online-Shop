@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 @Repository
-public interface ShoppingBasketPartRepository extends CrudRepository<ShoppingBasketPart, UUID> {
+public interface ShoppingBasketPartRepository extends CrudRepository<ShoppingBasketPart, ShoppingBasketPartId> {
 }

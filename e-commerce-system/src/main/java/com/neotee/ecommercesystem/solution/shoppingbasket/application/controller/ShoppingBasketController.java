@@ -1,6 +1,5 @@
 package com.neotee.ecommercesystem.solution.shoppingbasket.application.controller;
 
-import com.neotee.ecommercesystem.exception.EntityIdNullException;
 import com.neotee.ecommercesystem.solution.shoppingbasket.application.dto.IdDto;
 import com.neotee.ecommercesystem.solution.shoppingbasket.application.dto.ShoppingBasketDTO;
 import com.neotee.ecommercesystem.solution.shoppingbasket.application.dto.ShoppingBasketPartDto;
@@ -24,10 +23,18 @@ public class ShoppingBasketController {
 
     @Operation(summary = "Get basket by ClientId", description = "Returns the shopping basket for the given client")
     @GetMapping
-    public ResponseEntity<ShoppingBasketDTO> getBasketByClientId(@RequestParam(value = "clientId", required = false) UUID clientId) {
+    public ResponseEntity<ShoppingBasketDTO> getBasketByClientId(@RequestParam(value = "clientId", required = false)UUID clientId) {
         ShoppingBasketDTO basket = shoppingBasketApplicationService.getBasketByClientId(clientId);
         return ResponseEntity.ok(basket);
     }
+
+    @Operation(summary= "Get basket by id", description = "Returns the shoppingbasket for the given Id")
+    @GetMapping("/{shoppingBasket-id}")
+    public ResponseEntity<ShoppingBasketDTO> getBasketById(@PathVariable("shoppingBasket-id") UUID shoppingBasketId) {
+        ShoppingBasketDTO basket = shoppingBasketApplicationService.getBasketById(shoppingBasketId);
+        return ResponseEntity.ok(basket);
+    }
+
 
     @Operation(summary = "Add thing to basket", description = "Adds an item to the shopping basket")
     @PostMapping("/{shoppingBasket-id}/parts")

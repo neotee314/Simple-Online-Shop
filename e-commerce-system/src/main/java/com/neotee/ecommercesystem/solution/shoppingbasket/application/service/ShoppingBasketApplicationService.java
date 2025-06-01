@@ -8,6 +8,7 @@ import com.neotee.ecommercesystem.solution.shoppingbasket.application.dto.Shoppi
 import com.neotee.ecommercesystem.solution.shoppingbasket.application.mapper.ShoppingBasketMapper;
 import com.neotee.ecommercesystem.solution.shoppingbasket.application.mapper.ShoppingBasketPartMapper;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasket;
+import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasketId;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasketPart;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasketRepository;
 import com.neotee.ecommercesystem.solution.thing.application.service.ThingService;
@@ -27,14 +28,15 @@ public class ShoppingBasketApplicationService {
     private final ThingService thingService;
 
     public ShoppingBasketDTO getBasketByClientId(UUID clientId) {
-        if (clientId == null) throw new EntityIdNullException();
+        if (clientId == null ) throw new EntityIdNullException();
         Email clientEmail = clientBasketServiceInterface.findClientEmail(clientId);
         ShoppingBasket shoppingBasket = shoppingBasketRepository.findByClientEmail(clientEmail).orElse(null);
+        if (shoppingBasket == null) throw new EntityNotFoundException();
         return basketMapper.toDto(shoppingBasket);
     }
 
     public void addThingToBasket(UUID basketId, ShoppingBasketPartDto request) {
-        ShoppingBasket shoppingBasket = shoppingBasketRepository.findById(basketId).orElseThrow(
+        ShoppingBasket shoppingBasket = shoppingBasketRepository.findById(new ShoppingBasketId(basketId)).orElseThrow(
                 EntityNotFoundException::new);
         if (request == null || request.getThingId() == null) throw new EntityIdNullException();
         if (request.getQuantity() < 0) throw new QuantityNegativeException();
@@ -46,26 +48,32 @@ public class ShoppingBasketApplicationService {
     }
 
     public UUID checkoutBasket(UUID basketId) {
-        ShoppingBasket shoppingBasket = shoppingBasketRepository.findById(basketId).orElseThrow(EntityNotFoundException::new);
+        ShoppingBasket shoppingBasket = shoppingBasketRepository.findById(new ShoppingBasketId(basketId)).orElseThrow(EntityNotFoundException::new);
         if (shoppingBasket.isEmpty()) throw new ShoppingBasketEmptyException();
         return shoppingBasketUseCasesService.checkout(shoppingBasket.getClientEmail());
     }
 
 
-    public ShoppingBasket findById(UUID shoppingBasketId) {
-        return shoppingBasketRepository.findById(shoppingBasketId)
+    public ShoppingBasket findById(UUID basketId) {
+        return shoppingBasketRepository.findById(new ShoppingBasketId(basketId))
                 .orElse(null);
     }
 
-    public void removeThingFromShoppingBasket(UUID shoppingBasketId, UUID thingId) {
-        if (shoppingBasketId == null || thingId == null) {
+    public void removeThingFromShoppingBasket(UUID basketId, UUID thingId) {
+        if (basketId == null || thingId == null) {
             throw new EntityIdNullException();
         }
-        ShoppingBasket shoppingBasket = shoppingBasketRepository.findById(shoppingBasketId).orElseThrow(EntityNotFoundException::new);
+        ShoppingBasket shoppingBasket = shoppingBasketRepository.findById(new ShoppingBasketId(basketId)).orElseThrow(EntityNotFoundException::new);
         if (!thingService.existsById(thingId)) throw new EntityNotFoundException();
         if (!shoppingBasket.contains(thingId)) throw new ThingNotInShoppingBasketException();
         shoppingBasket.removeItem(thingId);
         shoppingBasketRepository.save(shoppingBasket);
 
+    }
+
+    public ShoppingBasketDTO getBasketById(UUID shoppingBasketId) {
+        if (shoppingBasketId == null) throw new EntityIdNullException();
+        ShoppingBasket shoppingBasket = shoppingBasketRepository.findById(new ShoppingBasketId(shoppingBasketId)).orElseThrow(EntityNotFoundException::new);
+        return basketMapper.toDto(shoppingBasket);
     }
 }

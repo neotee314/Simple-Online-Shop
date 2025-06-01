@@ -5,6 +5,7 @@ import com.neotee.ecommercesystem.*;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasket;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasketRepository;
 import com.neotee.ecommercesystem.usecases.masterdata.*;
+import jakarta.transaction.Transactional;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 
-import javax.transaction.Transactional;
 
 
 @SpringBootTest
@@ -206,8 +206,6 @@ public class ShoppingBasketRESTTest {
         shoppingBasketRESTHelper.deleteThingFromShoppingBasket(shoppingBasketId6, thingId3, CONFLICT);
     }
 
-    @Autowired
-    private ShoppingBasketRepository shoppingBasketRepository;
 
     @Test
     public void testAddRemoveThingsFromAndToShoppingBasket() throws Exception {
@@ -231,7 +229,7 @@ public class ShoppingBasketRESTTest {
         shoppingBasketRESTHelper.addThingToShoppingBasket(shoppingBasketId5, thingId1, 1);
         shoppingBasketRESTHelper.addThingToShoppingBasket(shoppingBasketId5, thingId2, 2);
 
-        List<ShoppingBasket> shoppingBasketList = shoppingBasketRepository.findAll();
+
 
         int reservedStock1 = shoppingBasketUseCases.getReservedStockInShoppingBaskets(thingId1);
         int reservedStock2 = shoppingBasketUseCases.getReservedStockInShoppingBaskets(thingId2);

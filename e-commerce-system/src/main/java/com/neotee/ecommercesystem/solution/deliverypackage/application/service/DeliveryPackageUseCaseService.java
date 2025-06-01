@@ -4,6 +4,7 @@ import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.solution.deliverypackage.domain.DeliveryPackage;
 import com.neotee.ecommercesystem.solution.deliverypackage.domain.DeliveryPackagePart;
 import com.neotee.ecommercesystem.solution.deliverypackage.domain.DeliveryPackageRepository;
+import com.neotee.ecommercesystem.solution.order.domain.OrderId;
 import com.neotee.ecommercesystem.usecases.DeliveryPackageUseCases;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,8 @@ public class DeliveryPackageUseCaseService implements DeliveryPackageUseCases {
     @Transactional
     public List<UUID> getContributingStorageUnitsForOrder(UUID orderId) {
         // Retrieve all DeliveryPackages related to the given orderId
-        List<DeliveryPackage> deliveryPackages = deliveryPackageRepository.findByOrderId(orderId);
+        OrderId id = new OrderId(orderId);
+        List<DeliveryPackage> deliveryPackages = findByOrderId(id);
         if (deliveryPackages.isEmpty()) throw new ShopException("Delivery package does not exist");
 
         // List to store IDs of storage units contributing to this order
@@ -44,7 +46,8 @@ public class DeliveryPackageUseCaseService implements DeliveryPackageUseCases {
     @Transactional
     public Map<UUID, Integer> getDeliveryPackageForOrderAndStorageUnit(UUID orderId, UUID storageUnitId) {
         // Retrieve DeliveryPackages for the given orderId
-        List<DeliveryPackage> deliveryPackages = deliveryPackageRepository.findByOrderId(orderId);
+        OrderId id = new OrderId(orderId);
+        List<DeliveryPackage> deliveryPackages = findByOrderId(id);
         if (deliveryPackages.isEmpty()) throw new ShopException("Delivery package does not exist");
 
         Map<UUID, Integer> deliveryPackageMap = new HashMap<>();
@@ -60,6 +63,18 @@ public class DeliveryPackageUseCaseService implements DeliveryPackageUseCases {
         }
 
         return deliveryPackageMap;
+    }
+
+    private List<DeliveryPackage> findByOrderId(OrderId orderId) {
+        List<DeliveryPackage> deliveryPackages = deliveryPackageRepository.findAll();
+        List<DeliveryPackage> result = new ArrayList<>();
+        for (DeliveryPackage deliveryPackage : deliveryPackages) {
+            if (deliveryPackage.getOrder().getOrderId().equals(orderId)) {
+                result.add(deliveryPackage);
+            }
+        }
+        return result;
+
     }
 
     @Override

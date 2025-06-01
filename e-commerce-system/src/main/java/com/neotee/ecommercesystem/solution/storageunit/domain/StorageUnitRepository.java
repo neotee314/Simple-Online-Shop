@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface StorageUnitRepository extends CrudRepository<StorageUnit, UUID> {
+public interface StorageUnitRepository extends CrudRepository<StorageUnit, StorageUnitId> {
     @Override
     List<StorageUnit> findAll();
 }

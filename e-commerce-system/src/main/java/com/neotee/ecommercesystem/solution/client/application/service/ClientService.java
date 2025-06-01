@@ -6,6 +6,7 @@ import com.neotee.ecommercesystem.domainprimitives.ZipCode;
 import com.neotee.ecommercesystem.exception.EntityNotFoundException;
 import com.neotee.ecommercesystem.exception.EntityIdNullException;
 import com.neotee.ecommercesystem.solution.client.domain.Client;
+import com.neotee.ecommercesystem.solution.client.domain.ClientId;
 import com.neotee.ecommercesystem.solution.client.domain.ClientRepository;
 import com.neotee.ecommercesystem.solution.order.application.service.ClientOrderServiceInterface;
 import com.neotee.ecommercesystem.solution.shoppingbasket.application.service.ClientBasketServiceInterface;
@@ -29,9 +30,6 @@ public class ClientService implements ClientBasketServiceInterface, ClientOrderS
         return clientRepository.findByEmail(email);
     }
 
-    public void deleteAllClients() {
-        clientRepository.deleteAll();
-    }
 
     public List<UUID> getOrderHistory(Email clientEmail) {
         Client client = getClient(clientEmail);
@@ -73,7 +71,7 @@ public class ClientService implements ClientBasketServiceInterface, ClientOrderS
     }
 
     public Client findById(UUID clientId) {
-        return clientRepository.findById(clientId).orElse(null);
+        return clientRepository.findById(new ClientId(clientId)).orElse(null);
     }
 
     public Email findClientEmail(UUID clientId) {

@@ -9,6 +9,7 @@ import java.util.UUID;
 @Setter
 @Getter
 @ToString
+@Data
 public class IdDto {
     private UUID id;
 }

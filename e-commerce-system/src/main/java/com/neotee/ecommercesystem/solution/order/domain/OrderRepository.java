@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface OrderRepository extends CrudRepository<Order, UUID> {
+public interface OrderRepository extends CrudRepository<Order, OrderId> {
     @Override
     List<Order> findAll();
 }

@@ -5,10 +5,9 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.UUID;
 
 @Repository
-public interface ClientRepository extends CrudRepository<Client, UUID> {
+public interface ClientRepository extends CrudRepository<Client, ClientId> {
     Client findByEmail( Email email);
     @Override
     List<Client> findAll();
