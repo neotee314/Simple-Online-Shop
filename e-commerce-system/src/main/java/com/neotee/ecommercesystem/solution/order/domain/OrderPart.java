@@ -1,11 +1,16 @@
 package com.neotee.ecommercesystem.solution.order.domain;
 
 import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exception.EntityIdNullException;
+import com.neotee.ecommercesystem.exception.QuantityNegativeException;
+import com.neotee.ecommercesystem.solution.thing.domain.Thing;
+import com.neotee.ecommercesystem.solution.thing.domain.ThingId;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import jakarta.persistence.*;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -16,44 +21,51 @@ import java.util.UUID;
 public class OrderPart {
 
     @Id
-    private UUID id;
+    private OrderPartId id;
 
-    private UUID thingId;
+    @ManyToOne
+    private Thing thing;
 
     private Integer orderQuantity;
-
-
-    public OrderPart(UUID thingId, int quantity) {
-        if (thingId == null || quantity <= 0) throw new ShopException("Invalid thing ID or quantity must be greater than 0");
-        this.id = UUID.randomUUID();
-        this.thingId = thingId;
-        this.orderQuantity = quantity;
-    }
-
-    public void increaseQuantity(int amount) {
-        if (amount <= 0) {
-            throw new ShopException("Increase amount must be greater than zero.");
-        }
-        this.orderQuantity += amount;
-    }
-
-    public boolean contains(UUID thingId) {
-        if (thingId == null) throw new ShopException("Thing ID must not be null");
-        return this.thingId.equals(thingId);
-    }
 
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         OrderPart orderPart = (OrderPart) o;
-        return Objects.equals(getThingId(), orderPart.getThingId());
+        return Objects.equals(getId(), orderPart.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getThingId());
+        return Objects.hashCode(getId());
     }
 
 
+
+
+    public OrderPart(Thing thing, int quantity) {
+        if (thing == null) throw new EntityIdNullException();
+        if (quantity <= 0) throw new QuantityNegativeException();
+        this.id = new OrderPartId();
+        this.thing = thing;
+        this.orderQuantity = quantity;
+    }
+
+    public void increaseQuantity(int amount) {
+        if (amount <= 0) {
+            throw new QuantityNegativeException();
+        }
+        this.orderQuantity += amount;
+    }
+
+    public boolean contains(UUID thingId) {
+        if (thingId == null) throw new EntityIdNullException();
+        return this.thing.getThingId().getId().equals(thingId);
+    }
+
+
+    public ThingId getThingId() {
+        return thing.getThingId();
+    }
 }

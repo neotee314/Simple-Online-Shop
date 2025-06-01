@@ -1,11 +1,11 @@
 package com.neotee.ecommercesystem.solution.shoppingbasket.application.service;
 
-import com.neotee.ecommercesystem.solution.client.domain.Client;
+import com.neotee.ecommercesystem.domainprimitives.Email;
 
 import java.util.UUID;
 
 public interface ClientBasketServiceInterface {
     void emptyAllBasket();
 
-    Client findById(UUID clientId);
+    Email findClientEmail(UUID clientId);
 }

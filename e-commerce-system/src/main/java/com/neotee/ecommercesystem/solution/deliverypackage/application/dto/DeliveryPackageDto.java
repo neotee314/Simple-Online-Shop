@@ -1,4 +1,5 @@
-package com.neotee.ecommercesystem.solution.deliverypackage.application.dto;
+/***
+ * package com.neotee.ecommercesystem.solution.deliverypackage.application.dto;
 
 import lombok.Data;
 
@@ -13,3 +14,4 @@ public class DeliveryPackageDto {
     private List<DeliveryPackagePartDto> deliveryPackageParts;
 
 }
+***/

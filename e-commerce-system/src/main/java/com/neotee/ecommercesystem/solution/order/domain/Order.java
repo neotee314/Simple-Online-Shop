@@ -1,7 +1,11 @@
 package com.neotee.ecommercesystem.solution.order.domain;
 
-import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
+import com.neotee.ecommercesystem.exception.EntityIdNullException;
+import com.neotee.ecommercesystem.exception.QuantityNegativeException;
+import com.neotee.ecommercesystem.exception.ValueObjectNullOrEmptyException;
+import com.neotee.ecommercesystem.solution.thing.domain.Thing;
+import com.neotee.ecommercesystem.solution.thing.domain.ThingId;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,7 +22,7 @@ import java.util.*;
 public class Order {
 
     @Id
-    private UUID orderId;
+    private OrderId orderId;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<OrderPart> orderParts = new ArrayList<>();
@@ -29,32 +33,32 @@ public class Order {
     private LocalDate submissionDate;
 
     public Order(Email clientEmail) {
-        if (clientEmail == null) throw new ShopException("Client email must not be null");
-        orderId = UUID.randomUUID();
+        if (clientEmail == null) throw new ValueObjectNullOrEmptyException();
+        orderId = new OrderId();
         submissionDate = LocalDate.now();
         this.clientEmail = clientEmail;
     }
 
-    public void addOrderParts(Map<UUID, Integer> partsWithQuantity) {
+    public void addOrderParts(Map<Thing, Integer> partsWithQuantity) {
         if (partsWithQuantity == null || partsWithQuantity.isEmpty()) {
-            throw new ShopException("Order parts cannot be null or empty");
+            throw new EntityNotFoundException();
         }
-        for (Map.Entry<UUID, Integer> entry : partsWithQuantity.entrySet()) {
-            UUID partId = entry.getKey();
+        for (Map.Entry<Thing, Integer> entry : partsWithQuantity.entrySet()) {
+            Thing thing = entry.getKey();
             Integer quantity = entry.getValue();
 
             if (quantity <= 0) {
-                throw new ShopException("Quantity must be greater than zero for part: " + partId);
+                throw new QuantityNegativeException();
             }
 
-            OrderPart part = new OrderPart(partId, quantity);
+            OrderPart part = new OrderPart(thing, quantity);
             addOrderPart(part);
         }
     }
 
     public void addOrderPart(OrderPart newPart) {
         if (newPart == null || newPart.getOrderQuantity() <= 0) {
-            throw new ShopException("Order quantity must be greater than zero.");
+            throw new QuantityNegativeException();
         }
 
         for (OrderPart existingPart : orderParts) {
@@ -79,17 +83,17 @@ public class Order {
     }
 
 
-    public Map<UUID, Integer> getOrderLineItemsMap() {
-        Map<UUID, Integer> partsWithQuantity = new HashMap<>();
+    public Map<Thing, Integer> getOrderLineItemsMap() {
+        Map<Thing, Integer> partsWithQuantity = new HashMap<>();
         for (OrderPart orderPart : orderParts) {
-            partsWithQuantity.put(orderPart.getThingId(), orderPart.getOrderQuantity());
+            partsWithQuantity.put(orderPart.getThing(), orderPart.getOrderQuantity());
         }
         return partsWithQuantity;
     }
 
 
     public boolean contains(UUID thingId) {
-        if (thingId == null) throw new ShopException("Thing ID must not be null");
+        if (thingId == null) throw new EntityIdNullException();
         return orderParts.stream()
                 .anyMatch(p -> p.contains(thingId));
     }

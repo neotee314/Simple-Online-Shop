@@ -1,15 +1,15 @@
 package com.neotee.ecommercesystem.solution.order.application.service;
 
 import com.neotee.ecommercesystem.domainprimitives.Email;
-import com.neotee.ecommercesystem.solution.client.application.service.ClientService;
 import com.neotee.ecommercesystem.solution.order.domain.Order;
+import com.neotee.ecommercesystem.solution.order.domain.OrderId;
 import com.neotee.ecommercesystem.solution.order.domain.OrderPart;
 import com.neotee.ecommercesystem.solution.order.domain.OrderRepository;
 import com.neotee.ecommercesystem.usecases.OrderUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import jakarta.transaction.Transactional;
 
 import java.util.*;
 
@@ -18,12 +18,12 @@ import java.util.*;
 public class OrdeUseCaseService implements OrderUseCases {
 
     private final OrderRepository orderRepository;
-    private final ClientService clientService;
+    private final ClientOrderServiceInterface clientOrderServiceInterface;
 
     @Override
     @Transactional
     public Map<UUID, Integer> getOrderHistory(EmailType clientEmail) {
-        List<UUID> orderHistory = clientService.getOrderHistory((Email) clientEmail);
+        List<UUID> orderHistory = clientOrderServiceInterface.getOrderHistory((Email) clientEmail);
         if (orderHistory.isEmpty()) return new HashMap<>();
 
         Map<UUID, Integer> orderHistoryMap = new HashMap<>();
@@ -33,7 +33,7 @@ public class OrdeUseCaseService implements OrderUseCases {
             List<OrderPart> orderParts = order.getOrderParts();
 
             for (OrderPart orderPart : orderParts) {
-                UUID thingId = orderPart.getThingId();
+                UUID thingId = orderPart.getThingId().getId();
                 int quantity = orderPart.getOrderQuantity();
                 orderHistoryMap.merge(thingId, quantity, Integer::sum);
             }
@@ -45,7 +45,7 @@ public class OrdeUseCaseService implements OrderUseCases {
     private List<Order> mapToOrder(List<UUID> orderListIds) {
         List<Order> orders = new ArrayList<>();
         for (UUID orderId : orderListIds) {
-            Order order = orderRepository.findById(orderId).orElse(null);
+            Order order = orderRepository.findById(new OrderId(orderId)).orElse(null);
             if (order == null) continue;
             orders.add(order);
         }

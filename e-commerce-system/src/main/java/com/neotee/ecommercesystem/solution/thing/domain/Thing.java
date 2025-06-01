@@ -1,7 +1,7 @@
 package com.neotee.ecommercesystem.solution.thing.domain;
 
-import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Money;
+import com.neotee.ecommercesystem.exception.ValueObjectNullOrEmptyException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,11 +17,10 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Thing {
     @Id
-    private UUID thingId;
+    private ThingId thingId;
     private String name;
     private String description;
     private Float size;
-    private int stockQuantity;
 
     @Embedded
     @AttributeOverrides({
@@ -37,21 +36,21 @@ public class Thing {
     })
     private Money salesPrice;
 
-    public Thing(UUID thingId, String name, String description, Float size, int stockQuantity,
+    public Thing(UUID thingId, String name, String description, Float size,
                  Money purchasePrice, Money salesPrice) {
         if (thingId == null || name == null || name.isBlank() || description == null || description.isBlank() ||
-                (size != null && size <= 0) || stockQuantity < 0 ||
+                (size != null && size <= 0) ||
                 purchasePrice == null || salesPrice == null ||
                 purchasePrice.getAmount() <= 0 || salesPrice.getAmount() <= 0 ||
                 purchasePrice.largerThan(salesPrice)
         )
-            throw new ShopException("Invalid thing ID, name, description, size, stock quantity, purchase price or sales price");
+            throw new ValueObjectNullOrEmptyException();
 
-        this.thingId = thingId;
+
+        this.thingId = new ThingId(thingId);
         this.name = name;
         this.description = description;
         this.size = size;
-        this.stockQuantity = stockQuantity;
         this.purchasePrice = purchasePrice;
         this.salesPrice = salesPrice;
     }
@@ -60,19 +59,9 @@ public class Thing {
         return (Money) Money.of(salesPrice.getAmount(), "EUR");
     }
 
-    public boolean isInStock() {
-        return stockQuantity > 0;
-    }
 
-    public void removeFromStock(int quantity) {
-        if (quantity > stockQuantity) {
-            throw new ShopException("Not enough stock available.");
-        }
-        stockQuantity -= quantity;
-    }
-
-    public void addToStock(int quantity) {
-        stockQuantity += quantity;
+    public UUID getUUID() {
+        return thingId.getId();
     }
 
     @Override
@@ -88,10 +77,4 @@ public class Thing {
         return thingId != null ? thingId.hashCode() : 0;
     }
 
-    public void changeStockTo(int newTotalQuantity) {
-        if (newTotalQuantity < 0) {
-            throw new ShopException("Invalid stock quantity");
-        }
-        stockQuantity = newTotalQuantity;
-    }
 }

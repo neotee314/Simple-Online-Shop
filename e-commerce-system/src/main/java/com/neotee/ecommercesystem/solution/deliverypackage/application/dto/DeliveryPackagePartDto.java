@@ -1,3 +1,4 @@
+/***
 package com.neotee.ecommercesystem.solution.deliverypackage.application.dto;
 
 import lombok.Data;
@@ -9,3 +10,4 @@ public class DeliveryPackagePartDto {
     private UUID thingId;
     private int quantity;
 }
+***/

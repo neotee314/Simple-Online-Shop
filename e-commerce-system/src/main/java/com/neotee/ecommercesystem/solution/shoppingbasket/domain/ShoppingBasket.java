@@ -3,6 +3,9 @@ package com.neotee.ecommercesystem.solution.shoppingbasket.domain;
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.Money;
+import com.neotee.ecommercesystem.exception.EntityIdNullException;
+import com.neotee.ecommercesystem.solution.thing.domain.Thing;
+import com.neotee.ecommercesystem.solution.thing.domain.ThingId;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +29,7 @@ import static com.neotee.ecommercesystem.solution.shoppingbasket.domain.BasketSt
 public class ShoppingBasket {
 
     @Id
-    private UUID id;
+    private ShoppingBasketId id;
 
     private Email clientEmail;
 
@@ -37,7 +40,7 @@ public class ShoppingBasket {
 
 
     public ShoppingBasket() {
-        this.id = UUID.randomUUID();
+        this.id = new ShoppingBasketId();
     }
 
     // Add a new part to the shopping basket
@@ -56,7 +59,8 @@ public class ShoppingBasket {
         parts.add(newPart);
     }
 
-    public int removeReservedItems(UUID thingId, Integer quantityToRemove) {
+    public int removeReservedItems(ThingId thingId, Integer quantityToRemove) {
+        if (thingId == null || quantityToRemove == null || quantityToRemove < 0) throw new EntityIdNullException();
         int reserved = getReservedQuantityForThing(thingId);
         int removed = Math.min(reserved, quantityToRemove);
 
@@ -74,7 +78,7 @@ public class ShoppingBasket {
     }
 
 
-    public Integer getReservedQuantityForThing(UUID thingId) {
+    public Integer getReservedQuantityForThing(ThingId thingId) {
         if (thingId == null) {
             throw new ShopException("thingId cannot be null");
         }
@@ -84,15 +88,32 @@ public class ShoppingBasket {
                 .sum();
     }
 
-    public void addItem(UUID thingId, Integer quantity, Money price) {
-        if (thingId == null || quantity < 0 || price == null || price.getAmount() < 0)
+    public void addItem(Thing thing, Integer quantity, Money price) {
+        if (thing == null || quantity < 0 || price == null || price.getAmount() < 0)
             throw new ShopException("Invalid thing ID or quantity must be greater than 0");
         // Add item to the shopping basket
-        ShoppingBasketPart part = new ShoppingBasketPart(thingId, quantity, price);
+
+        ShoppingBasketPart part = getPartContainingThing(thing);
+        if (part != null) {
+            part.increaseQuantity(quantity);
+            return;
+        }
+
+        part = new ShoppingBasketPart(thing, quantity, price);
         addPart(part);
     }
 
-    public void removeItem(UUID thingId, Integer quantity) {
+    private ShoppingBasketPart getPartContainingThing(Thing thing) {
+        if (thing == null) throw new EntityNotFoundException();
+        for (ShoppingBasketPart part : parts) {
+            if (part.getThing().equals(thing)) {
+                return part;
+            }
+        }
+        return null;
+    }
+
+    public void removeItem(ThingId thingId, Integer quantity) {
         if (thingId == null || quantity <= 0)
             throw new ShopException("Invalid thing ID or quantity must be greater than 0");
 
@@ -123,9 +144,14 @@ public class ShoppingBasket {
         }
     }
 
-    public Map<UUID, Integer> getAsMap() {
+    public Map<Thing, Integer> getPartsQuantityMap() {
         return parts.stream()
-                .collect(Collectors.toMap(ShoppingBasketPart::getThingId, ShoppingBasketPart::getQuantity));
+                .collect(Collectors.toMap(ShoppingBasketPart::getThing, ShoppingBasketPart::getQuantity));
+    }
+
+    public Map<UUID, Integer> getBasketAsMapOfThingIdAndQuantities() {
+        return parts.stream()
+                .collect(Collectors.toMap(part -> part.getThing().getThingId().getId(), ShoppingBasketPart::getQuantity));
     }
 
     public Money getAsMoneyValue() {
@@ -142,10 +168,6 @@ public class ShoppingBasket {
         parts.clear();
     }
 
-    public Map<UUID, Integer> getPartsAsMapValue() {
-        return parts.stream()
-                .collect(Collectors.toMap(ShoppingBasketPart::getThingId, ShoppingBasketPart::getQuantity));
-    }
 
     public boolean contains(UUID thingId) {
         if (thingId == null) throw new ShopException("Thing ID must not be null");

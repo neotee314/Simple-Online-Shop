@@ -1,9 +1,15 @@
 package com.neotee.ecommercesystem.solution.storageunit.application.service;
 
-import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
+import com.neotee.ecommercesystem.exception.EntityNotFoundException;
+import com.neotee.ecommercesystem.exception.ThingQuantityNotAvailableException;
+import com.neotee.ecommercesystem.solution.storageunit.domain.StockLevelRepository;
 import com.neotee.ecommercesystem.solution.storageunit.domain.StorageUnit;
+import com.neotee.ecommercesystem.solution.storageunit.domain.StorageUnitId;
 import com.neotee.ecommercesystem.solution.storageunit.domain.StorageUnitRepository;
+import com.neotee.ecommercesystem.solution.thing.application.service.InventoryServiceInterface;
+import com.neotee.ecommercesystem.solution.thing.domain.Thing;
+import com.neotee.ecommercesystem.solution.thing.domain.ThingId;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,57 +20,52 @@ import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class InventoryFulfillmentService {
+public class InventoryFulfillmentService implements InventoryServiceInterface {
 
     private final StorageUnitRepository storageUnitRepository;
-
+    private final StockLevelRepository stockLevelRepository;
     public StorageUnit findById(UUID storageUnitId) {
-        Optional<StorageUnit> storageUnitOptional = storageUnitRepository.findById(storageUnitId);
-
-        if (storageUnitOptional.isEmpty())
-            throw new ShopException("Storage with Id " + storageUnitId + " does not exist");
-        return storageUnitOptional.get();
+        return storageUnitRepository.findById(new StorageUnitId(storageUnitId))
+                .orElseThrow(EntityNotFoundException::new);
 
     }
 
     public List<StorageUnit> findAll() {
-        List<StorageUnit> storageUnits = new ArrayList<>();
-        storageUnitRepository.findAll().forEach(storageUnits::add);
-        return storageUnits;
+        return new ArrayList<>(storageUnitRepository.findAll());
     }
 
 
     @Transactional
-    public void removeFromStock(Map<UUID, Integer> partsWithQuantity) {
+    public void removeFromStock(Map<Thing, Integer> thingQuantityMap) {
         List<StorageUnit> storageUnits = findAll();
 
-        partsWithQuantity.forEach((thingId, requiredQty) -> {
+        thingQuantityMap.forEach((thing, requiredQty) -> {
             StorageUnit unit = storageUnits.stream()
-                    .filter(su -> su.getAvailableStock(thingId) >= requiredQty)
+                    .filter(su -> su.hasSufficientQuantity(thing, requiredQty))
                     .findFirst()
-                    .orElseThrow(() -> new ShopException("Not enough stock for thing ID: " + thingId));
+                    .orElseThrow(ThingQuantityNotAvailableException::new);
 
-            unit.removeFromStock(thingId, requiredQty);
+            unit.removeFromStock(thing.getThingId(), requiredQty);
             storageUnitRepository.save(unit);
         });
     }
 
 
     @Transactional
-    public List<UUID> getContributingStorageUnit(Map<UUID, Integer> items, ZipCode clientZipCode) {
-        Map<UUID, Integer> remainingItems = new HashMap<>(items);
-        List<UUID> contributorMap = new ArrayList<>();
+    public List<StorageUnitId> getContributingStorageUnit(Map<Thing, Integer> items, ZipCode clientZipCode) {
+        Map<Thing, Integer> remainingItems = new HashMap<>(items);
+        List<StorageUnitId> contributorMap = new ArrayList<>();
         List<StorageUnit> storageUnits = new ArrayList<>(findAll());
         while (!remainingItems.isEmpty()) {
 
-            List<UUID> sortedStorageUnitIds = sortStorageUnits(storageUnits, remainingItems, clientZipCode);
+            List<StorageUnitId> sortedStorageUnitIds = sortStorageUnits(storageUnits, remainingItems, clientZipCode);
             if (sortedStorageUnitIds.isEmpty()) break;
 
-            UUID storageId = sortedStorageUnitIds.getFirst();
-            StorageUnit storageUnit = findById(storageId);
+            StorageUnitId storageId = sortedStorageUnitIds.getFirst();
+            StorageUnit storageUnit = findById(storageId.getId());
             if (storageUnit == null) continue;
 
-            Map<UUID, Integer> servableItems = storageUnit.getServableItems(remainingItems);
+            Map<Thing, Integer> servableItems = storageUnit.getServableItems(remainingItems);
             if (!servableItems.isEmpty()) {
                 servableItems.keySet().forEach(remainingItems::remove);
                 contributorMap.add(storageId);
@@ -76,9 +77,9 @@ public class InventoryFulfillmentService {
         return contributorMap;
     }
 
-    public List<UUID> sortStorageUnits(List<StorageUnit> storageUnits,
-                                       Map<UUID, Integer> unfulfilledItems,
-                                       ZipCode clientZipCode) {
+    public List<StorageUnitId> sortStorageUnits(List<StorageUnit> storageUnits,
+                                                Map<Thing, Integer> unfulfilledItems,
+                                                ZipCode clientZipCode) {
 
         // Step 1: Define comparators
         Comparator<StorageUnit> byContributingItems = Comparator
@@ -94,7 +95,7 @@ public class InventoryFulfillmentService {
 
         // Step 2: Check if any storage unit can fulfill all items
         List<StorageUnit> fullCoverageUnits = storageUnits.stream()
-                .filter(su -> su.canFullfillAll(unfulfilledItems))
+                .filter(su -> su.areItemsFulfilled(unfulfilledItems))
                 .toList();
 
         if (!fullCoverageUnits.isEmpty()) {
@@ -117,6 +118,27 @@ public class InventoryFulfillmentService {
                 .toList();
     }
 
+    public int getAvailableInventory(UUID thingId) {
+        List<StorageUnit> storageUnits = findAll();
+        return storageUnits.stream()
+                .mapToInt(unit -> unit.getAvailableStock(thingId))
+                .sum();
+    }
+
+    @Override
+    public Boolean isInStock(UUID thingId) {
+        List<StorageUnit> storageUnits = findAll();
+        return storageUnits.stream()
+                .anyMatch(unit -> unit.contains(new ThingId(thingId)));
+    }
+
+    @Override
+
+    public void deleteAllStockLevel() {
+        stockLevelRepository.deleteAll();
+        log.info("Deleted all stock levels");
+
+    }
 }
 
 

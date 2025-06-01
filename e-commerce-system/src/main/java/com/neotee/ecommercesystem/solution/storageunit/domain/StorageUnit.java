@@ -3,6 +3,10 @@ package com.neotee.ecommercesystem.solution.storageunit.domain;
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
+import com.neotee.ecommercesystem.exception.*;
+import com.neotee.ecommercesystem.exception.EntityNotFoundException;
+import com.neotee.ecommercesystem.solution.thing.domain.Thing;
+import com.neotee.ecommercesystem.solution.thing.domain.ThingId;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,148 +21,128 @@ import java.util.*;
 @Setter
 public class StorageUnit {
     @Id
-    private UUID storageId;
+    private StorageUnitId storageId;
 
     private String name;
     @Embedded
     private HomeAddress address;
 
-    @ElementCollection
-    private Map<UUID, Integer> stockLevels = new HashMap<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JoinColumn(name = "storage_unit_id")
+    private List<StockLevel> stockLevels = new ArrayList<>();
 
 
     public StorageUnit(HomeAddress address, String name) {
         if (address == null || name == null || name.isBlank())
-            throw new ShopException("Address and name must not be null or blank");
-        this.storageId = UUID.randomUUID();
+            throw new ValueObjectNullOrEmptyException();
+        this.storageId = new StorageUnitId();
         this.address = address;
         this.name = name;
     }
 
-    public void addToStock(UUID thingId, Integer quantity) {
-        if (thingId == null || quantity == null || quantity < 0) {
-            throw new ShopException("Invalid thing ID or quantity must be greater than 0");
+    public void addToStock(Thing thing, Integer quantity) {
+        if (thing == null) throw new EntityNotFoundException();
+        if (quantity == null) throw new ValueObjectNullOrEmptyException();
+        if (quantity < 0) throw new QuantityNegativeException();
+
+        for (StockLevel stockLevel : stockLevels) {
+            if (stockLevel.contains(thing))
+                stockLevel.addToQuantity(quantity);
         }
-
-        int current = stockLevels.getOrDefault(thingId, 0);
-        stockLevels.put(thingId, current + quantity);
-    }
-
-    public RemovalPlan planRemoval(UUID thingId, int quantityToRemove, int reservedQuantity) {
-        if (thingId == null || quantityToRemove < 0 || reservedQuantity < 0)
-            throw new ShopException("Invalid thing ID or quantity to remove must be greater than 0");
-        int currentStock = getAvailableStock(thingId);
-        int totalAvailable = currentStock + reservedQuantity;
-
-        if (quantityToRemove > totalAvailable) {
-            throw new ShopException("The removed quantity exceeds available and reserved stock.");
-        }
-
-        int fromStock = Math.min(currentStock, quantityToRemove);
-        int fromReserved = quantityToRemove - fromStock;
-
-        return new RemovalPlan(fromStock, fromReserved);
+        StockLevel stockLevel = new StockLevel(thing, quantity);
+        stockLevels.add(stockLevel);
     }
 
 
+    public void removeFromStock(ThingId thingId, Integer removeQuantity) {
+        if (thingId == null) throw new EntityIdNullException();
 
-    public void removeFromStock(UUID thingId, Integer removeQuantity) {
-        if (thingId == null || removeQuantity == null || removeQuantity <= 0) {
-            throw new ShopException("Invalid thing ID or quantity to remove must be greater than 0");
-        }
-
-        Integer currentQuantity = stockLevels.get(thingId);
-        if (currentQuantity == null) {
-            throw new ShopException("Thing not found in stock");
-        }
-
-        if (currentQuantity < removeQuantity) {
-            throw new ShopException("Not enough quantity in stock to remove");
-        }
-
-        int updatedQuantity = currentQuantity - removeQuantity;
-
-        if (updatedQuantity == 0) {
-            stockLevels.remove(thingId);
-        } else {
-            stockLevels.put(thingId, updatedQuantity);
+        for (StockLevel stockLevel : stockLevels) {
+            if (stockLevel.contains(thingId)) {
+                stockLevel.removeFromQuantity(removeQuantity);
+                if (stockLevel.getQuantityInStock() <= 0) {
+                    stockLevels.remove(stockLevel);
+                }
+                return;
+            }
         }
     }
 
-    public boolean canServeAnyOf(Map<UUID, Integer> items) {
-        return !getServableItems(items).isEmpty();
-    }
 
-    public void changeStockTo(UUID thingId, Integer newTotalQuantity) {
-        if (thingId == null || newTotalQuantity == null || newTotalQuantity < 0) {
-            throw new ShopException("Invalid thing ID or new quantity must not be negative");
-        }
-
-        if (newTotalQuantity == 0) {
-            stockLevels.remove(thingId);
-        } else {
-            stockLevels.put(thingId, newTotalQuantity);
+    public void changeStockTo(Thing thing, Integer newTotalQuantity) {
+        if (thing == null) throw new EntityNotFoundException();
+        for (StockLevel stockLevel : stockLevels) {
+            if (stockLevel.contains(thing)) {
+                stockLevel.changeStockTo(newTotalQuantity);
+                if (stockLevel.getQuantityInStock() <= 0) {
+                    stockLevels.remove(stockLevel);
+                }
+                return;
+            }
         }
     }
 
     public Integer getAvailableStock(UUID thingId) {
-        if (thingId == null) throw new ShopException("Thing ID must not be null");
-        Integer stock = stockLevels.get(thingId);
-        return stock == null ? 0 : stock;
+        if (thingId == null) throw new EntityIdNullException();
+        for (StockLevel stockLevel : stockLevels) {
+            if (stockLevel.contains(new ThingId(thingId))) {
+                return stockLevel.getQuantityInStock();
+            }
+        }
+        return 0;
     }
 
-    public  Integer getTotalContributingItems(Map<UUID, Integer> items) {
+    public Integer getTotalContributingItems(Map<Thing, Integer> items) {
         Integer totalContributingItems = 0;
-        for (UUID thingId : items.keySet()) {
-            if (stockLevels.containsKey(thingId))
-                totalContributingItems += 1;
+
+        for (Thing thing : items.keySet()) {
+            for (StockLevel stockLevel : stockLevels) {
+                if (stockLevel.contains(thing))
+                    totalContributingItems += 1;
+            }
+
         }
         return totalContributingItems;
     }
 
-    public Integer getTotalCount(Map<UUID, Integer> items) {
-        Integer totalCount = 0;
-        for (UUID thingId : items.keySet()) {
-            if (!stockLevels.containsKey(thingId)) continue;
-            totalCount += stockLevels.get(thingId);
+
+    public boolean contains(ThingId thingId) {
+        if (thingId == null) throw new EntityIdNullException();
+        for (StockLevel stockLevel : stockLevels) {
+            if (stockLevel.contains(thingId)) {
+                return true;
+            }
         }
-        return totalCount;
-    }
-
-
-    public boolean contains(UUID thingId) {
-        if (thingId == null) throw new ShopException("Thing ID must not be null");
-        return stockLevels.containsKey(thingId);
+        return false;
     }
 
     public Integer getDistanceToClient(ZipCode clientZipCode) {
-        if (clientZipCode == null) throw new ShopException("Client ZIP code must not be null");
+        if (clientZipCode == null) throw new ValueObjectNullOrEmptyException();
         return clientZipCode.difference(address.getZipCode());
     }
 
 
-    private boolean canServeItem(UUID thingId, int requiredQuantity) {
+    public boolean hasSufficientQuantity(Thing thing, int requiredQuantity) {
         if (requiredQuantity < 0) return false;
-        if (thingId == null) throw new ShopException("Thing ID must not be null");
-        if (!stockLevels.containsKey(thingId)) return false;
-        return stockLevels.get(thingId) >= requiredQuantity;
+        if (thing == null) throw new EntityNotFoundException();
+        if (!contains(thing.getThingId())) return false;
+        return getQuantityOf(thing) >= requiredQuantity;
     }
 
-    public Map<UUID, Integer> getServableItems(Map<UUID, Integer> remainingItems) {
+    public Map<Thing, Integer> getServableItems(Map<Thing, Integer> remainingItems) {
         if (remainingItems == null) throw new ShopException("Remaining items must not be null");
-
-        Map<UUID, Integer> canServeItems = new LinkedHashMap<>();
+        Map<Thing, Integer> canServeItems = new LinkedHashMap<>();
 
         // Sort entries by descending quantity
-        List<Map.Entry<UUID, Integer>> sortedEntries = new ArrayList<>(remainingItems.entrySet());
+        List<Map.Entry<Thing, Integer>> sortedEntries = new ArrayList<>(remainingItems.entrySet());
         sortedEntries.stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).forEach(sortedEntries::add);
 
-        for (Map.Entry<UUID, Integer> entry : sortedEntries) {
-            UUID thingId = entry.getKey();
+        for (Map.Entry<Thing, Integer> entry : sortedEntries) {
+            Thing thing = entry.getKey();
             int requiredQuantity = entry.getValue();
 
-            if (this.canServeItem(thingId, requiredQuantity)) {
-                canServeItems.put(thingId, requiredQuantity);
+            if (this.hasSufficientQuantity(thing, requiredQuantity)) {
+                canServeItems.put(thing, requiredQuantity);
                 if (requiredQuantity >= 10) break;
             }
         }
@@ -167,42 +151,52 @@ public class StorageUnit {
     }
 
 
-    public int getAvailableStocks(Map<UUID, Integer> items) {
+    public int getAvailableStocks(Map<Thing, Integer> items) {
         if (items == null) throw new ShopException("Items must not be null");
         int availableStocks = 0;
-        for (UUID thingId : items.keySet()) {
-            int quantity = items.get(thingId);
-            if (this.canServeItem(thingId, quantity)) {
-                availableStocks += stockLevels.get(thingId);
+        for (Thing thing : items.keySet()) {
+            int quantity = items.get(thing);
+            if (this.hasSufficientQuantity(thing, quantity)) {
+                availableStocks += getQuantityOf(thing);
             }
         }
         return availableStocks;
     }
 
-    public int getAvailableStockss(Map<UUID, Integer> items) {
-        if (items == null) throw new ShopException("Items must not be null");
-        int availableStocks = 0;
-        for (UUID thingId : items.keySet()) {
-            if (this.contains(thingId)) {
-                availableStocks += stockLevels.get(thingId);
-            }
-        }
-        return availableStocks;
-    }
 
-    public boolean canFullfillAll(Map<UUID, Integer> unfulfilledItems) {
+    public boolean areItemsFulfilled(Map<Thing, Integer> unfulfilledItems) {
         if (unfulfilledItems == null) throw new ShopException("Unfulfilled items must not be null");
 
-        for (Map.Entry<UUID, Integer> entry : unfulfilledItems.entrySet()) {
-            UUID thingId = entry.getKey();
+        for (Map.Entry<Thing, Integer> entry : unfulfilledItems.entrySet()) {
+            Thing thing = entry.getKey();
             int requiredQuantity = entry.getValue();
+            if (!contains(thing.getThingId()) || getQuantityOf(thing) < requiredQuantity) return false;
 
-            // If the item is missing or quantity is not enough, return false
-            if (!stockLevels.containsKey(thingId) || stockLevels.get(thingId) < requiredQuantity) {
-                return false;
-            }
         }
         return true;
     }
 
+    public int getQuantityOf(Thing thing) {
+        if (thing == null) throw new EntityNotFoundException();
+        for (StockLevel stockLevel : stockLevels) {
+            if (stockLevel.contains(thing)) {
+                return stockLevel.getQuantityInStock();
+            }
+        }
+        return 0;
+    }
+
+    public int getQuantityOf(ThingId thingId) {
+        if (thingId == null) throw new EntityIdNullException();
+        for (StockLevel stockLevel : stockLevels) {
+            if (stockLevel.contains(thingId)) {
+                return stockLevel.getQuantityInStock();
+            }
+        }
+        return 0;
+    }
+
+    public UUID getUUID() {
+        return storageId.getId();
+    }
 }

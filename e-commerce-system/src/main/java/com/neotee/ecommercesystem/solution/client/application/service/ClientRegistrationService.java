@@ -3,6 +3,7 @@ package com.neotee.ecommercesystem.solution.client.application.service;
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
+import com.neotee.ecommercesystem.exception.EntityNotFoundException;
 import com.neotee.ecommercesystem.solution.client.domain.Client;
 import com.neotee.ecommercesystem.solution.client.domain.ClientRepository;
 import com.neotee.ecommercesystem.solution.client.domain.ClientTypeImp;
@@ -18,13 +19,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ClientRegistrationService implements ClientRegistrationUseCases {
 
-    private final ClientService clientService;
     private final ClientRepository clientRepository;
 
     @Override
     @Transactional
     public void register(String name, EmailType email, HomeAddressType address) {
-
         if (clientRepository.findByEmail((Email) email) != null) {
             throw new ShopException("Client already exists");
         }
@@ -36,7 +35,7 @@ public class ClientRegistrationService implements ClientRegistrationUseCases {
     @Override
     public void changeAddress(EmailType email, HomeAddressType address) {
        Client client = clientRepository.findByEmail((Email) email);
-        if (client == null) throw new ShopException("Client not found");
+        if (client == null) throw new EntityNotFoundException();
 
         client.changeAddress((HomeAddress) address);
         clientRepository.save(client);
@@ -44,10 +43,8 @@ public class ClientRegistrationService implements ClientRegistrationUseCases {
 
     @Override
     public ClientType getClientData(EmailType clientEmail) {
-        Client client = clientService.getClient((Email) clientEmail);
-        if (client == null) {
-            throw new ShopException("Client with email " + clientEmail + " does not exist");
-        }
+        Client client = clientRepository.findByEmail((Email) clientEmail);
+        if (client == null) throw new EntityNotFoundException();
 
         return new ClientTypeImp(
                 client.getName(),
@@ -58,6 +55,6 @@ public class ClientRegistrationService implements ClientRegistrationUseCases {
 
     @Override
     public void deleteAllClients() {
-        clientService.deleteAllClients();
+        clientRepository.deleteAll();
     }
 }

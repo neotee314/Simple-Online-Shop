@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface ThingRepository extends CrudRepository<Thing, UUID> {
+public interface ThingRepository extends CrudRepository<Thing, ThingId> {
     @Override
     List<Thing> findAll();
-    Thing findByThingId(UUID id);
+    Thing findByThingId(ThingId thingId);
 }

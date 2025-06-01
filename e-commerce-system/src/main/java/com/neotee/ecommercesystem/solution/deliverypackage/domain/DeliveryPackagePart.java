@@ -1,11 +1,11 @@
 package com.neotee.ecommercesystem.solution.deliverypackage.domain;
 
 
+import com.neotee.ecommercesystem.solution.thing.domain.Thing;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 
 import java.util.UUID;
 
@@ -15,13 +15,19 @@ import java.util.UUID;
 @NoArgsConstructor
 public class DeliveryPackagePart {
     @Id
-    private UUID id;
-    private UUID thingId;
+    private DeliveryPackagePartId id;
+
+    @ManyToOne
+    private Thing thing;
     private int quantity;
 
-    public DeliveryPackagePart(UUID thingId, int quantity) {
-        this.id = UUID.randomUUID();
-        this.thingId = thingId;
+    public DeliveryPackagePart(Thing thing, int quantity) {
+        this.id = new DeliveryPackagePartId();
+        this.thing = thing;
         this.quantity = quantity;
+    }
+
+    public UUID getThingId() {
+        return thing.getThingId().getId();
     }
 }

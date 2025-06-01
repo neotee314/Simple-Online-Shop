@@ -1,3 +1,4 @@
+/***
 package com.neotee.ecommercesystem.solution.order.application.dto;
 
 import lombok.*;
@@ -14,3 +15,4 @@ public class OrderPartDto {
     private int quantity = 0;
 
 }
+**/

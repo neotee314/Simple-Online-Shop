@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-public class ShoppingBasketDto {
+public class ShoppingBasketDTO {
     private UUID id;
     private String totalSalesPrice;
     private String clientEmail;

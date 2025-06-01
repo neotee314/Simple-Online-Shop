@@ -4,6 +4,8 @@ import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
+import com.neotee.ecommercesystem.exception.EntityNotFoundException;
+import com.neotee.ecommercesystem.exception.ValueObjectNullOrEmptyException;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.BasketState;
 import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasket;
 import lombok.Getter;
@@ -23,7 +25,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Client {
     @Id
-    private UUID clientId = UUID.randomUUID();
+    private ClientId clientId ;
     @Embedded
     private Email email;
     @Embedded
@@ -38,9 +40,9 @@ public class Client {
     private ShoppingBasket shoppingBasket;
 
     public Client(String name, Email email, HomeAddress homeAddress) {
-        if (name == null || name.isBlank()) throw new ShopException("Invalid name");
-        if (email == null || homeAddress == null) throw new ShopException("Email/address cannot be null");
-
+        if (name == null || name.isBlank()) throw new ValueObjectNullOrEmptyException();
+        if (email == null || homeAddress == null) throw new ValueObjectNullOrEmptyException();
+        this.clientId = new ClientId();
         this.name = name;
         this.email = email;
         this.homeAddress = homeAddress;
@@ -58,7 +60,7 @@ public class Client {
 
 
     public void changeAddress(HomeAddress address) {
-        if (address == null) throw new ShopException("Address cannot be null");
+        if (address == null) throw new ValueObjectNullOrEmptyException();
         this.setHomeAddress(address);
     }
 

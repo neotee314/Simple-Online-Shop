@@ -3,6 +3,7 @@ package com.neotee.ecommercesystem.solution.thing.application.service;
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Money;
 import com.neotee.ecommercesystem.solution.thing.domain.Thing;
+import com.neotee.ecommercesystem.solution.thing.domain.ThingId;
 import com.neotee.ecommercesystem.solution.thing.domain.ThingRepository;
 import com.neotee.ecommercesystem.usecases.ThingCatalogUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
@@ -19,16 +20,17 @@ public class ThingCatalogService implements ThingCatalogUseCases {
     private final ThingService thingService;
     private final ReservationCheckServiceInterface reservationService;
     private final OrderedItemsServiceInterface orderedItemsService;
+    private final InventoryServiceInterface inventoryService;
     private final ThingRepository thingRepository;
 
     @Override
     public void addThingToCatalog(UUID thingId, String name, String description, Float size,
                                   MoneyType purchasePrice, MoneyType salesPrice) {
-        if (thingRepository.findByThingId(thingId) != null) {
+        if (thingService.existsById(thingId)) {
             throw new ShopException("Thing with id " + thingId + " already exists");
         }
 
-        Thing thing = new Thing(thingId, name, description, size, 0, (Money) purchasePrice, (Money) salesPrice);
+        Thing thing = new Thing(thingId, name, description, size, (Money) purchasePrice, (Money) salesPrice);
         thingRepository.save(thing);
     }
 
@@ -39,7 +41,7 @@ public class ThingCatalogService implements ThingCatalogUseCases {
         Thing thing = thingService.findById(thingId);
         if (thing == null) throw new ShopException("Thing does not exist");
 
-        if (thing.isInStock())
+        if (inventoryService.isInStock(thing.getThingId().getId()))
             throw new ShopException("Thing still has inventory");
 
         if (reservationService.isReservedInAnyBasket(thingId))
@@ -48,7 +50,7 @@ public class ThingCatalogService implements ThingCatalogUseCases {
         if (orderedItemsService.isPartOfCompletedOrder(thingId))
             throw new ShopException("Thing is part of a completed order");
 
-        thingRepository.deleteById(thingId);
+        thingRepository.deleteById(new ThingId(thingId));
     }
 
     @Override
@@ -62,7 +64,6 @@ public class ThingCatalogService implements ThingCatalogUseCases {
 
     @Override
     public void deleteThingCatalog() {
-        orderedItemsService.deleteOrderParts();
-        thingService.deleteAllThing();
+        thingRepository.deleteAll();
     }
 }
