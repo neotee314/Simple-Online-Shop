@@ -2,8 +2,6 @@ package com.neotee.ecommercesystem.shoppingbasket;
 
 
 import com.neotee.ecommercesystem.*;
-import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasket;
-import com.neotee.ecommercesystem.solution.shoppingbasket.domain.ShoppingBasketRepository;
 import com.neotee.ecommercesystem.usecases.masterdata.*;
 import jakarta.transaction.Transactional;
 import org.springframework.test.web.servlet.ResultMatcher;
