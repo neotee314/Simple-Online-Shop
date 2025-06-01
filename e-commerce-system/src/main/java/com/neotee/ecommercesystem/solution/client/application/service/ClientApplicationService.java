@@ -8,6 +8,8 @@ import com.neotee.ecommercesystem.solution.client.application.mapper.ClientMappe
 import com.neotee.ecommercesystem.solution.client.domain.Client;
 import com.neotee.ecommercesystem.solution.client.domain.ClientId;
 import com.neotee.ecommercesystem.solution.client.domain.ClientRepository;
+import com.neotee.ecommercesystem.solution.shoppingbasket.application.dto.ShoppingBasketDTO;
+import com.neotee.ecommercesystem.solution.shoppingbasket.application.mapper.ShoppingBasketMapper;
 import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class ClientApplicationService {
     private final ClientRepository clientRepository;
     private final ClientMapper clientMapper;
     private final ClientRegistrationUseCases clientRegistrationUseCases;
+    private final ShoppingBasketMapper shoppingBasketMapper;
 
     public ClientDTO findClientDTOByEmail(String emailaddress) {
         if (emailaddress == null || emailaddress.isEmpty()) throw new ValueObjectNullOrEmptyException();
@@ -53,5 +56,13 @@ public class ClientApplicationService {
         if (clientDTO == null) throw new EntityNotFoundException();
         Client client = clientMapper.toEntity(clientDTO);
         clientRegistrationUseCases.changeAddress(client.getEmail(), client.getHomeAddress());
+    }
+
+    public ShoppingBasketDTO getBasketOf(UUID clientId) {
+        if (clientId == null) throw new EntityNotFoundException();
+        Client client = clientRepository.findById(new ClientId(clientId)).
+                orElseThrow(EntityNotFoundException::new);
+        ShoppingBasketDTO dto = shoppingBasketMapper.toDto(client.getShoppingBasket());
+        return dto;
     }
 }
