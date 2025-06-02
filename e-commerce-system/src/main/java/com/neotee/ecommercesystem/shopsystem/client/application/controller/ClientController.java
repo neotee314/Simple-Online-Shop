@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/clients")
-@Tag(name = "Client Management")
+@Tag(name = "Client Management", description = "Verwaltung von Kunden")
 @RequiredArgsConstructor
 public class ClientController {
     private final ClientApplicationService clientApplicationService;

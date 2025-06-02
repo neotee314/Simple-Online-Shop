@@ -8,5 +8,6 @@ import java.util.List;
 @Repository
 public interface StockLevelRepository extends CrudRepository<StockLevel, StockLevelId> {
 
+    @Override
     List<StockLevel> findAll();
 }

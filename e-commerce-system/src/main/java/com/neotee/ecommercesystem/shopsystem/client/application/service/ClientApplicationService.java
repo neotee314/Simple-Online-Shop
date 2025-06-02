@@ -26,9 +26,9 @@ public class ClientApplicationService {
     private final ClientRegistrationUseCases clientRegistrationUseCases;
     private final ShoppingBasketMapper shoppingBasketMapper;
 
-    public ClientDTO findClientDTOByEmail(String emailaddress) {
-        if (emailaddress == null || emailaddress.isEmpty()) throw new ValueObjectNullOrEmptyException();
-        Email email = Email.of(emailaddress);
+    public ClientDTO findClientDTOByEmail(String emailAddress) {
+        if (emailAddress == null || emailAddress.isEmpty()) throw new ValueObjectNullOrEmptyException();
+        Email email = Email.of(emailAddress);
         Client client = clientRepository.findByEmail(email);
         if (client == null) throw new EntityNotFoundException();
         return clientMapper.toDto(client);

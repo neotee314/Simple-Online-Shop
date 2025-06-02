@@ -1,5 +1,4 @@
-/***
-package com.neotee.ecommercesystem.solution.order.application.dto;
+package com.neotee.ecommercesystem.shopsystem.order.application.dto;
 
 import lombok.*;
 
@@ -10,9 +9,8 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderPartDto {
+public class OrderPartDTO {
     private UUID thingId ;
-    private int quantity = 0;
+    private int quantity ;
 
 }
-**/

@@ -10,4 +10,6 @@ public interface ThingRepository extends CrudRepository<Thing, ThingId> {
     @Override
     List<Thing> findAll();
     Thing findByThingId(ThingId thingId);
+
+    List<Thing> findByName(String name);
 }

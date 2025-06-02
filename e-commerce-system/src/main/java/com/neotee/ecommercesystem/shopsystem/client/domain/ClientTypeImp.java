@@ -6,9 +6,9 @@ import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
 
 public class ClientTypeImp implements ClientType {
-    private String name;
-    private EmailType email;
-    private HomeAddressType homeAddress;
+    private final String name;
+    private final EmailType email;
+    private final HomeAddressType homeAddress;
 
     public ClientTypeImp(String name, EmailType email, HomeAddressType homeAddress) {
         this.name = name;

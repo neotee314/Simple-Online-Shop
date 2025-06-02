@@ -27,7 +27,7 @@ public class StockLevel {
     @ManyToOne
     private Thing thing;
 
-    private Integer quantityInStock = 0;
+    private Integer quantityInStock ;
 
     public StockLevel(Thing thing, Integer quantityInStock) {
         if (thing == null || quantityInStock == null) throw new EntityNotFoundException();

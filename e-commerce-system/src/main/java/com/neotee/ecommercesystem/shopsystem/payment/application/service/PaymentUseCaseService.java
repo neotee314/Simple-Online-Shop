@@ -37,7 +37,7 @@ public class PaymentUseCaseService implements PaymentUseCases {
 
     @Override
     public UUID authorizePayment(EmailType clientEmail, MoneyType amount) {
-        if (clientEmail == null || clientEmail.equals("") || amount == null || amount.getAmount() <= 0)
+        if (clientEmail == null || clientEmail.toString().isEmpty() || amount == null || amount.getAmount() <= 0)
             throw new ShopException("invalid data");
         Payment payment = paymentService.createNewPayment((Email) clientEmail, (Money) amount);
         return payment.getPaymentId();
@@ -58,7 +58,7 @@ public class PaymentUseCaseService implements PaymentUseCases {
 
     @Override
     public MoneyType getPaymentTotal(EmailType clientEmail) {
-        if (clientEmail == null || clientEmail.equals("")) throw new ShopException("invalid data");
+        if (clientEmail == null || clientEmail.toString().isEmpty()) throw new ShopException("invalid data");
         return paymentService.getPaymentTotal((Email) clientEmail);
 
     }

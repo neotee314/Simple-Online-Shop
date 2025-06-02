@@ -16,7 +16,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/shoppingBaskets")
 @RequiredArgsConstructor
-@Tag(name = "Shopping Basket", description = "APIs for managing shopping baskets")
+@Tag(name = "Shopping Basket Management", description = "Verwaltung von Shopping Basket")
 public class ShoppingBasketController {
 
     private final ShoppingBasketApplicationService shoppingBasketApplicationService;

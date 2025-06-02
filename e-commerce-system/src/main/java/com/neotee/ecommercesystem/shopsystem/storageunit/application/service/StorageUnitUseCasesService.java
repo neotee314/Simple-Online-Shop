@@ -25,7 +25,6 @@ public class StorageUnitUseCasesService implements StorageUnitUseCases {
 
     private final StorageUnitRepository storageUnitRepository;
     private final ReservedQuantityService reservationServiceInterface;
-    private final StockLevelRepository stockLevelRepository;
     private final ThingService thingService;
 
     @Override
