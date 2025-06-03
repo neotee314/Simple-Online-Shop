@@ -13,13 +13,13 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.fields;
 
 @ArchTag("layerRules")
-@AnalyzeClasses(packages = "com.neotee.ecommercesystem.solution")
+@AnalyzeClasses(packages = "com.neotee.ecommercesystem.shopsystem")
 @SuppressWarnings("PMD")
 public class BasicPackageRulesTest {
 
     @ArchTest
     static final ArchRule noClassesOnTopLevel =
-            classes().should().resideInAPackage( "..solution.*.." );
+            classes().should().resideInAPackage( "..shopsystem.*.." );
 
     @ArchTest
     static final ArchRule noNonIdFieldsOfTypeIUUID =

@@ -31,4 +31,11 @@ public abstract class DeliveryPackagePartMapper {
     public Thing mapUUIDToThing(UUID id) {
         return thingService.findById(id);
     }
+
+    public DeliveryPackagePartDTO map(UUID thingId, Integer quantity) {
+        DeliveryPackagePartDTO dto = new DeliveryPackagePartDTO();
+        dto.setThingId(thingId);
+        dto.setQuantity(quantity);
+        return dto;
+    }
 }

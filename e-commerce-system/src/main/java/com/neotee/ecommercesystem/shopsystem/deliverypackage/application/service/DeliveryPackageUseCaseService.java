@@ -1,6 +1,8 @@
 package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.service;
 
 import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exception.EntityIdNullException;
+import com.neotee.ecommercesystem.exception.EntityNotFoundException;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackage;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackagePart;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackageRepository;
@@ -21,10 +23,11 @@ public class DeliveryPackageUseCaseService implements DeliveryPackageUseCases {
     @Override
     @Transactional
     public List<UUID> getContributingStorageUnitsForOrder(UUID orderId) {
+        if (orderId == null) throw new EntityIdNullException();
         // Retrieve all DeliveryPackages related to the given orderId
         OrderId id = new OrderId(orderId);
         List<DeliveryPackage> deliveryPackages = findByOrderId(id);
-        if (deliveryPackages.isEmpty()) throw new ShopException("Delivery package does not exist");
+        if (deliveryPackages.isEmpty()) throw new EntityNotFoundException();
 
         // List to store IDs of storage units contributing to this order
         List<UUID> contributingStorageUnits = new ArrayList<>();

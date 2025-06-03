@@ -17,9 +17,9 @@ public class BasicNoOutsideSolutionRulesTest {
             layeredArchitecture()
                     .consideringAllDependencies()
                     .layer("Domainprimitives").definedBy("com.neotee.ecommercesystem.domainprimitives..")
-                    .layer("SolutionClasses").definedBy("com.neotee.ecommercesystem.solution..")
+                    .layer("ShopSystemClasses").definedBy("com.neotee.ecommercesystem.shopsystem..")
                     .layer("Tests").definedBy("com.neotee.ecommercesystem.basictests..")
 
-                    .whereLayer("Domainprimitives").mayOnlyBeAccessedByLayers("SolutionClasses", "Tests")
-                    .whereLayer("SolutionClasses").mayOnlyBeAccessedByLayers("Tests");
+                    .whereLayer("Domainprimitives").mayOnlyBeAccessedByLayers("ShopSystemClasses", "Tests")
+                    .whereLayer("ShopSystemClasses").mayOnlyBeAccessedByLayers("Tests");
 }

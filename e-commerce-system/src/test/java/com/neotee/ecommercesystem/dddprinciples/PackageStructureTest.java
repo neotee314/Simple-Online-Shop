@@ -17,13 +17,13 @@ public class PackageStructureTest {
             "storageunit",
             "deliverypackage"
     };
-    private static final String BASE_PACKAGE = "com.neotee.ecommercesystem.solution";
+    private static final String BASE_PACKAGE = "com.neotee.ecommercesystem.shopsystem";
     private JavaClasses importedClasses;
 
 
     @BeforeEach
     public void setUp() {
-        importedClasses = new ClassFileImporter().importPackages( "com.neotee.ecommercesystem.solution" );
+        importedClasses = new ClassFileImporter().importPackages( "com.neotee.ecommercesystem.shopsystem" );
     }
 
 

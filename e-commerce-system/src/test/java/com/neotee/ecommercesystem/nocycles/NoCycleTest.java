@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 
 public class NoCycleTest {
-    private JavaClasses importedClasses = new ClassFileImporter().importPackages("com.neotee.ecommercesystem.solution");
+    private JavaClasses importedClasses = new ClassFileImporter().importPackages("com.neotee.ecommercesystem.shopsystem");
 
     private SliceAssignment inAllClasses() {
         return new SliceAssignment() {
@@ -37,7 +37,7 @@ public class NoCycleTest {
 
     @Test
     public void testNoCyclicDependenciesBetweenPackages() {
-        ArchRule rule = slices().matching("..solution.(*)..").should().beFreeOfCycles();
+        ArchRule rule = slices().matching("..shopsystem.(*)..").should().beFreeOfCycles();
         rule.check(importedClasses);
     }
 }

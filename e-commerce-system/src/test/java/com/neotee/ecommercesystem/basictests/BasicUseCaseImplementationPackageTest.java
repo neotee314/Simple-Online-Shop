@@ -26,7 +26,7 @@ public class BasicUseCaseImplementationPackageTest {
         put("OrderUseCases", Arrays.asList("order"));
     }};
     private static final String USECASE_PATH = "com.neotee.ecommercesystem.usecases";
-    private static final String SOLUTION_PATH = "com.neotee.ecommercesystem.solution";
+    private static final String SOLUTION_PATH = "com.neotee.ecommercesystem.shopsystem";
 
     @Test
     public void testRequiredClassesDeclared() {

@@ -183,6 +183,8 @@ When an order is placed, the system analyzes which storage units can fulfill the
 
 ---
 
+
+
 ##  Scalability & Extensibility
 
 This project is highly modular and can be extended with:
@@ -195,6 +197,43 @@ This project is highly modular and can be extended with:
 It is also ready for containerization using Docker and Kubernetes.
 
 ---
+
+## 🐳 Docker Usage
+
+This project includes a `Dockerfile` in the root directory. You can easily build and run the application inside a Docker container by following these steps:
+
+### Build the project
+
+First, build the Java project using Gradle (make sure you have Gradle installed or use the Gradle wrapper):
+
+
+./gradlew build
+
+
+### Build the Docker image
+
+Use Docker to build an image named `ecommerce-app`:
+
+
+docker build -t ecommerce-app .
+
+
+### Run the Docker container
+
+Run the Docker container, mapping the container port 8080 to your local machine’s port 8080:
+
+
+docker run -p 8080:8080 ecommerce-app
+
+
+### Access the application
+
+Open your browser and go to:
+
+
+http://localhost:8080/my-e-commerce
+
+
 
 ##  Contact
 

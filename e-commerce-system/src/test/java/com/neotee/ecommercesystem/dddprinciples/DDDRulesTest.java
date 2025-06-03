@@ -14,7 +14,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 @ArchTag("layerRules")
-@AnalyzeClasses(packages = "com.neotee.ecommercesystem.solution")
+@AnalyzeClasses(packages = "com.neotee.ecommercesystem.shopsystem")
 @SuppressWarnings("PMD")
 public class DDDRulesTest {
 

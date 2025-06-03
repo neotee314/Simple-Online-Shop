@@ -1,5 +1,7 @@
 package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.controller;
 
+import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.dto.DeliveryPackageDTO;
+import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.service.DeliveryPackageApplicationService;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.service.DeliveryPackageUseCaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,23 +22,18 @@ import java.util.UUID;
 @Tag(name = "DeliveryPackage Management", description = "Verwaltung von DeliverPackages")
 public class DeliveryPackageController {
 
-    private final DeliveryPackageUseCaseService deliveryPackageService;
+    private final DeliveryPackageApplicationService deliveryPackageApplicationService;
 
     @Operation(
             summary = "Gibt Storage-Units zurück, die zu einer Bestellung beitragen",
             description = "Diese Methode gibt alle StorageUnit-IDs zurück, die Pakete zu der angegebenen Bestellung beigetragen haben."
     )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Erfolgreich gefunden"),
-            @ApiResponse(responseCode = "404", description = "Keine Pakete für diese Bestellung gefunden"),
-            @ApiResponse(responseCode = "500", description = "Interner Fehler")
-    })
-    @GetMapping("/contributors/{orderId}")
-    public ResponseEntity<List<UUID>> getContributingStorageUnitsForOrder(
-            @Parameter(description = "ID der Bestellung", required = true)
-            @PathVariable UUID orderId) {
+    @GetMapping
+    public ResponseEntity<List<DeliveryPackageDTO>> getContributingStorageUnitsForOrder(
+            @Parameter(description = "ID der Bestellung")
+            @RequestParam(value = "orderId", required = false) UUID orderId) {
 
-        List<UUID> result = deliveryPackageService.getContributingStorageUnitsForOrder(orderId);
+        List<DeliveryPackageDTO> result = deliveryPackageApplicationService.getContributingStorageUnitsForOrder(orderId);
         return ResponseEntity.ok(result);
     }
 
@@ -44,19 +41,14 @@ public class DeliveryPackageController {
             summary = "Gibt Artikel und Mengen für Bestellung und StorageUnit zurück",
             description = "Diese Methode gibt eine Map von Artikel-UUID zu Menge zurück, die von einer bestimmten StorageUnit zur Lieferung beigetragen wurden."
     )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Erfolgreich gefunden"),
-            @ApiResponse(responseCode = "404", description = "Keine passenden Pakete gefunden"),
-            @ApiResponse(responseCode = "500", description = "Interner Fehler")
-    })
     @GetMapping("/{orderId}/storageUnit/{storageUnitId}")
-    public ResponseEntity<Map<UUID, Integer>> getDeliveryPackageParts(
+    public ResponseEntity<List<DeliveryPackageDTO>> getDeliveryPackageParts(
             @Parameter(description = "ID der Bestellung", required = true)
             @PathVariable UUID orderId,
             @Parameter(description = "ID der StorageUnit", required = true)
             @PathVariable UUID storageUnitId) {
 
-        Map<UUID, Integer> result = deliveryPackageService.getDeliveryPackageForOrderAndStorageUnit(orderId, storageUnitId);
+        List<DeliveryPackageDTO> result = deliveryPackageApplicationService.getDeliveryPackageForOrderAndStorageUnit(orderId, storageUnitId);
         return ResponseEntity.ok(result);
     }
 
@@ -70,7 +62,7 @@ public class DeliveryPackageController {
     })
     @DeleteMapping("/all")
     public ResponseEntity<Void> deleteAllDeliveryPackages() {
-        deliveryPackageService.deleteAllDeliveryPackages();
+        deliveryPackageApplicationService.deleteAllDeliveryPackages();
         return ResponseEntity.noContent().build();
     }
 }

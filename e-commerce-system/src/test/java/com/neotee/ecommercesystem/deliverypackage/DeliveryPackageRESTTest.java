@@ -20,9 +20,9 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.*;
 
-import static com.neotee.ecommercesystem.ClientTestHelper.CLIENT_EMAIL;
-import static com.neotee.ecommercesystem.ThingAndStockTestHelper.STORAGE_UNIT_ID;
-import static com.neotee.ecommercesystem.ThingAndStockTestHelper.THING_DATA;
+import static com.neotee.ecommercesystem.usecases.masterdata.ClientMasterDataInitializer.CLIENT_EMAIL;
+import static com.neotee.ecommercesystem.usecases.masterdata.ThingAndStockMasterDataInitializer.STORAGE_UNIT_ID;
+import static com.neotee.ecommercesystem.usecases.masterdata.ThingAndStockMasterDataInitializer.THING_DATA;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
