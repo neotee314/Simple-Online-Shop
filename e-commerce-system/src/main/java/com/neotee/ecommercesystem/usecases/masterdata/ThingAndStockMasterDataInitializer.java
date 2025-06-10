@@ -15,7 +15,7 @@ import java.util.*;
  * This is a test helper class that initializes and registers things (but without stock)
  * in the system, using the given interface(s).
  */
-@Component
+
 @Slf4j
 @SuppressWarnings("PMD")
 public class ThingAndStockMasterDataInitializer {

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface PaymentRepository extends CrudRepository<Payment, UUID> {
+public interface PaymentRepository extends CrudRepository<Payment, PaymentId> {
 
     List<Payment> findByClientEmail(Email clientEmail);
 }

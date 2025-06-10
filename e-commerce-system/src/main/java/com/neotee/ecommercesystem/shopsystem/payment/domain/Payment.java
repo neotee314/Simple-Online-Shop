@@ -18,7 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Payment {
     @Id
-    private UUID paymentId;
+    private PaymentId paymentId;
 
     private Email clientEmail;
 
@@ -26,6 +26,7 @@ public class Payment {
     private Money money;
     
     public Payment(Email clientEmail, Money money) {
+        this.paymentId = new PaymentId();
         this.clientEmail = clientEmail;
         this.money = money;
     }

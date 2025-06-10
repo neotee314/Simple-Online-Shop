@@ -2,6 +2,7 @@ package com.neotee.ecommercesystem.shopsystem.delivery.application.service;
 
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
+import com.neotee.ecommercesystem.exception.ValueObjectNullOrEmptyException;
 import com.neotee.ecommercesystem.shopsystem.delivery.domain.Delivery;
 import com.neotee.ecommercesystem.usecases.ClientType;
 import com.neotee.ecommercesystem.usecases.DeliveryUseCases;
@@ -27,7 +28,7 @@ public class DeliveryUseCaseService implements DeliveryUseCases {
         validateContent(deliveryContent);
 
         Delivery delivery = deliveryService.createDelivery(deliveryRecipient, deliveryContent);
-        return delivery.getId();
+        return delivery.getDeliveryId().getId();
     }
 
     @Override
@@ -36,12 +37,12 @@ public class DeliveryUseCaseService implements DeliveryUseCases {
             throw new ShopException("Client email cannot be null or empty");
         }
 
-        return deliveryService.getDeliveryHisotry((Email) clientEmail);
+        return deliveryService.getDeliveryHistory((Email) clientEmail);
     }
 
     @Override
     public void deleteDeliveryHistory() {
-        deliveryService.deleteDeliveryHisotry();
+        deliveryService.deleteDeliveryHistory();
     }
 
     private void validateRecipient(ClientType recipient) {
@@ -57,7 +58,7 @@ public class DeliveryUseCaseService implements DeliveryUseCases {
                 || recipient.getEmail() == null
                 || Strings.isBlank(recipient.getEmail().toString())
         ) {
-            throw new ShopException("Recipient has invalid fields.");
+            throw new ValueObjectNullOrEmptyException();
         }
     }
 

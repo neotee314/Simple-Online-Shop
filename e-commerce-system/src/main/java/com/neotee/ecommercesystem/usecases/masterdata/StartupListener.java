@@ -10,7 +10,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 
-@Component
+
 @Slf4j
 @Profile("!test")
 public class StartupListener implements ApplicationListener<ContextRefreshedEvent>  {
@@ -22,7 +22,7 @@ public class StartupListener implements ApplicationListener<ContextRefreshedEven
     private StorageUnitUseCases storageUnitUseCases;
     private Purgatory purgatory;
 
-    @Autowired
+
     public StartupListener( ClientRegistrationUseCases clientRegistrationUseCases,
                             ThingCatalogUseCases thingCatalogUseCases,
                             StorageUnitUseCases storageUnitUseCases,

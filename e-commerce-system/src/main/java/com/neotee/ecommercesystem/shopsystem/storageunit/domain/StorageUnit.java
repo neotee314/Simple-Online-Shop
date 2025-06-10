@@ -96,10 +96,9 @@ public class StorageUnit {
         Integer totalContributingItems = 0;
 
         for (Thing thing : items.keySet()) {
-            for (StockLevel stockLevel : stockLevels) {
-                if (stockLevel.contains(thing))
-                    totalContributingItems += 1;
-            }
+            if (this.hasSufficientQuantityOf(thing, items.get(thing)))
+                totalContributingItems += 1;
+
 
         }
         return totalContributingItems;
@@ -122,7 +121,7 @@ public class StorageUnit {
     }
 
 
-    public boolean hasSufficientQuantity(Thing thing, int requiredQuantity) {
+    public boolean hasSufficientQuantityOf(Thing thing, int requiredQuantity) {
         if (requiredQuantity < 0) return false;
         if (thing == null) throw new EntityNotFoundException();
         if (!contains(thing.getThingId())) return false;
@@ -135,13 +134,13 @@ public class StorageUnit {
 
         // Sort entries by descending quantity
         List<Map.Entry<Thing, Integer>> sortedEntries = new ArrayList<>(remainingItems.entrySet());
-        sortedEntries.stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).forEach(sortedEntries::add);
+        sortedEntries.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
 
         for (Map.Entry<Thing, Integer> entry : sortedEntries) {
             Thing thing = entry.getKey();
             int requiredQuantity = entry.getValue();
 
-            if (this.hasSufficientQuantity(thing, requiredQuantity)) {
+            if (this.hasSufficientQuantityOf(thing, requiredQuantity)) {
                 canServeItems.put(thing, requiredQuantity);
                 if (requiredQuantity >= 10) break;
             }
@@ -151,30 +150,6 @@ public class StorageUnit {
     }
 
 
-    public int getAvailableStocks(Map<Thing, Integer> items) {
-        if (items == null) throw new ShopException("Items must not be null");
-        int availableStocks = 0;
-        for (Thing thing : items.keySet()) {
-            int quantity = items.get(thing);
-            if (this.hasSufficientQuantity(thing, quantity)) {
-                availableStocks += getQuantityOf(thing);
-            }
-        }
-        return availableStocks;
-    }
-
-
-    public boolean areItemsFulfilled(Map<Thing, Integer> unfulfilledItems) {
-        if (unfulfilledItems == null) throw new ShopException("Unfulfilled items must not be null");
-
-        for (Map.Entry<Thing, Integer> entry : unfulfilledItems.entrySet()) {
-            Thing thing = entry.getKey();
-            int requiredQuantity = entry.getValue();
-            if (!contains(thing.getThingId()) || getQuantityOf(thing) < requiredQuantity) return false;
-
-        }
-        return true;
-    }
 
     public int getQuantityOf(Thing thing) {
         if (thing == null) throw new EntityNotFoundException();

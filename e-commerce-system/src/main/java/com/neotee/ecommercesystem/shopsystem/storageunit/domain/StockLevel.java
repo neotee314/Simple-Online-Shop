@@ -40,7 +40,7 @@ public class StockLevel {
 
     public boolean contains(Thing thing) {
         if (thing == null) throw new EntityNotFoundException();
-        return this.thing.equals(thing);
+        return this.thing.getThingId().getId().equals(thing.getThingId().getId());
     }
 
     public boolean contains(ThingId thingId) {

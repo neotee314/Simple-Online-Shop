@@ -1,8 +1,9 @@
 package com.neotee.ecommercesystem.shopsystem.storageunit.application.controller;
 
 import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.AvailableStockDTO;
-import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.StockRequestDTO;
-import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.StorageUnitDTO;
+import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.StockResponseDTO;
+import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.StorageUnitRequestDTO;
+import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.StorageUnitResponseDTO;
 import com.neotee.ecommercesystem.shopsystem.storageunit.application.service.StorageUnitApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,20 +26,20 @@ public class StorageUnitController {
 
     @Operation(summary = "Get all storage units")
     @GetMapping
-    public ResponseEntity<List<StorageUnitDTO>> getAllStorageUnits() {
+    public ResponseEntity<List<StorageUnitResponseDTO>> getAllStorageUnits() {
         return ResponseEntity.ok(storageUnitApplicationService.getAllStorageUnits());
     }
 
     @Operation(summary = "Get a storage unit by ID")
     @GetMapping("/{id}")
-    public ResponseEntity<StorageUnitDTO> getStorageUnitById(@PathVariable UUID id) {
+    public ResponseEntity<StorageUnitResponseDTO> getStorageUnitById(@PathVariable UUID id) {
         return ResponseEntity.ok(storageUnitApplicationService.getStorageUnitById(id));
     }
 
     @Operation(summary = "Create a new storage unit")
     @PostMapping
-    public ResponseEntity<Void> createStorageUnit(@RequestBody StorageUnitDTO dto) {
-        storageUnitApplicationService.addNewStorageUnit(dto.getAddress(), dto.getName());
+    public ResponseEntity<Void> createStorageUnit(@RequestBody StorageUnitRequestDTO dto) {
+        storageUnitApplicationService.addNewStorageUnit(dto);
         return ResponseEntity.ok().build();
     }
 
@@ -53,21 +54,21 @@ public class StorageUnitController {
 
     @Operation(summary = "Add stock to a storage unit")
     @PostMapping("/stock/add")
-    public ResponseEntity<Void> addStock(@RequestBody StockRequestDTO dto) {
+    public ResponseEntity<Void> addStock(@RequestBody StockResponseDTO dto) {
         storageUnitApplicationService.addToStock(dto);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Remove stock from a storage unit")
     @PostMapping("/stock/remove")
-    public ResponseEntity<Void> removeStock(@RequestBody StockRequestDTO dto) {
+    public ResponseEntity<Void> removeStock(@RequestBody StockResponseDTO dto) {
         storageUnitApplicationService.removeFromStock(dto);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Change stock level in a storage unit")
     @PostMapping("/stock/change")
-    public ResponseEntity<Void> changeStock(@RequestBody StockRequestDTO dto) {
+    public ResponseEntity<Void> changeStock(@RequestBody StockResponseDTO dto) {
         storageUnitApplicationService.changeStockTo(dto);
         return ResponseEntity.ok().build();
     }

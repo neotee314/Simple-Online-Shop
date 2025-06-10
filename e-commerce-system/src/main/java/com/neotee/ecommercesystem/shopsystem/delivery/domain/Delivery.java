@@ -1,17 +1,12 @@
 package com.neotee.ecommercesystem.shopsystem.delivery.domain;
 
 import com.neotee.ecommercesystem.domainprimitives.Email;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Getter
@@ -19,23 +14,45 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Delivery {
     @Id
-    private UUID id = UUID.randomUUID();
+    private DeliveryId deliveryId;
 
     @Embedded
     private Email clientEmail;
 
 
-    @ElementCollection
-    private Map<UUID, Integer> deliveryContents = new HashMap<>();
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<DeliveryContent> deliveryContents;
 
     public Delivery(Email clientEmail) {
+        this.deliveryId = new DeliveryId();
+        this.deliveryContents = new ArrayList<>();
         this.clientEmail = clientEmail;
     }
 
-    public void addToContent(Map.Entry<UUID, Integer> deliveryContent) {
-        UUID goodId = deliveryContent.getKey();
-        Integer quantity = deliveryContent.getValue();
-        Integer currentQuantity = deliveryContents.getOrDefault(goodId, 0);
-        deliveryContents.put(goodId, currentQuantity + quantity);
+    public void addToContent(DeliveryContent deliveryContent) {
+        DeliveryContent found = getDeliveryContent(deliveryContent.getDeliveryContentId());
+        if (found == null) {
+            deliveryContents.add(deliveryContent);
+            return;
+        }
+        found.addToQuantity(deliveryContent.getQuantity());
+    }
+
+
+    private DeliveryContent getDeliveryContent(DeliveryContentId deliveryContentId) {
+        for(DeliveryContent deliveryContent : deliveryContents) {
+            if(deliveryContent.getDeliveryContentId().equals(deliveryContentId)) {
+                return deliveryContent;
+            }
+        }
+        return null;
+    }
+
+    public Map<UUID, Integer> getDliveryContentAsMapValue() {
+        Map<UUID, Integer> map = new HashMap<>();
+        for(DeliveryContent deliveryContent : deliveryContents) {
+             map.put(deliveryContent.getDeliveryContentId().getId(), deliveryContent.getQuantity());
+        }
+        return map;
     }
 }

@@ -3,7 +3,6 @@ package com.neotee.ecommercesystem.shopsystem.storageunit.application.service;
 import com.neotee.ecommercesystem.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
 import com.neotee.ecommercesystem.exception.EntityNotFoundException;
-import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StockLevelRepository;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnit;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnitId;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnitRepository;

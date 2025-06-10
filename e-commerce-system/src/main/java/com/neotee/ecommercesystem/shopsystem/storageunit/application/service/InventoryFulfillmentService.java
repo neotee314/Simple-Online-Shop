@@ -3,10 +3,7 @@ package com.neotee.ecommercesystem.shopsystem.storageunit.application.service;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
 import com.neotee.ecommercesystem.exception.EntityNotFoundException;
 import com.neotee.ecommercesystem.exception.ThingQuantityNotAvailableException;
-import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StockLevelRepository;
-import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnit;
-import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnitId;
-import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnitRepository;
+import com.neotee.ecommercesystem.shopsystem.storageunit.domain.*;
 import com.neotee.ecommercesystem.shopsystem.thing.application.service.InventoryServiceInterface;
 import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
 import com.neotee.ecommercesystem.shopsystem.thing.domain.ThingId;
@@ -16,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -24,6 +22,7 @@ public class InventoryFulfillmentService implements InventoryServiceInterface {
 
     private final StorageUnitRepository storageUnitRepository;
     private final StockLevelRepository stockLevelRepository;
+
     public StorageUnit findById(UUID storageUnitId) {
         return storageUnitRepository.findById(new StorageUnitId(storageUnitId))
                 .orElseThrow(EntityNotFoundException::new);
@@ -35,19 +34,11 @@ public class InventoryFulfillmentService implements InventoryServiceInterface {
     }
 
 
-    @Transactional
-    public void removeFromStock(Map<Thing, Integer> thingQuantityMap) {
-        List<StorageUnit> storageUnits = findAll();
-
-        thingQuantityMap.forEach((thing, requiredQty) -> {
-            StorageUnit unit = storageUnits.stream()
-                    .filter(su -> su.hasSufficientQuantity(thing, requiredQty))
-                    .findFirst()
-                    .orElseThrow(ThingQuantityNotAvailableException::new);
-
-            unit.removeFromStock(thing.getThingId(), requiredQty);
-            storageUnitRepository.save(unit);
-        });
+    public void removeFromStock(StorageUnit storageUnit, Map<Thing, Integer> thingQuantityMap) {
+        for (Thing thing : thingQuantityMap.keySet()) {
+            storageUnit.removeFromStock(thing.getThingId(), thingQuantityMap.get(thing));
+            storageUnitRepository.save(storageUnit);
+        }
     }
 
 
@@ -63,7 +54,7 @@ public class InventoryFulfillmentService implements InventoryServiceInterface {
 
             StorageUnitId storageId = sortedStorageUnitIds.getFirst();
             StorageUnit storageUnit = findById(storageId.getId());
-            if (storageUnit == null) continue;
+            if (storageUnit == null) break;
 
             Map<Thing, Integer> servableItems = storageUnit.getServableItems(remainingItems);
             if (!servableItems.isEmpty()) {
@@ -80,43 +71,12 @@ public class InventoryFulfillmentService implements InventoryServiceInterface {
     public List<StorageUnitId> sortStorageUnits(List<StorageUnit> storageUnits,
                                                 Map<Thing, Integer> unfulfilledItems,
                                                 ZipCode clientZipCode) {
-
-        // Step 1: Define comparators
-        Comparator<StorageUnit> byContributingItems = Comparator
-                .comparingInt((StorageUnit su) -> su.getTotalContributingItems(unfulfilledItems))
-                .reversed();
-
-        Comparator<StorageUnit> byAvailableStock = Comparator
-                .comparingInt((StorageUnit su) -> su.getAvailableStocks(unfulfilledItems))
-                .reversed();
-
-        Comparator<StorageUnit> byDistance = Comparator
-                .comparingInt(su -> su.getDistanceToClient(clientZipCode));
-
-        // Step 2: Check if any storage unit can fulfill all items
-        List<StorageUnit> fullCoverageUnits = storageUnits.stream()
-                .filter(su -> su.areItemsFulfilled(unfulfilledItems))
-                .toList();
-
-        if (!fullCoverageUnits.isEmpty()) {
-            // If at least one unit can fulfill all items, sort them only by distance (closer is better)
-            return fullCoverageUnits.stream()
-                    .sorted(byDistance)
-                    .map(StorageUnit::getStorageId)
-                    .toList();
-        }
-
-        // Step 3: Otherwise, sort all units based on:
-        // 1. Contributing items count (more is better)
-        // 2. Available stock for those items (more is better)
-        // 3. Distance to client (less is better)
         return storageUnits.stream()
-                .sorted(byContributingItems
-                        .thenComparing(byAvailableStock)
-                        .thenComparing(byDistance))
+                .sorted(new StorageUnitComparator(unfulfilledItems, clientZipCode))
                 .map(StorageUnit::getStorageId)
                 .toList();
     }
+
 
     public int getAvailableInventory(UUID thingId) {
         List<StorageUnit> storageUnits = findAll();
@@ -133,7 +93,6 @@ public class InventoryFulfillmentService implements InventoryServiceInterface {
     }
 
     @Override
-
     public void deleteAllStockLevel() {
         stockLevelRepository.deleteAll();
         log.info("Deleted all stock levels");

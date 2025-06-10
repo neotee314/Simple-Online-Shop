@@ -21,7 +21,7 @@ import java.util.*;
 public class DeliveryPackageService {
 
     private final DeliveryPackageRepository deliveryPackageRepository;
-    private final InventoryFulfillmentService storageUnitService;
+    private final InventoryFulfillmentService inventoryFulfillmentService;
     private final OrderService orderService;
 
 
@@ -30,21 +30,21 @@ public class DeliveryPackageService {
         Order order = orderService.findById(orderId);
         ZipCode clientZipCode = orderService.findClientZipCode(orderId);
 
-        List<StorageUnitId> storageIds = storageUnitService.getContributingStorageUnit(items, clientZipCode);
+
+        List<StorageUnitId> storageIds = inventoryFulfillmentService.getContributingStorageUnit(items, clientZipCode);
         List<DeliveryPackage> deliveryPackages = new ArrayList<>();
 
         for (StorageUnitId storageId : storageIds) {
-            StorageUnit storageUnit = storageUnitService.findById(storageId.getId());
+            StorageUnit storageUnit = inventoryFulfillmentService.findById(storageId.getId());
 
             Map<Thing, Integer> partItems = storageUnit.getServableItems(items);
 
-
-            if (partItems.isEmpty()) continue;
+            if (partItems.isEmpty()) break;
 
             DeliveryPackage deliveryPackage = new DeliveryPackage(storageUnit, order);
             deliveryPackage.createParts(partItems);
 
-            storageUnitService.removeFromStock(partItems);
+            inventoryFulfillmentService.removeFromStock(storageUnit, partItems);
 
             items.keySet().removeAll(partItems.keySet());
 

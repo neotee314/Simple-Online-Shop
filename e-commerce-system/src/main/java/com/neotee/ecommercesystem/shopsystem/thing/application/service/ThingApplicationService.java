@@ -3,8 +3,9 @@ package com.neotee.ecommercesystem.shopsystem.thing.application.service;
 import com.neotee.ecommercesystem.domainprimitives.Money;
 import com.neotee.ecommercesystem.exception.EntityIdNullException;
 import com.neotee.ecommercesystem.exception.ValueObjectNullOrEmptyException;
+import com.neotee.ecommercesystem.shopsystem.thing.application.dto.RequestThingDTO;
+import com.neotee.ecommercesystem.shopsystem.thing.application.dto.ResponseThingDTO;
 import com.neotee.ecommercesystem.shopsystem.thing.application.dto.SalesPriceDTO;
-import com.neotee.ecommercesystem.shopsystem.thing.application.dto.ThingDTO;
 import com.neotee.ecommercesystem.shopsystem.thing.application.mapper.ThingMapper;
 import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
 import com.neotee.ecommercesystem.shopsystem.thing.domain.ThingId;
@@ -26,19 +27,19 @@ public class ThingApplicationService {
     private final ThingMapper thingMapper;
     private final ThingCatalogService thingCatalogService;
 
-    public List<ThingDTO> searchThingsByName(String name) {
+    public List<ResponseThingDTO> searchThingsByName(String name) {
         if (name == null || name.isEmpty()) throw new ValueObjectNullOrEmptyException();
-        List<ThingDTO> thingDTOs = new ArrayList<>();
+        List<ResponseThingDTO> responseThingDTOS = new ArrayList<>();
         List<Thing> things = thingRepository.findByName(name);
         for (Thing thing : things) {
-            ThingDTO thingDTO = new ThingDTO();
-            thingDTO = thingMapper.toDTO(thing);
-            thingDTOs.add(thingDTO);
+            ResponseThingDTO responseThingDTO = new ResponseThingDTO();
+            responseThingDTO = thingMapper.toDTO(thing);
+            responseThingDTOS.add(responseThingDTO);
         }
-        return thingDTOs;
+        return responseThingDTOS;
     }
 
-    public ThingDTO getThingById(UUID thingId) {
+    public ResponseThingDTO getThingById(UUID thingId) {
         if (thingId == null) throw new EntityIdNullException();
         Thing thing = thingRepository.findByThingId(new ThingId(thingId));
         return thingMapper.toDTO(thing);
@@ -68,21 +69,22 @@ public class ThingApplicationService {
         thingCatalogService.deleteThingCatalog();
     }
 
-    public void addThingToCatalog(ThingDTO dto) {
+    public void addThingToCatalog(RequestThingDTO dto) {
         if (dto == null) throw new ValueObjectNullOrEmptyException();
         MoneyType salesPrice = Money.of(dto.getSalePrice(),"EUR");
         MoneyType purchasePrice = Money.of(dto.getPurchasePrice(),"EUR");
-        thingCatalogService.addThingToCatalog(dto.getId(),dto.getName(),dto.getDescription(),dto.getSize(),
+        UUID thingId = UUID.randomUUID();
+        thingCatalogService.addThingToCatalog(thingId,dto.getName(),dto.getDescription(),dto.getSize(),
                 salesPrice,purchasePrice);
 
     }
 
-    public List<ThingDTO> getAllThings() {
+    public List<ResponseThingDTO> getAllThings() {
         List<Thing> things = thingRepository.findAll();
-        List<ThingDTO> thingDTOs = new ArrayList<>();
+        List<ResponseThingDTO> responseThingDTOS = new ArrayList<>();
         for (Thing thing : things) {
-            thingDTOs.add(thingMapper.toDTO(thing));
+            responseThingDTOS.add(thingMapper.toDTO(thing));
         }
-        return thingDTOs;
+        return responseThingDTOS;
     }
 }

@@ -30,19 +30,17 @@ public class DeliveryPackageUseCaseService implements DeliveryPackageUseCases {
         if (deliveryPackages.isEmpty()) throw new EntityNotFoundException();
 
         // List to store IDs of storage units contributing to this order
-        List<UUID> contributingStorageUnits = new ArrayList<>();
+        Set<UUID> contributingStorageUnits = new HashSet<>();
 
         // Add the storage unit ID of each DeliveryPackage to the list
         for (DeliveryPackage deliveryPackage : deliveryPackages) {
             UUID storageUnitId = deliveryPackage.getStorageUnitId();
 
-            // Add only if not already in the list
-            if (!contributingStorageUnits.contains(storageUnitId)) {
                 contributingStorageUnits.add(storageUnitId);
-            }
+
         }
 
-        return contributingStorageUnits;
+        return contributingStorageUnits.stream().toList();
     }
 
     @Override

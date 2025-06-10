@@ -1,6 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.thing.application.mapper;
 
-import com.neotee.ecommercesystem.shopsystem.thing.application.dto.ThingDTO;
+import com.neotee.ecommercesystem.shopsystem.thing.application.dto.ResponseThingDTO;
 import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
 import com.neotee.ecommercesystem.shopsystem.thing.domain.ThingId;
 import com.neotee.ecommercesystem.domainprimitives.Money;
@@ -15,12 +15,12 @@ public interface ThingMapper {
     @Mapping(source = "id", target = "thingId", qualifiedByName = "uuidToThingId")
     @Mapping(source = "purchasePrice", target = "purchasePrice", qualifiedByName = "floatToMoney")
     @Mapping(source = "salePrice", target = "salesPrice", qualifiedByName = "floatToMoney")
-    Thing toEntity(ThingDTO dto);
+    Thing toEntity(ResponseThingDTO dto);
 
     @Mapping(source = "thingId", target = "id", qualifiedByName = "thingIdToUuid")
     @Mapping(source = "purchasePrice", target = "purchasePrice", qualifiedByName = "moneyToFloat")
     @Mapping(source = "salesPrice", target = "salePrice", qualifiedByName = "moneyToFloat")
-    ThingDTO toDTO(Thing entity);
+    ResponseThingDTO toDTO(Thing entity);
 
 
     @Named("uuidToThingId")

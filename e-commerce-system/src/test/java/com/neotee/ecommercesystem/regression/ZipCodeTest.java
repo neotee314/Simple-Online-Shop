@@ -134,7 +134,7 @@ class ZipCodeTest {
         int diff5b = _01234.difference(_01238);
         int diff4a = _01234.difference(_01263);
         int diff4b = _01234.difference(_01213);
-        int diff3a = _01234.difference(_01823);
+        int diff3a = _01234.difference(_01823);//<_01234.difference(_04233);
         int diff3b = _01234.difference(_01312);
         int diff2a = _01234.difference(_04233);
         int diff2b = _01234.difference(_02544);

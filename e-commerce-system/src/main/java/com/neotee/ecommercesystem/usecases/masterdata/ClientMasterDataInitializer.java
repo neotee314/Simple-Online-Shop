@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * This is a test helper class that initializes and registers clients in the system,
  * using the given interface(s).
  */
-@Component
+
 @Slf4j
 @SuppressWarnings("PMD")
 public class ClientMasterDataInitializer {

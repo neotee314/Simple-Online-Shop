@@ -5,8 +5,7 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
-public class ThingDTO {
-    private UUID id;
+public class RequestThingDTO {
     private String name;
     private String description;
     private Float size;

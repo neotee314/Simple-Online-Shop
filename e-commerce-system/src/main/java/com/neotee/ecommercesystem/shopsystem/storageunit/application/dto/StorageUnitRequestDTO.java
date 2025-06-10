@@ -11,10 +11,8 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StorageUnitDTO {
-    private UUID storageId;
+public class StorageUnitRequestDTO {
     private String name;
     private HomeAddress address;
-    private List<StockLevelDTO> stockLevels;
 }
 

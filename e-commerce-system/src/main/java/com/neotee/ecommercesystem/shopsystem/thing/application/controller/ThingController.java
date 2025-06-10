@@ -1,7 +1,8 @@
 package com.neotee.ecommercesystem.shopsystem.thing.application.controller;
 
+import com.neotee.ecommercesystem.shopsystem.thing.application.dto.RequestThingDTO;
 import com.neotee.ecommercesystem.shopsystem.thing.application.dto.SalesPriceDTO;
-import com.neotee.ecommercesystem.shopsystem.thing.application.dto.ThingDTO;
+import com.neotee.ecommercesystem.shopsystem.thing.application.dto.ResponseThingDTO;
 import com.neotee.ecommercesystem.shopsystem.thing.application.service.ThingApplicationService;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,20 +24,20 @@ public class ThingController {
 
     @Operation(summary = "Get all Things")
     @GetMapping("/all")
-    public ResponseEntity<List<ThingDTO>> getAllThings() {
+    public ResponseEntity<List<ResponseThingDTO>> getAllThings() {
         return ResponseEntity.ok(thingApplicationService.getAllThings());
     }
 
 
     @Operation(summary = "Search things by name")
     @GetMapping
-    public ResponseEntity<List<ThingDTO>> searchThingsByName(@RequestParam(value = "name", required = false) String name) {
+    public ResponseEntity<List<ResponseThingDTO>> searchThingsByName(@RequestParam(value = "name", required = false) String name) {
         return ResponseEntity.ok(thingApplicationService.searchThingsByName(name));
     }
 
     @Operation(summary = "Get thing by ID")
     @GetMapping("/{thing-id}")
-    public ResponseEntity<ThingDTO> getThingById(@PathVariable("thing-id") UUID thingId) {
+    public ResponseEntity<ResponseThingDTO> getThingById(@PathVariable("thing-id") UUID thingId) {
         return ResponseEntity.ok(thingApplicationService.getThingById(thingId));
     }
 
@@ -50,7 +51,7 @@ public class ThingController {
 
     @Operation(summary = "Add thing to catalog")
     @PostMapping
-    public ResponseEntity<Void> addThingToCatalog(@RequestBody ThingDTO dto) {
+    public ResponseEntity<Void> addThingToCatalog(@RequestBody RequestThingDTO dto) {
         thingApplicationService.addThingToCatalog(dto);
         return ResponseEntity.noContent().build();
     }

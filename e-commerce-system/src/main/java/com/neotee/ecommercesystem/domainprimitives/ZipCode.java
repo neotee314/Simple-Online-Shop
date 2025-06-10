@@ -44,46 +44,42 @@ public class ZipCode implements ZipCodeType {
 
     @Override
     public int difference(ZipCodeType otherZipCode) throws ShopException {
-        if (otherZipCode == null) {
-            throw new ShopException("otherZipCode cannot be null");
+        if (otherZipCode == null) throw new ShopException("Invalid zip code");
+        String thisZip = this.toString();
+        String otherZip = otherZipCode.toString();
+
+        if (thisZip.length() != otherZip.length()) {
+            throw new ShopException("Zip codes must be of same length");
         }
 
-        String zip1 = this.zipCode;
-        String zip2 = otherZipCode.toString();
+        int firstDiffPos = -1;
+        for (int i = 0; i < thisZip.length(); i++) {
+            if (thisZip.charAt(i) != otherZip.charAt(i)) {
+                firstDiffPos = i;
+                break;
+            }
+        }
 
-        if (zip1.equals(zip2)) {
+        if (firstDiffPos == -1) {
             return 0;
         }
 
-        int length = Math.min(zip1.length(), zip2.length());
-        int difference = 0;
+        // Base difference based on position (more left = more significant)
+        int positionDifference = (thisZip.length() - firstDiffPos) * 1000;
 
-        // Calculate differences from the right
-        for (int i = 1; i <= length; i++) {
-            char char1 = zip1.charAt(zip1.length() - i);
-            char char2 = zip2.charAt(zip2.length() - i);
+        if (firstDiffPos == 0) {
+            int thisDigit = Character.getNumericValue(thisZip.charAt(0));
+            int otherDigit = Character.getNumericValue(otherZip.charAt(0));
 
-            if (char1 != char2) {
-                difference += 1;
-            }
+            // Calculate circular distance (0 and 9 are adjacent)
+            int digitDiff = Math.abs(thisDigit - otherDigit);
+            digitDiff = Math.min(digitDiff, 10 - digitDiff);
+
+            // Add distance to base (closer digits = smaller total difference)
+            return positionDifference + digitDiff;
         }
 
-        // Consider regional proximity for the first digit
-        if (zip1.length() > 0 && zip2.length() > 0) {
-            char firstChar1 = zip1.charAt(0);
-            char firstChar2 = zip2.charAt(0);
-
-            if (firstChar1 != firstChar2) {
-                int regionDifference = Math.min(Math.abs(firstChar1 - firstChar2), 10 - Math.abs(firstChar1 - firstChar2));
-                difference += regionDifference * 10; // Scale it to reflect regional importance
-            }
-            if ( firstChar1 == firstChar2 && zip1.charAt(1)!=zip2.charAt(1)) {
-                // If only the first digit differs, return 5
-                return 1000000;
-            }
-        }
-
-        return difference;
+        return positionDifference;
     }
 
 

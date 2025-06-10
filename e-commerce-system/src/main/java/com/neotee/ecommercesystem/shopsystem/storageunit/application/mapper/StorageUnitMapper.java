@@ -1,6 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.storageunit.application.mapper;
 
-import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.StorageUnitDTO;
+import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.StorageUnitResponseDTO;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnit;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnitId;
 import org.mapstruct.Mapper;
@@ -14,10 +14,10 @@ import java.util.UUID;
 public abstract class StorageUnitMapper {
 
     @Mapping(target = "storageId", source = "storageId", qualifiedByName = "mapStorageUnitIdToUUID")
-    public abstract StorageUnitDTO toDto(StorageUnit storageUnit);
+    public abstract StorageUnitResponseDTO toDto(StorageUnit storageUnit);
 
     @Mapping(target = "storageId", source = "storageId", qualifiedByName = "mapUUIDToStorageUnitId")
-    public abstract StorageUnit toEntity(StorageUnitDTO storageUnitDTO);
+    public abstract StorageUnit toEntity(StorageUnitResponseDTO storageUnitResponseDTO);
 
     @Named("mapStorageUnitIdToUUID")
     public UUID mapStorageUnitIdToUUID(StorageUnitId storageUnitId) {

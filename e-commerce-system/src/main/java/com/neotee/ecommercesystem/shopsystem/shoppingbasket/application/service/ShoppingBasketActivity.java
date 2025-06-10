@@ -5,6 +5,7 @@ import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBaske
 import java.util.UUID;
 
 public class ShoppingBasketActivity implements ShoppingBasketActivityInterface {
+
     @Override
     public void processEmpty() {
 
