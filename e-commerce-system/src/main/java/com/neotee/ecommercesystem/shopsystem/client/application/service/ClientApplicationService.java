@@ -9,7 +9,6 @@ import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
 import com.neotee.ecommercesystem.shopsystem.client.domain.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

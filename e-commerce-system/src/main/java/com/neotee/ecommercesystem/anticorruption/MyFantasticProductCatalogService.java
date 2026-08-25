@@ -48,6 +48,6 @@ public class MyFantasticProductCatalogService implements ProductCatalogUseCases 
 
     @Override
     public void deleteProductCatalog() {
-        productRepository.deleteAll();
+        productApplicationService.deleteAllProducts();
     }
 }

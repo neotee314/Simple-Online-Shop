@@ -1,17 +1,19 @@
 package com.neotee.ecommercesystem.regression;
 
+import com.neotee.ecommercesystem.ClientMasterDataInitializer;
+import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
+import com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.neotee.ecommercesystem.usecases.masterdata.*;
 import com.neotee.ecommercesystem.usecases.*;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
 
-import static com.neotee.ecommercesystem.usecases.masterdata.ClientMasterDataInitializer.CLIENT_EMAIL;
-import static com.neotee.ecommercesystem.usecases.masterdata.ThingAndStockMasterDataInitializer.THING_DATA;
-import static com.neotee.ecommercesystem.usecases.masterdata.ThingAndStockMasterDataInitializer.STORAGE_UNIT_ID;
+import static com.neotee.ecommercesystem.ClientMasterDataInitializer.CLIENT_EMAIL;
+import static com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer.THING_DATA;
+import static com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer.STORAGE_UNIT_ID;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;

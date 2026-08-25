@@ -1,8 +1,8 @@
 package com.neotee.ecommercesystem.shopsystem.payment.domain;
 
-import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.Money;
+import com.neotee.ecommercesystem.exceptions.ShopException;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

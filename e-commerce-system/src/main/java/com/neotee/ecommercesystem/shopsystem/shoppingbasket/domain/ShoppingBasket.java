@@ -14,7 +14,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "shopping_basket")
@@ -22,8 +21,7 @@ import java.util.stream.Collectors;
 @Getter
 public class ShoppingBasket extends AggregateRoot<ShoppingBasketId> {
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id", nullable = false, unique = true)
+    @OneToOne
     private Client client;
 
     @Enumerated(EnumType.STRING)
@@ -78,6 +76,16 @@ public class ShoppingBasket extends AggregateRoot<ShoppingBasketId> {
         updateBasketState();
     }
 
+    public void removeItem(Product product) {
+        if (product == null)
+            throw new DomainValidationException("ShoppingBasket", "Product darf nicht null sein.");
+        var part = findPartByProduct(product);
+        if (part == null)
+            throw new DomainValidationException("ShoppingBasket", "Produkt nicht im Warenkorb gefunden.");
+        parts.remove(part);
+        updateBasketState();
+    }
+
     public void removeItem(Product product, Integer quantity) {
         if (product == null)
             throw new DomainValidationException("ShoppingBasket", "Product darf nicht null sein.");
@@ -97,17 +105,6 @@ public class ShoppingBasket extends AggregateRoot<ShoppingBasketId> {
             throw new DomainValidationException("ShoppingBasket", "Kann nicht mehr entfernen als vorhanden ist.");
         }
         updateBasketState();
-    }
-
-    public void removeItem(Product product) {
-        if (product == null)
-            throw new DomainValidationException("ShoppingBasket", "Product darf nicht null sein.");
-
-        var part = findPartByProduct(product);
-        if (part != null) {
-            parts.remove(part);
-            updateBasketState();
-        }
     }
 
     public void clear() {
@@ -131,10 +128,6 @@ public class ShoppingBasket extends AggregateRoot<ShoppingBasketId> {
         if (product == null)
             throw new DomainValidationException("ShoppingBasket", "Product darf nicht null sein.");
         return findPartByProduct(product) != null;
-    }
-
-    public int getPartCount() {
-        return parts.size();
     }
 
     public int getTotalQuantity() {

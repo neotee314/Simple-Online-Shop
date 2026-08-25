@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.persistence.*;
 
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+import static guru.nidi.codeassert.model.Scope.classes;
 
 @ArchTag("layerRules")
 @AnalyzeClasses(packages = "com.neotee.ecommercesystem.shopsystem")

@@ -1,6 +1,7 @@
 package com.neotee.ecommercesystem.shopsystem.order.domain;
 
 import com.neotee.ecommercesystem.core.AggregateRoot;
+import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.OrderId;
 import com.neotee.ecommercesystem.domainprimitives.OrderStatus;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;

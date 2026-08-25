@@ -1,31 +1,49 @@
 package com.neotee.ecommercesystem.shopsystem.storageunit.application.mapper;
 
+import com.neotee.ecommercesystem.domainprimitives.ProductId;
+import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;
+import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.StockLevelResponseDTO;
 import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.StorageUnitResponseDTO;
+import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StockLevel;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnit;
-import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnitId;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-import org.mapstruct.ReportingPolicy;
+import org.springframework.stereotype.Component;
 
-import java.util.UUID;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, uses = {StockLevelMapper.class})
-public abstract class StorageUnitMapper {
+@Component
+public class StorageUnitMapper {
 
-    @Mapping(target = "storageId", source = "storageId", qualifiedByName = "mapStorageUnitIdToUUID")
-    public abstract StorageUnitResponseDTO toDto(StorageUnit storageUnit);
+    public StorageUnitResponseDTO toResponseDTO(StorageUnit storageUnit) {
+        if (storageUnit == null) {
+            return null;
+        }
 
-    @Mapping(target = "storageId", source = "storageId", qualifiedByName = "mapUUIDToStorageUnitId")
-    public abstract StorageUnit toEntity(StorageUnitResponseDTO storageUnitResponseDTO);
+        var stockLevels = storageUnit.getStockLevels().stream()
+                .map(this::toStockLevelResponseDTO)
+                .collect(Collectors.toList());
 
-    @Named("mapStorageUnitIdToUUID")
-    public UUID mapStorageUnitIdToUUID(StorageUnitId storageUnitId) {
-        return storageUnitId.getId();
+        return new StorageUnitResponseDTO(
+                storageUnit.getId(),
+                storageUnit.getName(),
+                storageUnit.getAddress() != null ? storageUnit.getAddress().getStreet() : null,
+                storageUnit.getAddress() != null ? storageUnit.getAddress().getCity() : null,
+                storageUnit.getAddress() != null && storageUnit.getAddress().getZipCode() != null
+                        ? storageUnit.getAddress().getZipCode().getZipCode()
+                        : null,
+                stockLevels
+        );
     }
 
-    @Named("mapUUIDToStorageUnitId")
-    public StorageUnitId mapUUIDToStorageUnitId(UUID uuid) {
-        return new StorageUnitId(uuid);
+    public StockLevelResponseDTO toStockLevelResponseDTO(StockLevel stockLevel) {
+        if (stockLevel == null) {
+            return null;
+        }
+
+        return new StockLevelResponseDTO(
+                stockLevel.getProduct() != null ? stockLevel.getProduct().getId() : null,
+                stockLevel.getProduct() != null ? stockLevel.getProduct().getName() : null,
+                stockLevel.getQuantityInStock()
+        );
     }
 }

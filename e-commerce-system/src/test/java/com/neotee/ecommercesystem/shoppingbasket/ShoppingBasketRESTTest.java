@@ -2,24 +2,26 @@ package com.neotee.ecommercesystem.shoppingbasket;
 
 
 import com.neotee.ecommercesystem.*;
-import com.neotee.ecommercesystem.usecases.masterdata.*;
 import jakarta.transaction.Transactional;
+import com.neotee.ecommercesystem.ClientMasterDataInitializer;
+import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
+import com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import com.neotee.ecommercesystem.usecases.*;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.neotee.ecommercesystem.usecases.masterdata.ThingAndStockMasterDataInitializer.*;
+import static com.neotee.ecommercesystem.ThingAndStockTestHelper.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static com.neotee.ecommercesystem.usecases.masterdata.ClientMasterDataInitializer.CLIENT_EMAIL;
+import static com.neotee.ecommercesystem.ClientMasterDataInitializer.CLIENT_EMAIL;
 import static com.neotee.ecommercesystem.usecases.masterdata.FactoryMethodInvoker.instantiateEmail;
 
 import java.util.*;
@@ -78,11 +80,11 @@ public class ShoppingBasketRESTTest {
     @Test
     public void testInvalidShoppingBasketBaseUris() throws Exception {
         // given
-        String allShoppingBasketsUri = "/shoppingBaskets";
-        String randomIdUri = "/shoppingBaskets/" + UUID.randomUUID();
-        String randomClientUUID = "/shoppingBaskets?clientId=" + UUID.randomUUID();
+        String allShoppingBasketsUri = "/api/v1/shoppingBaskets";
+        String randomIdUri = "/api/v1/shoppingBaskets/" + UUID.randomUUID();
+        String randomClientUUID = "/api/v1/shoppingBaskets?clientId=" + UUID.randomUUID();
         String invalidClientUUID = "/shoppingCarts?customerId=" + "invalidUUID";
-        String randomParamUri = "/shoppingBaskets?randomParam=randomValue";
+        String randomParamUri = "/api/v1/shoppingBaskets?randomParam=randomValue";
 
         // when
         // then
@@ -99,8 +101,8 @@ public class ShoppingBasketRESTTest {
         // given
         EmailType clientEmail8 = CLIENT_EMAIL[8];
         UUID shoppingBasketId8 = shoppingBasketRESTHelper.getQueryShoppingBasket(clientEmail8);
-        String randomShoppingBasketPartUri = "/shoppingBaskets/" + shoppingBasketId8.toString() + "/random";
-        String randomThingUri = "/shoppingBaskets/" + shoppingBasketId8.toString()
+        String randomShoppingBasketPartUri = "/api/v1/shoppingBaskets/" + shoppingBasketId8.toString() + "/random";
+        String randomThingUri = "/api/v1/shoppingBaskets/" + shoppingBasketId8.toString()
                 + "/parts/" + UUID.randomUUID();
 
         // when

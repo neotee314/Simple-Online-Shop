@@ -1,5 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.service;
 
+import com.neotee.ecommercesystem.domainprimitives.ClientId;
 import com.neotee.ecommercesystem.domainprimitives.OrderId;
 import com.neotee.ecommercesystem.domainprimitives.ProductId;
 import com.neotee.ecommercesystem.domainprimitives.ShoppingBasketId;
@@ -11,6 +12,7 @@ import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.port.out
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasket;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketPart;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketRepository;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.port.out.FindProductForShoppingBasketPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,14 +25,26 @@ public class ShoppingBasketApplicationService {
 
     private final ShoppingBasketRepository basketRepository;
     private final CreateOrderPort createOrderPort;
+    private final FindProductForShoppingBasketPort findProductPort;
 
-    public ShoppingBasket getBasketByClientId(Client client) {
+    public ShoppingBasket getBasketByClient(Client client) {
         return findOrCreateBasket(client);
     }
 
+    public ShoppingBasket getBasketByClientId(ClientId clientId) {
+        return basketRepository.findByClientId(clientId).orElseThrow(() -> new EntityNotFoundException("ShoppingBasketApplicationService",
+                "Basket for this client does not exist"));
+    }
 
     public ShoppingBasket addItem(Client client, Product product, Integer quantity) {
         var basket = findOrCreateBasket(client);
+        basket.addItem(product, quantity);
+        return basketRepository.save(basket);
+    }
+
+    public ShoppingBasket addItem(ShoppingBasketId basketId, ProductId productId, Integer quantity) {
+        var basket = findBasketById(basketId);
+        var product = findProductPort.findById(productId);
         basket.addItem(product, quantity);
         return basketRepository.save(basket);
     }
@@ -41,6 +55,26 @@ public class ShoppingBasketApplicationService {
                 "Basket for this client does not exist"));
         basket.removeItem(product, quantity);
         return basketRepository.save(basket);
+    }
+
+    public ShoppingBasket removeItem(ShoppingBasketId basketId, ProductId productId) {
+        var basket = findBasketById(basketId);
+        var product = findProductPort.findById(productId);
+        basket.removeItem(product);
+        return basketRepository.save(basket);
+    }
+
+    public ShoppingBasket removeItemWithQuantity(ShoppingBasketId basketId, ProductId productId, int quantity) {
+        var basket = findBasketById(basketId);
+        var product = findProductPort.findById(productId);
+        basket.removeItem(product,quantity);
+        return basketRepository.save(basket);
+    }
+
+    public void clearBasket(ShoppingBasketId basketId) {
+        var basket = findBasketById(basketId);
+        basketRepository.delete(basket);
+
     }
 
     public OrderId checkout(ShoppingBasketId basketId) {
@@ -92,6 +126,7 @@ public class ShoppingBasketApplicationService {
                         ShoppingBasketPart::getQuantity
                 ));
     }
+
     public Integer getReservedQuantityForProduct(ProductId productId) {
         if (productId == null)
             throw new DomainValidationException("ShoppingBasketApplicationService", "Product ID darf nicht null sein.");
@@ -100,5 +135,13 @@ public class ShoppingBasketApplicationService {
                 .mapToInt(basket -> basket.getReservedQuantityForProduct(productId))
                 .sum();
     }
+
+
+    public ShoppingBasket getBasketById(ShoppingBasketId shoppingBasketId) {
+        return basketRepository.findById(shoppingBasketId).orElseThrow(() -> new EntityNotFoundException("ShoppingBasketApplicationService",
+                "Basket for this client does not exist"));
+    }
+
+
 
 }

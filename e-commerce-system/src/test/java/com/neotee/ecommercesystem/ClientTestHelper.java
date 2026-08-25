@@ -2,7 +2,7 @@ package com.neotee.ecommercesystem;
 
 
 
-import com.neotee.ecommercesystem.exception.ShopException;
+import com.neotee.ecommercesystem.exceptions.ShopException;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.neotee.ecommercesystem.usecases.*;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;

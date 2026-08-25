@@ -1,71 +1,45 @@
 package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.mapper;
 
-import com.neotee.ecommercesystem.domainprimitives.OrderId;
-import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.dto.DeliveryPackageDTO;
-import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.dto.DeliveryPackagePartDTO;
+import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.dto.DeliveryPackagePartResponseDTO;
+import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.dto.DeliveryPackageResponseDTO;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackage;
-import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackageId;
-import com.neotee.ecommercesystem.shopsystem.order.domain.Order;
-import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnit;
-import org.mapstruct.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackagePart;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring", uses = {DeliveryPackagePartMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public abstract class DeliveryPackageMapper {
+@Component
+public class DeliveryPackageMapper {
 
-    @Autowired
-    protected DeliveryPackagePartMapper deliveryPackagePartMapper;
+    public DeliveryPackageResponseDTO toResponseDTO(DeliveryPackage deliveryPackage) {
+        if (deliveryPackage == null) {
+            return null;
+        }
 
-    @Mapping(target = "id", source = "id", qualifiedByName = "mapDeliveryPackageIdToUUID")
-    @Mapping(target = "storageUnitId", source = "storageUnit.storageId.id")
-    @Mapping(target = "orderId", source = "order.orderId.id")
-    public abstract DeliveryPackageDTO toDto(DeliveryPackage entity);
+        var partDTOs = deliveryPackage.getParts().stream()
+                .map(this::toPartResponseDTO)
+                .collect(Collectors.toList());
 
-    // Wenn du von DTO zurück zu Entity mappen willst
-    @Mapping(target = "id", source = "id", qualifiedByName = "mapUUIDToDeliveryPackageId")
-    @Mapping(target = "storageUnit", source = "storageUnitId", qualifiedByName = "mapUUIDToStorageUnit")
-    @Mapping(target = "order", source = "orderId", qualifiedByName = "mapUUIDToOrder")
-    public abstract DeliveryPackage toEntity(DeliveryPackageDTO dto);
-
-    @Named("mapUUIDToDeliveryPackageId")
-    public DeliveryPackageId mapUUIDToDeliveryPackageId(UUID id) {
-        return new DeliveryPackageId(id);
+        return new DeliveryPackageResponseDTO(
+                deliveryPackage.getId(),
+                deliveryPackage.getOrder().getId(),
+                deliveryPackage.getStorageUnitId(),
+                partDTOs,
+                deliveryPackage.getTotalQuantity(),
+                deliveryPackage.getPartCount()
+        );
     }
 
-    @Named("mapDeliveryPackageIdToUUID")
-    public UUID mapDeliveryPackageIdToUUID(DeliveryPackageId id) {
-        return id.getId();
-    }
+    public DeliveryPackagePartResponseDTO toPartResponseDTO(DeliveryPackagePart part) {
+        if (part == null) {
+            return null;
+        }
 
-    @Named("mapUUIDToStorageUnit")
-    public StorageUnit mapUUIDToStorageUnit(UUID id) {
-        StorageUnit su = new StorageUnit();
-        su.setStorageId(new com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnitId(id));
-        return su;
-    }
-
-    @Named("mapUUIDToOrder")
-    public Order mapUUIDToOrder(UUID id) {
-        Order order = new Order();
-        order.setOrderId(new OrderId(id));
-        return order;
-    }
-
-    public DeliveryPackageDTO mapToDto(UUID orderId, UUID storageUnitId, Map<UUID, Integer> contents) {
-        DeliveryPackageDTO dto = new DeliveryPackageDTO();
-        dto.setId(UUID.randomUUID());
-        dto.setOrderId(orderId);
-        dto.setStorageUnitId(storageUnitId);
-
-        List<DeliveryPackagePartDTO> parts = contents.entrySet().stream()
-                .map(entry -> deliveryPackagePartMapper.map(entry.getKey(), entry.getValue()))
-                .toList();
-
-        dto.setDeliveryPackageParts(parts);
-        return dto;
+        return new DeliveryPackagePartResponseDTO(
+                part.getProduct().getId(),
+                part.getProduct().getName(),
+                part.getQuantity()
+        );
     }
 }

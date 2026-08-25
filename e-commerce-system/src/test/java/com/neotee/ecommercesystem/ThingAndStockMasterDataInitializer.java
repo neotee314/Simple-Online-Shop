@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.usecases.masterdata;
+package com.neotee.ecommercesystem;
 
 
 import com.neotee.ecommercesystem.usecases.StorageUnitUseCases;
@@ -7,6 +7,7 @@ import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
@@ -17,6 +18,7 @@ import java.util.*;
 
 @Slf4j
 @SuppressWarnings("PMD")
+@Component
 public class ThingAndStockMasterDataInitializer {
 
     private ProductCatalogUseCases productCatalogUseCases;

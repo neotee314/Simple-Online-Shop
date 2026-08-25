@@ -5,23 +5,23 @@ import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
 import com.neotee.ecommercesystem.usecases.ClientType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
-import com.neotee.ecommercesystem.usecases.masterdata.ClientMasterDataInitializer;
+import com.neotee.ecommercesystem.ClientMasterDataInitializer;
 import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.UUID;
 
 import static com.neotee.ecommercesystem.ClientTestHelper.CLIENT_NAME;
-import static com.neotee.ecommercesystem.usecases.masterdata.ClientMasterDataInitializer.CLIENT_ADDRESS;
-import static com.neotee.ecommercesystem.usecases.masterdata.ClientMasterDataInitializer.CLIENT_EMAIL;
+import static com.neotee.ecommercesystem.ClientMasterDataInitializer.CLIENT_ADDRESS;
+import static com.neotee.ecommercesystem.ClientMasterDataInitializer.CLIENT_EMAIL;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -59,10 +59,10 @@ public class ClientRESTTest {
     @Test
     public void testInvalidClientUris() throws Exception {
         // given
-        String allClientsUri = "/clients";
-        String randomIdUri = "/clients/" +  randomId;
-        String nonExistingEmailUri = "/clients?email=" + nonExistingEmail;
-        String randomParamUri = "/clients?randomParam=randomValue";
+        String allClientsUri = "/api/v1/clients";
+        String randomIdUri = "/api/v1/clients/" +  randomId;
+        String nonExistingEmailUri = "/api/v1/clients?email=" + nonExistingEmail;
+        String randomParamUri = "/api/v1/clients?randomParam=randomValue";
 
         // when
         // then
@@ -76,7 +76,7 @@ public class ClientRESTTest {
     @Test
     public void testRandomClientId() throws Exception {
         // given
-        String invalidUri = "/clients/" +  randomId;
+        String invalidUri = "/api/v1/clients/" +  randomId;
 
         // when
         // then
@@ -88,7 +88,7 @@ public class ClientRESTTest {
     public void testQueryClient() throws Exception {
         // given
         EmailType email4 = CLIENT_EMAIL[4];
-        String clientUri4 = "/clients?email=" + email4;
+        String clientUri4 = "/api/v1/clients?email=" + email4;
 
         // when
         ClientType client4 = clientRegistrationUseCases.getClientData( email4 );

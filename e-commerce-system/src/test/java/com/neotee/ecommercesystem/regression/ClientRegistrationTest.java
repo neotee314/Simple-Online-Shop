@@ -1,16 +1,16 @@
 package com.neotee.ecommercesystem.regression;
 
-import com.neotee.ecommercesystem.exception.ShopException;
+import com.neotee.ecommercesystem.exceptions.ShopException;
 import com.neotee.ecommercesystem.usecases.*;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
-import com.neotee.ecommercesystem.usecases.masterdata.*;
+import com.neotee.ecommercesystem.ClientMasterDataInitializer;
+import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static com.neotee.ecommercesystem.usecases.masterdata.ClientMasterDataInitializer.*;
-import static com.neotee.ecommercesystem.usecases.masterdata.ClientMasterDataInitializer.CLIENT_EMAIL;
+import static com.neotee.ecommercesystem.ClientMasterDataInitializer.*;
 import static com.neotee.ecommercesystem.usecases.masterdata.FactoryMethodInvoker.instantiateEmail;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class ClientRegistrationTest {
     @Autowired
     private ClientRegistrationUseCases clientRegistrationUseCases;
+
     @Autowired
     private Purgatory purgatory;
 

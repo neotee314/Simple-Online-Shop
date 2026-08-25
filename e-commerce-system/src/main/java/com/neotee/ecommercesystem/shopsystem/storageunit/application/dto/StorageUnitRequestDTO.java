@@ -1,18 +1,18 @@
 package com.neotee.ecommercesystem.shopsystem.storageunit.application.dto;
 
-import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-import java.util.List;
-import java.util.UUID;
+public record StorageUnitRequestDTO(
+        @NotBlank(message = "Name darf nicht leer sein")
+        String name,
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class StorageUnitRequestDTO {
-    private String name;
-    private HomeAddress address;
-}
+        @NotBlank(message = "Straße darf nicht leer sein")
+        String street,
 
+        @NotBlank(message = "Stadt darf nicht leer sein")
+        String city,
+
+        @NotBlank(message = "Postleitzahl darf nicht leer sein")
+        String zipCode
+) {}

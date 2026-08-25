@@ -9,7 +9,6 @@ import com.neotee.ecommercesystem.restdtos.IdDTO;
 import com.neotee.ecommercesystem.restdtos.QuantityDTO;
 import com.neotee.ecommercesystem.usecases.*;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
-import com.neotee.ecommercesystem.usecases.masterdata.ThingAndStockMasterDataInitializer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;

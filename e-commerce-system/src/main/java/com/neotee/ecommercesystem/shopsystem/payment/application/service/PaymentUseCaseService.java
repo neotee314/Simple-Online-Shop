@@ -1,8 +1,8 @@
 package com.neotee.ecommercesystem.shopsystem.payment.application.service;
 
-import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.Money;
+import com.neotee.ecommercesystem.exceptions.ShopException;
 import com.neotee.ecommercesystem.shopsystem.payment.domain.Payment;
 import com.neotee.ecommercesystem.usecases.PaymentUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
@@ -11,14 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class PaymentUseCaseService implements PaymentUseCases {
     private final PaymentService paymentService;
-    private final ClientService clientService;
 
     /**
      * Authorizes a payment for a client (identified by his/her mail address) for a given amount
@@ -67,7 +65,6 @@ public class PaymentUseCaseService implements PaymentUseCases {
      */
     @Override
     public void deletePaymentHistory() {
-        List<Email> clients = clientService.findAll();
-        clients.forEach(clientEmail -> paymentService.deletePayments(clientEmail));
+
     }
 }

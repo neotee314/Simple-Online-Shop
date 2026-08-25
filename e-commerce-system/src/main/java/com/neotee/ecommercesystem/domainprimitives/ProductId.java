@@ -1,6 +1,5 @@
 package com.neotee.ecommercesystem.domainprimitives;
 
-import com.neotee.ecommercesystem.domainprimitives.GenericId;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import jakarta.persistence.Embeddable;
 

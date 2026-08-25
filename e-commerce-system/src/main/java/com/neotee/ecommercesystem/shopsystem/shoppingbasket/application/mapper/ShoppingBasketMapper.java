@@ -48,14 +48,8 @@ public class ShoppingBasketMapper {
                 part.getProduct().getName(),
                 part.getQuantity(),
                 part.getSalesPrice() != null ? part.getSalesPrice().getAmount().doubleValue() : 0.0,
-                part.getSubtotal() != null ? part.getSubtotal().getAmount().doubleValue() : 0.0
+                part.getSalesPrice() != null ? part.getSalesPrice().getAmount().doubleValue() : 0.0
         );
     }
 
-    public ShoppingBasketPart toPartEntity(ShoppingBasketPartRequestDTO dto) {
-        if (dto == null) return null;
-
-        var product = productService.findById(dto.productId());
-        return ShoppingBasketPart.create(product, dto.quantity());
-    }
 }

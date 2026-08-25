@@ -1,8 +1,8 @@
 package com.neotee.ecommercesystem.shopsystem.payment.application.service;
 
-import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.Money;
+import com.neotee.ecommercesystem.exceptions.ShopException;
 import com.neotee.ecommercesystem.shopsystem.payment.domain.Payment;
 import com.neotee.ecommercesystem.shopsystem.payment.domain.PaymentRepository;
 import jakarta.transaction.Transactional;

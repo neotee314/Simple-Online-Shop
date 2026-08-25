@@ -1,6 +1,8 @@
 package com.neotee.ecommercesystem.usecases;
 
-import com.neotee.ecommercesystem.exception.ShopException;
+
+
+import com.neotee.ecommercesystem.exceptions.ShopException;
 
 import java.util.List;
 import java.util.Map;

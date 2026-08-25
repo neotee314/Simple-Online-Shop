@@ -6,7 +6,6 @@ import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.client.application.service.ClientApplicationService;
 import com.neotee.ecommercesystem.shopsystem.product.application.service.ProductApplicationService;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.service.ShoppingBasketApplicationService;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketPart;
 import com.neotee.ecommercesystem.usecases.ShoppingBasketUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
@@ -77,7 +76,7 @@ public class MyFantasticShoppingBasketUseCaseService implements ShoppingBasketUs
             throw new DomainValidationException("MyFantasticShoppingBasketUseCaseService", "Client Email darf nicht null sein.");
 
         var client = clientApplicationService.findByEmail((Email) clientEmail);
-        var basket = basketService.getBasketByClientId(client.getId());
+        var basket = basketService.getBasketByClient(client);
 
         return basket.getTotalPrice();
     }
@@ -96,7 +95,7 @@ public class MyFantasticShoppingBasketUseCaseService implements ShoppingBasketUs
             throw new DomainValidationException("MyFantasticShoppingBasketUseCaseService", "Client Email darf nicht null sein.");
 
         var client = clientApplicationService.findByEmail((Email) clientEmail);
-        var basket = basketService.getBasketByClientId(client.getId());
+        var basket = basketService.getBasketByClient(client);
 
         return basket.getParts().isEmpty();
     }
@@ -108,7 +107,7 @@ public class MyFantasticShoppingBasketUseCaseService implements ShoppingBasketUs
             throw new DomainValidationException("MyFantasticShoppingBasketUseCaseService", "Client Email darf nicht null sein.");
 
         var client = clientApplicationService.findByEmail((Email) clientEmail);
-        var basket = basketService.getBasketByClientId(client.getId());
+        var basket = basketService.getBasketByClient(client);
 
         if (basket.getParts().isEmpty())
             throw new DomainValidationException("MyFantasticShoppingBasketUseCaseService", "Warenkorb ist leer.");

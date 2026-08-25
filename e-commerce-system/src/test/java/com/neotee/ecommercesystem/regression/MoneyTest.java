@@ -1,10 +1,10 @@
 package com.neotee.ecommercesystem.regression;
 
 import org.junit.jupiter.api.Test;
-import com.neotee.ecommercesystem.exception.ShopException;
+import com.neotee.ecommercesystem.exceptions.ShopException;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
 
-import static com.neotee.ecommercesystem.usecases.masterdata.FactoryMethodInvoker.*;
+import static com.neotee.ecommercesystem.usecases.masterdata.FactoryMethodInvoker.instantiateMoney;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MoneyTest {

@@ -5,14 +5,15 @@ import com.neotee.ecommercesystem.ShoppingBasketRESTHelper;
 import com.neotee.ecommercesystem.restdtos.StorageUnitIdDTO;
 import com.neotee.ecommercesystem.usecases.*;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
-import com.neotee.ecommercesystem.usecases.masterdata.*;
-import com.neotee.ecommercesystem.usecases.masterdata.ThingAndStockMasterDataInitializer;
+import com.neotee.ecommercesystem.ClientMasterDataInitializer;
+import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
+import com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -20,9 +21,9 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.*;
 
-import static com.neotee.ecommercesystem.usecases.masterdata.ClientMasterDataInitializer.CLIENT_EMAIL;
-import static com.neotee.ecommercesystem.usecases.masterdata.ThingAndStockMasterDataInitializer.STORAGE_UNIT_ID;
-import static com.neotee.ecommercesystem.usecases.masterdata.ThingAndStockMasterDataInitializer.THING_DATA;
+import static com.neotee.ecommercesystem.ClientMasterDataInitializer.CLIENT_EMAIL;
+import static com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer.STORAGE_UNIT_ID;
+import static com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer.THING_DATA;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -102,10 +103,10 @@ public class DeliveryPackageRESTTest {
     @Test
     public void testInvalidUris() throws Exception {
         // given
-        String alldeliveryPackagesUri = "/deliveryPackages";
-        String randomIdUri = "/deliveryPackages/" + UUID.randomUUID();
-        String randomOrderUri = "/deliveryPackages?orderId=" + UUID.randomUUID();
-        String randomParamUri = "/deliveryPackages?randomParam=randomValue";
+        String alldeliveryPackagesUri = "/api/v1/deliveryPackages";
+        String randomIdUri = "/api/v1/deliveryPackages/" + UUID.randomUUID();
+        String randomOrderUri = "/api/v1/deliveryPackages?orderId=" + UUID.randomUUID();
+        String randomParamUri = "/api/v1/deliveryPackages?randomParam=randomValue";
 
         // when
         // then
@@ -292,7 +293,7 @@ public class DeliveryPackageRESTTest {
 
 
     /**
-     * Calls the /deliveryPackages endpoint and checks the response.
+     * Calls the /api/v1/deliveryPackages endpoint and checks the response.
      *
      * @param orderId        The id of the order.
      * @param storageUnitMap The expected storage units and their quantities, as a map of maps:
@@ -302,7 +303,7 @@ public class DeliveryPackageRESTTest {
     public void checkDeliveryPackage(UUID orderId,
                                      Map<UUID, Map<UUID, Integer>> storageUnitMap) throws Exception {
         // call the GET endpoint
-        String deliveryPackageUri = "/deliveryPackages?orderId=" + orderId.toString();
+        String deliveryPackageUri = "/api/v1/deliveryPackages?orderId=" + orderId.toString();
         ResultActions resultActions = mockMvc.perform(get(deliveryPackageUri))
                 .andExpect(status().isOk());
 
