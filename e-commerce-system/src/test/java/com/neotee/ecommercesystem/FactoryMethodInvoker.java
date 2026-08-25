@@ -4,6 +4,7 @@ package com.neotee.ecommercesystem;
 
 import com.neotee.ecommercesystem.exceptions.ShopException;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
+import org.junit.jupiter.api.Assertions;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,8 +16,6 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 public class FactoryMethodInvoker {
 
     public static EmailType instantiateEmail(String emailAsString ) {
@@ -27,11 +26,11 @@ public class FactoryMethodInvoker {
             Class<?> implementingClass = findImplementation( interfaceClass );
 
             factoryMethod = implementingClass.getDeclaredMethod( "of", String.class );
-            assertNotNull( factoryMethod );
+            Assertions.assertNotNull( factoryMethod );
             int modifiers = factoryMethod.getModifiers();
-            assertTrue( Modifier.isStatic( modifiers ), "The method 'of' should be static" );
+            Assertions.assertTrue( Modifier.isStatic( modifiers ), "The method 'of' should be static" );
         } catch (Exception e) {
-            fail( "Failed to find implementation for EmailType", e );
+            Assertions.fail( "Failed to find implementation for EmailType", e );
         }
 
         Object instance = null;
@@ -40,9 +39,9 @@ public class FactoryMethodInvoker {
         } catch (Exception e) {
             if ( e instanceof InvocationTargetException && ( (InvocationTargetException) e ).getTargetException()
                     instanceof ShopException) throw new ShopException( e.getMessage() );
-            fail( "Failed to invoke factory method 'of' for '" + emailAsString + "'", e );
+            Assertions.fail( "Failed to invoke factory method 'of' for '" + emailAsString + "'", e );
         }
-        assertNotNull( instance );
+        Assertions.assertNotNull( instance );
         return (EmailType) instance;
     }
 
@@ -57,11 +56,11 @@ public class FactoryMethodInvoker {
 
             factoryMethod = implementingClass.getDeclaredMethod( "of",
                     String.class, String.class, ZipCodeType.class );
-            assertNotNull( factoryMethod );
+            Assertions.assertNotNull( factoryMethod );
             int modifiers = factoryMethod.getModifiers();
-            assertTrue( Modifier.isStatic( modifiers ), "The method 'of' should be static" );
+            Assertions.assertTrue( Modifier.isStatic( modifiers ), "The method 'of' should be static" );
         } catch (Exception e) {
-            fail( "Failed to find implementation for HomeAddressType", e );
+            Assertions.fail( "Failed to find implementation for HomeAddressType", e );
         }
 
         Object instance = null;
@@ -70,10 +69,10 @@ public class FactoryMethodInvoker {
         } catch (Exception e) {
             if ( e instanceof InvocationTargetException && ( (InvocationTargetException) e ).getTargetException()
                     instanceof ShopException ) throw new ShopException( e.getMessage() );
-            fail( "Failed to invoke factory method 'of' for '" +
+            Assertions.fail( "Failed to invoke factory method 'of' for '" +
                     street + "', '" + city + "', '" + zipCode + "'", e );
         }
-        assertNotNull( instance );
+        Assertions.assertNotNull( instance );
         return (HomeAddressType) instance;
     }
 
@@ -86,11 +85,11 @@ public class FactoryMethodInvoker {
             Class<?> implementingClass = findImplementation( interfaceClass );
 
             factoryMethod = implementingClass.getDeclaredMethod( "of", String.class );
-            assertNotNull( factoryMethod );
+            Assertions.assertNotNull( factoryMethod );
             int modifiers = factoryMethod.getModifiers();
-            assertTrue( Modifier.isStatic( modifiers ), "The method 'of' should be static" );
+            Assertions.assertTrue( Modifier.isStatic( modifiers ), "The method 'of' should be static" );
         } catch (Exception e) {
-            fail( "Failed to find implementation for ZipCodeType", e );
+            Assertions.fail( "Failed to find implementation for ZipCodeType", e );
         }
 
         Object instance = null;
@@ -99,9 +98,9 @@ public class FactoryMethodInvoker {
         } catch (Exception e) {
             if ( e instanceof InvocationTargetException && ( (InvocationTargetException) e ).getTargetException()
                     instanceof ShopException ) throw new ShopException( e.getMessage() );
-            fail( "Failed to invoke factory method 'of' for '" + zipCodeAsString + "'", e );
+            Assertions.fail( "Failed to invoke factory method 'of' for '" + zipCodeAsString + "'", e );
         }
-        assertNotNull( instance );
+        Assertions.assertNotNull( instance );
         return (ZipCodeType) instance;
     }
 
@@ -114,11 +113,11 @@ public class FactoryMethodInvoker {
             Class<?> implementingClass = findImplementation( interfaceClass );
 
             factoryMethod = implementingClass.getDeclaredMethod( "of", Float.class, String.class );
-            assertNotNull( factoryMethod );
+            Assertions.assertNotNull( factoryMethod );
             int modifiers = factoryMethod.getModifiers();
-            assertTrue( Modifier.isStatic( modifiers ), "The method 'of' should be static" );
+            Assertions.assertTrue( Modifier.isStatic( modifiers ), "The method 'of' should be static" );
         } catch (Exception e) {
-            fail( "Failed to find implementation for MoneyType", e );
+            Assertions.fail( "Failed to find implementation for MoneyType", e );
         }
 
         Object instance = null;
@@ -127,9 +126,9 @@ public class FactoryMethodInvoker {
         } catch (Exception e) {
             if ( e instanceof InvocationTargetException && ( (InvocationTargetException) e ).getTargetException()
                     instanceof ShopException ) throw new ShopException( e.getMessage() );
-            fail( "Failed to invoke factory method 'of' for '" + amount + "', '" + currency + "'", e );
+            Assertions.fail( "Failed to invoke factory method 'of' for '" + amount + "', '" + currency + "'", e );
         }
-        assertNotNull( instance );
+        Assertions.assertNotNull( instance );
         return (MoneyType) instance;
     }
 
@@ -139,10 +138,10 @@ public class FactoryMethodInvoker {
         try {
             String packageName = "com.neotee.ecommercesystem.domainprimitives";
             Class<?> implementingClass = findImplementingClass( packageName, interfaceClass );
-            assertNotNull( implementingClass );
+            Assertions.assertNotNull( implementingClass );
             return implementingClass;
         } catch (Exception e) {
-            fail( "Cannot find implementation for " + interfaceClass.getSimpleName(), e );
+            Assertions.fail( "Cannot find implementation for " + interfaceClass.getSimpleName(), e );
             return null; // This line will never be reached, but it's necessary to satisfy the compiler
         }
     }
@@ -170,7 +169,7 @@ public class FactoryMethodInvoker {
                 }
             }
         }
-        assertEquals( 1, count, "There should be exactly one implementing class" );
+        Assertions.assertEquals( 1, count, "There should be exactly one implementing class" );
         return result;
     }
 }

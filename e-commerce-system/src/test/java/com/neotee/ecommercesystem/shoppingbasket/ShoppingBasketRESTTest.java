@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static com.neotee.ecommercesystem.ClientMasterDataInitializer.CLIENT_EMAIL;
-import static com.neotee.ecommercesystem.usecases.masterdata.FactoryMethodInvoker.instantiateEmail;
+import static com.neotee.ecommercesystem.FactoryMethodInvoker.instantiateEmail;
 
 import java.util.*;
 

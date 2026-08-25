@@ -3,6 +3,7 @@ package com.neotee.ecommercesystem;
 
 
 import com.neotee.ecommercesystem.exceptions.ShopException;
+import com.neotee.ecommercesystem.usecases.masterdata.MockClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.neotee.ecommercesystem.usecases.*;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;

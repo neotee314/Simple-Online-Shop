@@ -117,16 +117,16 @@ public class ThingAndStockMasterDataInitializer {
 
 
     public void addAllThings() {
-        log.info( "Adding all things to the catalog." );
+        System.out.println( "Adding all things to the catalog." );
         for ( Object[] thingData : THING_DATA ) {
             addThingDataToCatalog( thingData );
 
         }
-        log.info( "All things are added to catalog." );
+        System.out.println( "All things are added to catalog." );
     }
 
     public void addThingDataToCatalog( Object[] thingData ) {
-        log.info( "... adding " + thingData[1] );
+        System.out.println( "... adding " + thingData[1] );
         productCatalogUseCases.addProductToCatalog( (UUID) thingData[0], (String) thingData[1], (String) thingData[2],
                 (Float) thingData[3], (MoneyType) thingData[4], (MoneyType) thingData[5] );
     }
@@ -187,12 +187,12 @@ public class ThingAndStockMasterDataInitializer {
     public final static UUID[] STORAGE_UNIT_ID = new UUID[STORAGE_UNIT_NUMOF];
 
     public void addAllStorageUnits() {
-        log.info( "Adding all storage units." );
+        System.out.println( "Adding all storage units." );
         for ( int i = 0; i < STORAGE_UNIT_NUMOF; i++ ) {
             STORAGE_UNIT_ID[i] = storageUnitUseCases.addNewStorageUnit(
                     STORAGE_UNIT_ADDRESS[i], STORAGE_UNIT_ADDRESS[i].getZipCode().toString() );
         }
-        log.info( "All storage units are added." );
+        System.out.println( "All storage units are added." );
     }
 
 
@@ -273,7 +273,7 @@ public class ThingAndStockMasterDataInitializer {
 
 
     public void addAllStock() {
-        log.info( "Adding all stocks to the storage units." );
+        System.out.println( "Adding all stocks to the storage units." );
         for ( Object[] thingData : THING_DATA ) {
             Integer[] stockInStorageUnits =
                     THING_STOCK.get( thingData[0] );

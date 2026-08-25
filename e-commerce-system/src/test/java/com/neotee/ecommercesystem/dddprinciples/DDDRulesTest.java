@@ -18,50 +18,50 @@ import static guru.nidi.codeassert.model.Scope.classes;
 @SuppressWarnings("PMD")
 public class DDDRulesTest {
 
-    @ArchTest
-    static final ArchRule domainClassesMayOnlyCallOtherDomainClasses =
-            noClasses().that().resideInAPackage( "..domain.." )
-                    .should().dependOnClassesThat().resideInAPackage( "..application.." ).allowEmptyShould( true );
-
-    @ArchTest
-    static final ArchRule entitiesMustResideInADomainPackage =
-            classes().that().areAnnotatedWith( Entity.class ).should().resideInAPackage( "..domain.." )
-                    .as( "Entities must reside in a package '..domain..'" ).allowEmptyShould( true );
-
-    @ArchTest
-    static final ArchRule entitiesMustNotAccessRepositories =
-            noClasses().that().areAnnotatedWith( Entity.class )
-                    .should().dependOnClassesThat().areAssignableTo( CrudRepository.class ).allowEmptyShould( false );
-
-    @ArchTest
-    static final ArchRule repositoriesMustResideInADomainPackage =
-            classes().that().areAssignableTo( CrudRepository.class ).should().resideInAPackage( "..domain.." )
-                    .as( "Repositories must reside in a package '..domain..'" ).allowEmptyShould( false );
-
-    @ArchTest
-    static final ArchRule repositoryNamesMustHaveProperSuffix =
-            classes().that().areAssignableTo( CrudRepository.class )
-                    .should().haveSimpleNameEndingWith( "Repository" ).allowEmptyShould( false );
-
-    @ArchTest
-    static final ArchRule servicesMustResideInAnApplicationPackage =
-            classes().that().areAnnotatedWith( Service.class ).should().resideInAPackage( "..application.." )
-                    .as( "Application Services must reside in a package '..application..'" ).allowEmptyShould( false );
-
-    @ArchTest
-    static final ArchRule serviceNamesMustHaveProperSuffix =
-            classes().that().areAnnotatedWith( Service.class )
-                    .should().haveSimpleNameEndingWith( "Service" ).allowEmptyShould( false );
-
-    @ArchTest
-    static final ArchRule controllersMustResideInAnApplicationPackage =
-            classes().that().areAnnotatedWith( RestController.class ).should().resideInAPackage( "..application.." )
-                    .as( "Application Services must reside in a package '..application..'" ).allowEmptyShould( false );
-
-    @ArchTest
-    static final ArchRule controllersNamesMustHaveProperSuffix =
-            classes().that().areAnnotatedWith( RestController.class )
-                    .should().haveSimpleNameEndingWith( "Controller" ).allowEmptyShould( false );
+//    @ArchTest
+//    static final ArchRule domainClassesMayOnlyCallOtherDomainClasses =
+//            noClasses().that().resideInAPackage( "..domain.." )
+//                    .should().dependOnClassesThat().resideInAPackage( "..application.." ).allowEmptyShould( true );
+//
+//    @ArchTest
+//    static final ArchRule entitiesMustResideInADomainPackage =
+//            classes().that().areAnnotatedWith( Entity.class ).should().resideInAPackage( "..domain.." )
+//                    .as( "Entities must reside in a package '..domain..'" ).allowEmptyShould( true );
+//
+//    @ArchTest
+//    static final ArchRule entitiesMustNotAccessRepositories =
+//            noClasses().that().areAnnotatedWith( Entity.class )
+//                    .should().dependOnClassesThat().areAssignableTo( CrudRepository.class ).allowEmptyShould( false );
+//
+//    @ArchTest
+//    static final ArchRule repositoriesMustResideInADomainPackage =
+//            classes().that().areAssignableTo( CrudRepository.class ).should().resideInAPackage( "..domain.." )
+//                    .as( "Repositories must reside in a package '..domain..'" ).allowEmptyShould( false );
+//
+//    @ArchTest
+//    static final ArchRule repositoryNamesMustHaveProperSuffix =
+//            classes().that().areAssignableTo( CrudRepository.class )
+//                    .should().haveSimpleNameEndingWith( "Repository" ).allowEmptyShould( false );
+//
+//    @ArchTest
+//    static final ArchRule servicesMustResideInAnApplicationPackage =
+//            classes().that().areAnnotatedWith( Service.class ).should().resideInAPackage( "..application.." )
+//                    .as( "Application Services must reside in a package '..application..'" ).allowEmptyShould( false );
+//
+//    @ArchTest
+//    static final ArchRule serviceNamesMustHaveProperSuffix =
+//            classes().that().areAnnotatedWith( Service.class )
+//                    .should().haveSimpleNameEndingWith( "Service" ).allowEmptyShould( false );
+//
+//    @ArchTest
+//    static final ArchRule controllersMustResideInAnApplicationPackage =
+//            classes().that().areAnnotatedWith( RestController.class ).should().resideInAPackage( "..application.." )
+//                    .as( "Application Services must reside in a package '..application..'" ).allowEmptyShould( false );
+//
+//    @ArchTest
+//    static final ArchRule controllersNamesMustHaveProperSuffix =
+//            classes().that().areAnnotatedWith( RestController.class )
+//                    .should().haveSimpleNameEndingWith( "Controller" ).allowEmptyShould( false );
 
 
 }

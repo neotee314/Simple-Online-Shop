@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
 
-import static com.neotee.ecommercesystem.usecases.masterdata.FactoryMethodInvoker.instantiateZipCode;
+import static com.neotee.ecommercesystem.FactoryMethodInvoker.instantiateZipCode;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import static org.junit.jupiter.api.Assertions.*;

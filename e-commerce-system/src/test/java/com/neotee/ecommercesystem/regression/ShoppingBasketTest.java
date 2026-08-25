@@ -13,7 +13,9 @@ import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
 import static com.neotee.ecommercesystem.ClientMasterDataInitializer.CLIENT_EMAIL;
 import com.neotee.ecommercesystem.ClientMasterDataInitializer;
 import com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer;
-import static com.neotee.ecommercesystem.usecases.masterdata.FactoryMethodInvoker.instantiateEmail;
+import static com.neotee.ecommercesystem.FactoryMethodInvoker.instantiateEmail;
+import static com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer.THING_DATA;
+import static com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer.THING_STOCK;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
