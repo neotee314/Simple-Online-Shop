@@ -11,9 +11,11 @@ import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MyFantasticClientRegistrationService implements ClientRegistrationUseCases {
 
     private final ClientApplicationService clientApplicationService;

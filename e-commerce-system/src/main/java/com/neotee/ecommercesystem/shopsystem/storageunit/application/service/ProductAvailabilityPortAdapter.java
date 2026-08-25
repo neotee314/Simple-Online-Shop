@@ -3,6 +3,7 @@ package com.neotee.ecommercesystem.shopsystem.storageunit.application.service;
 import com.neotee.ecommercesystem.domainprimitives.ProductId;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.product.application.port.out.ProductAvailabilityPort;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,10 +15,10 @@ public class ProductAvailabilityPortAdapter implements ProductAvailabilityPort {
     private final StorageUnitRepository storageUnitRepository;
 
     @Override
-    public Boolean isInStock(ProductId productId) {
+    public Boolean isInStock(Product product) {
         return storageUnitRepository.findAll().stream()
                 .flatMap(storageUnit -> storageUnit.getStockLevels().stream())
-                .anyMatch(stockLevel -> stockLevel.getProduct().getId().equals(productId) &&
+                .anyMatch(stockLevel -> stockLevel.getProduct().equals(product) &&
                         stockLevel.getQuantityInStock() > 0);
     }
 

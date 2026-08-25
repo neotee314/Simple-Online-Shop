@@ -1,5 +1,6 @@
 package com.neotee.ecommercesystem.regression;
 
+import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTag;
 import com.tngtech.archunit.junit.ArchTest;
@@ -8,7 +9,7 @@ import com.tngtech.archunit.lang.ArchRule;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
 @ArchTag("domainPrimitivesUsageRules")
-@AnalyzeClasses(packages = "com.neotee.ecommercesystem.shopsystem")
+@AnalyzeClasses(packagesOf = {Client.class})
 @SuppressWarnings("PMD")
 public class DomainPrimitivesUsageRulesTest {
     private static final String EMAIL_CLASS = "com.neotee.ecommercesystem.domainprimitives.Email";

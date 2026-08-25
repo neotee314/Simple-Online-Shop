@@ -1,19 +1,18 @@
 package com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain;
 
 import com.neotee.ecommercesystem.core.AggregateRoot;
-import com.neotee.ecommercesystem.domainprimitives.BasketState;
-import com.neotee.ecommercesystem.domainprimitives.Money;
-import com.neotee.ecommercesystem.domainprimitives.ProductId;
-import com.neotee.ecommercesystem.domainprimitives.ShoppingBasketId;
+import com.neotee.ecommercesystem.domainprimitives.*;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.event.CheckoutEvent;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "shopping_basket")
@@ -76,6 +75,21 @@ public class ShoppingBasket extends AggregateRoot<ShoppingBasketId> {
         updateBasketState();
     }
 
+    public CheckoutEvent checkout(Client client) {
+        if (parts.isEmpty()) {
+            throw new DomainValidationException("ShoppingBasket", "Warenkorb ist leer.");
+        }
+
+        var items = new HashMap<Product, Integer>();
+        for (var part : parts) {
+            var product = part.getProduct();
+            items.put(product, part.getQuantity());
+        }
+
+        clear();
+        return new CheckoutEvent(client, items);
+    }
+
     public void removeItem(Product product) {
         if (product == null)
             throw new DomainValidationException("ShoppingBasket", "Product darf nicht null sein.");
@@ -125,8 +139,6 @@ public class ShoppingBasket extends AggregateRoot<ShoppingBasketId> {
     }
 
     public boolean contains(Product product) {
-        if (product == null)
-            throw new DomainValidationException("ShoppingBasket", "Product darf nicht null sein.");
         return findPartByProduct(product) != null;
     }
 
@@ -155,9 +167,8 @@ public class ShoppingBasket extends AggregateRoot<ShoppingBasketId> {
     }
 
     private ShoppingBasketPart findPartByProduct(Product product) {
-        if (product == null) return null;
         return parts.stream()
-                .filter(part -> part.getProduct().getId().equals(product.getId()))
+                .filter(part -> part.getProduct().equals(product))
                 .findFirst()
                 .orElse(null);
     }

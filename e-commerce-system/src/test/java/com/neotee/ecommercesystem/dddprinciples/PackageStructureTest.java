@@ -12,7 +12,7 @@ public class PackageStructureTest {
     private static final String[] REQUIRED_PACKAGES = {
             "client",
             "shoppingbasket",
-            "thing",
+            "product",
             "order",
             "storageunit",
             "deliverypackage"

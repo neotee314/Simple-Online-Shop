@@ -61,13 +61,11 @@ public class Product extends AggregateRoot<ProductId> {
 
     public static Product create(String name, String description, Float size,
                                  Money purchasePrice, Money salesPrice) {
-        validateProductData(name, description, size, purchasePrice, salesPrice);
         return new Product(ProductId.newId(), name, description, size, purchasePrice, salesPrice, 0);
     }
 
     public static Product create(String name, String description, Float size,
                                  Money purchasePrice, Money salesPrice, Integer stockQuantity) {
-        validateProductData(name, description, size, purchasePrice, salesPrice);
         if (stockQuantity == null || stockQuantity < 0) {
             throw new DomainValidationException("stockQuantity", "Stock Quantity muss größer oder gleich 0 sein.");
         }
@@ -79,7 +77,6 @@ public class Product extends AggregateRoot<ProductId> {
         if (productId == null) {
             throw new DomainValidationException("productId", "Product ID darf nicht null sein.");
         }
-        validateProductData(name, description, size, purchasePrice, salesPrice);
         return new Product(productId, name, description, size, purchasePrice, salesPrice, 0);
     }
 
@@ -88,40 +85,13 @@ public class Product extends AggregateRoot<ProductId> {
         if (productId == null) {
             throw new DomainValidationException("productId", "Product ID darf nicht null sein.");
         }
-        validateProductData(name, description, size, purchasePrice, salesPrice);
         if (stockQuantity == null || stockQuantity < 0) {
             throw new DomainValidationException("stockQuantity", "Stock Quantity muss größer oder gleich 0 sein.");
         }
         return new Product(productId, name, description, size, purchasePrice, salesPrice, stockQuantity);
     }
 
-    private static void validateProductData(String name, String description, Float size,
-                                            Money purchasePrice, Money salesPrice) {
-        if (name == null || name.isBlank()) {
-            throw new DomainValidationException("name", "Name darf nicht leer sein.");
-        }
-        if (description == null || description.isBlank()) {
-            throw new DomainValidationException("description", "Beschreibung darf nicht leer sein.");
-        }
-        if (size != null && size <= 0) {
-            throw new DomainValidationException("size", "Größe muss größer als 0 sein.");
-        }
-        if (purchasePrice == null) {
-            throw new DomainValidationException("purchasePrice", "Einkaufspreis darf nicht null sein.");
-        }
-        if (salesPrice == null) {
-            throw new DomainValidationException("salesPrice", "Verkaufspreis darf nicht null sein.");
-        }
-        if (purchasePrice.getAmount() <= 0) {
-            throw new DomainValidationException("purchasePrice", "Einkaufspreis muss größer als 0 sein.");
-        }
-        if (salesPrice.getAmount() <= 0) {
-            throw new DomainValidationException("salesPrice", "Verkaufspreis muss größer als 0 sein.");
-        }
-        if (purchasePrice.largerThan(salesPrice)) {
-            throw new DomainValidationException("purchasePrice", "Einkaufspreis darf nicht größer als Verkaufspreis sein.");
-        }
-    }
+
 
     public void updatePrice(Money newPurchasePrice, Money newSalesPrice) {
         if (newPurchasePrice == null) {
@@ -150,37 +120,6 @@ public class Product extends AggregateRoot<ProductId> {
         this.stockQuantity += quantity;
     }
 
-    public void decreaseStock(int quantity) {
-        if (quantity <= 0) {
-            throw new DomainValidationException("quantity", "Quantity muss größer als 0 sein.");
-        }
-        if (this.stockQuantity < quantity) {
-            throw new DomainValidationException("stockQuantity", "Nicht genügend Lagerbestand vorhanden.");
-        }
-        this.stockQuantity -= quantity;
-    }
-
-    public boolean isInStock() {
-        return stockQuantity != null && stockQuantity > 0;
-    }
-
-    public boolean isInStock(int quantity) {
-        return stockQuantity != null && stockQuantity >= quantity;
-    }
-
-    public Money getSellingPrice() {
-        return (Money) Money.of(salesPrice.getAmount(), salesPrice.getCurrency());
-    }
-
-    public Money getPurchasePrice() {
-        return (Money) Money.of(purchasePrice.getAmount(), purchasePrice.getCurrency());
-    }
-
-    public boolean hasValidPrices() {
-        return purchasePrice != null && salesPrice != null &&
-                purchasePrice.getAmount() > 0 && salesPrice.getAmount() > 0 &&
-                !purchasePrice.largerThan(salesPrice);
-    }
 
     @Override
     public boolean equals(Object o) {

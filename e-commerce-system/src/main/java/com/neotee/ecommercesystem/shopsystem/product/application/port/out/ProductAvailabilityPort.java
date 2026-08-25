@@ -1,10 +1,9 @@
 package com.neotee.ecommercesystem.shopsystem.product.application.port.out;
 
-import com.neotee.ecommercesystem.domainprimitives.ProductId;
-
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 
 
 public interface ProductAvailabilityPort {
-    Boolean isInStock(ProductId productId);
+    Boolean isInStock(Product product);
     void deleteAllStockLevel();
 }

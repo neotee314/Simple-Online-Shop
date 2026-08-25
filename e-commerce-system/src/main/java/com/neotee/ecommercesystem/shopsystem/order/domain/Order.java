@@ -188,17 +188,15 @@ public class Order extends AggregateRoot<OrderId> {
         return partsWithQuantity;
     }
 
-    public boolean containsProduct(UUID productId) {
-        if (productId == null) {
+    public boolean containsProduct(Product product) {
+        if (product == null)
             throw new DomainValidationException("productId", "Product ID darf nicht null sein.");
-        }
+
         return orderParts.stream()
-                .anyMatch(p -> p.getProduct().getId().getId().equals(productId));
+                .anyMatch(p -> p.getProduct().equals(product));
     }
 
-    public int getPartCount() {
-        return orderParts.size();
-    }
+
 
     @Override
     public boolean equals(Object o) {

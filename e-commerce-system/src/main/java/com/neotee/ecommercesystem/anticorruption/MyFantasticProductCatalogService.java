@@ -46,10 +46,10 @@ public class MyFantasticProductCatalogService implements ProductCatalogUseCases 
     }
 
     @Override
+    @Transactional
     public void removeProductFromCatalog(UUID productUuid) {
         if (productUuid == null)
             throw new DomainValidationException("MyFantasticProductCatalogService", "Product UUID darf nicht null sein.");
-
         var productId = ProductId.of(productUuid);
         productApplicationService.removeProduct(productId);
     }

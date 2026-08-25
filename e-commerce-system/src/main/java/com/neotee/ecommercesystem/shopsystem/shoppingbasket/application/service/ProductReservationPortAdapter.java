@@ -1,7 +1,7 @@
 package com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.service;
 
-import com.neotee.ecommercesystem.domainprimitives.ProductId;
 import com.neotee.ecommercesystem.shopsystem.product.application.port.out.ProductReservationPort;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasket;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,14 +14,8 @@ public class ProductReservationPortAdapter implements ProductReservationPort {
     private final ShoppingBasketRepository shoppingBasketRepository;
 
     @Override
-    public boolean isReservedInAnyBasket(ProductId productId) {
-        if (productId == null) {
-            return false;
-        }
-
-        return shoppingBasketRepository.findAll().stream()
-                .flatMap(basket -> basket.getParts().stream())
-                .anyMatch(part -> part.getProduct().getId().equals(productId));
+    public boolean isReservedInAnyBasket(Product product) {
+        return shoppingBasketRepository.findAll().stream().anyMatch(basket -> basket.contains(product));
     }
 
     @Override

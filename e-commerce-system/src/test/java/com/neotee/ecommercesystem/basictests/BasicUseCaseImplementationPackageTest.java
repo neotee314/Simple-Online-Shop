@@ -21,7 +21,7 @@ public class BasicUseCaseImplementationPackageTest {
     private static final Map<String, List<String>> USECASE_INTERFACES = new HashMap<String, List<String>>() {{
         put("ClientRegistrationUseCases", Arrays.asList("client"));
         put("StorageUnitUseCases", Arrays.asList("storageunit", "stock"));
-        put("ThingCatalogUseCases", Arrays.asList("thing"));
+        put("ProductCatalogUseCases", Arrays.asList("product"));
         put("ShoppingBasketUseCases", Arrays.asList("shoppingbasket"));
         put("OrderUseCases", Arrays.asList("order"));
     }};

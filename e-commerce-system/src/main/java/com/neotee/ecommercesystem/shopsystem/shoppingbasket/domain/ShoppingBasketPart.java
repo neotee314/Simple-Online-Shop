@@ -19,7 +19,7 @@ import java.util.UUID;
 @Getter
 public class ShoppingBasketPart extends AbstractEntity<ShoppingBasketPartId> {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 

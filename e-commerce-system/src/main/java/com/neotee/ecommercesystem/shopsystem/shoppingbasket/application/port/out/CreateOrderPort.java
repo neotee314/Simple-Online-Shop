@@ -6,4 +6,8 @@ import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 
 public interface CreateOrderPort {
     OrderId createOrder(Client client, Product product, Integer quantity);
+
+    void addOrderPart(OrderId orderId, Client client, Product product, Integer quantity);
+
+    void submitOrder(OrderId orderId);
 }

@@ -66,18 +66,14 @@ public class ProductApplicationService {
 
 
     public void removeProduct(ProductId productId) {
-        if (productId == null)
-            throw new DomainValidationException("ProductApplicationService", "Product ID darf nicht null sein.");
-
-        if (productAvailabilityPort.isInStock(productId))
+        var product = findById(productId);
+        if (productAvailabilityPort.isInStock(product))
             throw new DomainValidationException("ProductApplicationService", "Produkt hat noch Lagerbestand.");
 
-
-        if (productReservationPort.isReservedInAnyBasket(productId))
+        if (productReservationPort.isReservedInAnyBasket(product))
             throw new DomainValidationException("ProductApplicationService", "Produkt ist noch in einem Warenkorb reserviert.");
 
-
-        if (productOrderHistoryPort.isPartOfCompletedOrder(productId))
+        if (productOrderHistoryPort.isPartOfCompletedOrder(product))
             throw new DomainValidationException("ProductApplicationService", "Produkt ist Teil einer abgeschlossenen Bestellung.");
 
 
@@ -97,12 +93,4 @@ public class ProductApplicationService {
         productRepository.save(product);
     }
 
-    public void decreaseStock(ProductId productId, int quantity) {
-        if (productId == null)
-            throw new DomainValidationException("ProductApplicationService", "Product ID darf nicht null sein.");
-
-        var product = findById(productId);
-        product.decreaseStock(quantity);
-        productRepository.save(product);
-    }
 }

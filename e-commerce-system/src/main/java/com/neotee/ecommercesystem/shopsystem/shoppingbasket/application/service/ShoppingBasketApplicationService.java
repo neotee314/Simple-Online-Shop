@@ -14,6 +14,7 @@ import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBaske
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketRepository;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.port.out.FindProductForShoppingBasketPort;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.port.out.DecreaseStockPort;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.event.CheckoutEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +41,8 @@ public class ShoppingBasketApplicationService {
 
     public ShoppingBasket addItem(Client client, Product product, Integer quantity) {
         var basket = findOrCreateBasket(client);
-        basket.addItem(product, quantity);
+        var existingProduct = findProductPort.findById(product.getId());
+        basket.addItem(existingProduct, quantity);
         return basketRepository.save(basket);
     }
 
@@ -81,21 +83,20 @@ public class ShoppingBasketApplicationService {
 
     public OrderId checkout(ShoppingBasketId basketId) {
         var basket = findBasketById(basketId);
-
-        if (!basket.hasItems()) {
-            throw new DomainValidationException("ShoppingBasketApplicationService", "Warenkorb ist leer.");
-        }
-
         var client = basket.getClient();
+        var event = basket.checkout(client);
+        var orderId = processCheckoutEvent(event);
+        basketRepository.save(basket);
+        return orderId;
+    }
+
+    private OrderId processCheckoutEvent(CheckoutEvent event) {
         var orderId = OrderId.newId();
 
-        for (var part : basket.getParts()) {
-            createOrderPort.createOrder(client, part.getProduct(), part.getQuantity());
-            decreaseStockPort.decreaseStock(part.getProduct().getId(), part.getQuantity());
+        for (var entry : event.items().entrySet()) {
+            createOrderPort.addOrderPart(orderId, event.client(), entry.getKey(), entry.getValue());
+            decreaseStockPort.decreaseStock(entry.getKey().getId(), entry.getValue());
         }
-
-        basket.clear();
-        basketRepository.save(basket);
 
         return orderId;
     }
