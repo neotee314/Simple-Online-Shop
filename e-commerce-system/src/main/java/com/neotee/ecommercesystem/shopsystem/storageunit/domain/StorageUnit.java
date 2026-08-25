@@ -6,7 +6,6 @@ import com.neotee.ecommercesystem.domainprimitives.ZipCode;
 import com.neotee.ecommercesystem.exception.*;
 import com.neotee.ecommercesystem.exception.EntityNotFoundException;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
-import com.neotee.ecommercesystem.shopsystem.product.domain.ProductId;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

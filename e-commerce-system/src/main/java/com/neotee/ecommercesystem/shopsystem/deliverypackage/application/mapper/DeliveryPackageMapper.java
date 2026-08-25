@@ -1,5 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.mapper;
 
+import com.neotee.ecommercesystem.domainprimitives.OrderId;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.dto.DeliveryPackageDTO;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.dto.DeliveryPackagePartDTO;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackage;
@@ -50,7 +51,7 @@ public abstract class DeliveryPackageMapper {
     @Named("mapUUIDToOrder")
     public Order mapUUIDToOrder(UUID id) {
         Order order = new Order();
-        order.setOrderId(new com.neotee.ecommercesystem.shopsystem.order.domain.OrderId(id));
+        order.setOrderId(new OrderId(id));
         return order;
     }
 

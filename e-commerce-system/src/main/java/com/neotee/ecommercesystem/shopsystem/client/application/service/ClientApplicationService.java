@@ -4,6 +4,7 @@ import com.neotee.ecommercesystem.domainprimitives.ClientId;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
+import com.neotee.ecommercesystem.exceptions.EntityNotFoundException;
 import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
 import com.neotee.ecommercesystem.shopsystem.client.domain.ClientRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,34 +21,30 @@ public class ClientApplicationService {
 
 
     public Client findByEmail(Email email) {
-        if (email == null) {
-            throw new DomainValidationException("email", "E-Mail darf nicht null sein.");
-        }
-
         return clientRepository.findByEmail(email)
-                .orElseThrow(() -> new DomainValidationException("email", "Client mit dieser E-Mail nicht gefunden."));
+                .orElseThrow(() -> new EntityNotFoundException("ClientApplicationService", "Client mit dieser E-Mail nicht gefunden."));
     }
 
     public Client findById(ClientId clientId) {
         if (clientId == null) {
-            throw new DomainValidationException("clientId", "Client ID darf nicht null sein.");
+            throw new DomainValidationException("ClientApplicationService", "Client ID darf nicht null sein.");
         }
 
         return clientRepository.findById(clientId)
-                .orElseThrow(() -> new DomainValidationException("clientId", "Client nicht gefunden."));
+                .orElseThrow(() -> new EntityNotFoundException("ClientApplicationService", "Client nicht gefunden."));
     }
 
     public List<Client> findAll() {
         List<Client> clients = clientRepository.findAll();
         if (clients.isEmpty()) {
-            throw new DomainValidationException("clients", "Keine Clients gefunden.");
+            throw new EntityNotFoundException("ClientApplicationService", "Keine Clients gefunden.");
         }
         return clients;
     }
 
     public boolean existsByEmail(Email email) {
         if (email == null) {
-            throw new DomainValidationException("email", "E-Mail darf nicht null sein.");
+            throw new DomainValidationException("ClientApplicationService", "E-Mail darf nicht null sein.");
         }
         return clientRepository.findByEmail(email).isPresent();
     }
@@ -55,7 +52,7 @@ public class ClientApplicationService {
     
     public Client registerClient(String name, Email email, HomeAddress homeAddress) {
         if (existsByEmail(email)) {
-            throw new DomainValidationException("email", "Ein Client mit dieser E-Mail existiert bereits.");
+            throw new DomainValidationException("ClientApplicationService", "Ein Client mit dieser E-Mail existiert bereits.");
         }
 
         Client client = Client.create(name, email, homeAddress);
@@ -68,7 +65,7 @@ public class ClientApplicationService {
         clientRepository.findByEmail(email)
                 .ifPresent(existing -> {
                     if (!existing.getId().equals(clientId)) {
-                        throw new DomainValidationException("email", "Diese E-Mail wird bereits von einem anderen Client verwendet.");
+                        throw new DomainValidationException("ClientApplicationService", "Diese E-Mail wird bereits von einem anderen Client verwendet.");
                     }
                 });
 

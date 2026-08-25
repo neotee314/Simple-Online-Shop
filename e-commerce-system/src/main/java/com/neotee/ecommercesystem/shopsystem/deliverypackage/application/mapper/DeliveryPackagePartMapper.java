@@ -2,7 +2,6 @@ package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.mapper
 
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.dto.DeliveryPackagePartDTO;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackagePart;
-import com.neotee.ecommercesystem.shopsystem.product.application.service.ProductService;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import org.mapstruct.*;
 

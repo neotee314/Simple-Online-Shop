@@ -27,7 +27,7 @@ public class StockTest {
     @Autowired
     private ClientRegistrationUseCases clientRegistrationUseCases;
     @Autowired
-    private ThingCatalogUseCases thingCatalogUseCases;
+    private ProductCatalogUseCases productCatalogUseCases;
     @Autowired
     private StorageUnitUseCases storageUnitUseCases;
     @Autowired
@@ -48,7 +48,7 @@ public class StockTest {
         clientMasterDataInitializer.registerAllClients();
 
         thingAndStockMasterDataInitializer = new ThingAndStockMasterDataInitializer(
-                thingCatalogUseCases, storageUnitUseCases);
+                productCatalogUseCases, storageUnitUseCases);
         thingAndStockMasterDataInitializer.addAllThings();
         thingAndStockMasterDataInitializer.addAllStorageUnits();
 

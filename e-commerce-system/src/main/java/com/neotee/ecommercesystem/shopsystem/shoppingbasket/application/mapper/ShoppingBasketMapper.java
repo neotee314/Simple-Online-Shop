@@ -1,73 +1,61 @@
 package com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.mapper;
 
-import com.neotee.ecommercesystem.domainprimitives.Email;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.ShoppingBasketDTO;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.BasketState;
+import com.neotee.ecommercesystem.domainprimitives.ClientId;
+import com.neotee.ecommercesystem.domainprimitives.ShoppingBasketId;
+import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.ShoppingBasketPartRequestDTO;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.ShoppingBasketPartResponseDTO;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.ShoppingBasketResponseDTO;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasket;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketId;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-import org.mapstruct.ReportingPolicy;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketPart;
+import com.neotee.ecommercesystem.shopsystem.product.application.service.ProductApplicationService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring", uses = {ShoppingBasketPartMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public abstract class ShoppingBasketMapper {
-    @Mapping(target = "id", source = "id", qualifiedByName = "mapBasketIdToUUID")
-    @Mapping(target = "basketState", source = "basketState", qualifiedByName = "mapBasketStateEnumToString")
-    @Mapping(target = "clientEmail", source = "clientEmail", qualifiedByName = "mapEmailToString")
-    @Mapping(target = "totalSalesPrice", source = ".", qualifiedByName = "getTotalSalesPrice")
-    @Mapping(target = "shoppingBasketParts", source = "parts")
-    public abstract ShoppingBasketDTO toDto(ShoppingBasket shoppingBasket);
+@Component
+@RequiredArgsConstructor
+public class ShoppingBasketMapper {
 
-    @Mapping(target = "id", source = "id", qualifiedByName = "mapUUIDToBasketId")
-    @Mapping(target = "basketState", source = "basketState", qualifiedByName = "mapEnumBasketStateToString")
-    @Mapping(target = "clientEmail", source = "clientEmail", qualifiedByName = "mapStringToEmail")
-    @Mapping(target = "parts", source = "shoppingBasketParts")
-    public abstract ShoppingBasket toEntity(ShoppingBasketDTO shoppingBasketDto);
+    private final ProductApplicationService productService;
 
-    @Named("mapUUIDToBasketId")
-    public ShoppingBasketId mapUUIDToBasketId(UUID id) {
-        return new ShoppingBasketId(id);
+    public ShoppingBasketResponseDTO toResponseDTO(ShoppingBasket basket) {
+        if (basket == null) return null;
+
+        var partDTOs = basket.getParts().stream()
+                .map(this::toPartResponseDTO)
+                .collect(Collectors.toList());
+
+        return new ShoppingBasketResponseDTO(
+                basket.getId(),
+                basket.getClient() != null ? basket.getClient().getId() : null,
+                basket.getClient() != null ? basket.getClient().getEmail().getEmailAddress() : null,
+                partDTOs,
+                basket.getTotalPrice() != null ? basket.getTotalPrice().getAmount().doubleValue() : 0.0,
+                basket.getBasketState() != null ? basket.getBasketState().name() : "EMPTY",
+                basket.getTotalQuantity()
+        );
     }
 
-    @Named("mapBasketIdToUUID")
-    public UUID mapBasketIdToUUID(ShoppingBasketId shoppingBasketId) {
-        return shoppingBasketId.getId();
+    public ShoppingBasketPartResponseDTO toPartResponseDTO(ShoppingBasketPart part) {
+        if (part == null) return null;
+
+        return new ShoppingBasketPartResponseDTO(
+                part.getProduct().getId(),
+                part.getProduct().getName(),
+                part.getQuantity(),
+                part.getSalesPrice() != null ? part.getSalesPrice().getAmount().doubleValue() : 0.0,
+                part.getSubtotal() != null ? part.getSubtotal().getAmount().doubleValue() : 0.0
+        );
     }
 
-    @Named("getTotalSalesPrice")
-    public String getTotalSalesPrice(ShoppingBasket shoppingBasket) {
-        DecimalFormat df = new DecimalFormat("0.00");
-        df.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.GERMANY));
+    public ShoppingBasketPart toPartEntity(ShoppingBasketPartRequestDTO dto) {
+        if (dto == null) return null;
 
-        String formatted = df.format(shoppingBasket.getTotalSalesPrice().getAmount());
-        return formatted + " €";
+        var product = productService.findById(dto.productId());
+        return ShoppingBasketPart.create(product, dto.quantity());
     }
-
-
-    @Named("mapBasketStateEnumToString")
-    public String mapBasketStateEnumToString(BasketState basketState) {
-        return basketState.toString();
-    }
-
-    @Named("mapEnumBasketStateToString")
-    public String mapEnumBasketStateToString(String basketState) {
-        return BasketState.valueOf(basketState).toString();
-    }
-
-    @Named("mapEmailToString")
-    public String mapEmailToString(Email email) {
-        return email.getEmailAddress();
-    }
-
-    @Named("mapStringToEmail")
-    public Email mapStringToEmail(String email) {
-        return Email.of(email);
-    }
-
 }

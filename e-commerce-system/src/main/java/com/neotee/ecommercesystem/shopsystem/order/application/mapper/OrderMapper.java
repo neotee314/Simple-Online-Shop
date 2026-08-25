@@ -1,63 +1,64 @@
 package com.neotee.ecommercesystem.shopsystem.order.application.mapper;
 
-import com.neotee.ecommercesystem.domainprimitives.Email;
-import com.neotee.ecommercesystem.shopsystem.order.application.dto.OrderDTO;
-import com.neotee.ecommercesystem.shopsystem.order.application.dto.OrderPartDTO;
+import com.neotee.ecommercesystem.shopsystem.order.application.dto.OrderPartRequestDTO;
+import com.neotee.ecommercesystem.shopsystem.order.application.dto.OrderPartResponseDTO;
+import com.neotee.ecommercesystem.shopsystem.order.application.dto.OrderResponseDTO;
 import com.neotee.ecommercesystem.shopsystem.order.domain.Order;
-import com.neotee.ecommercesystem.shopsystem.order.domain.OrderId;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-import org.mapstruct.ReportingPolicy;
+import com.neotee.ecommercesystem.shopsystem.order.domain.OrderPart;
+import com.neotee.ecommercesystem.shopsystem.product.application.service.ProductApplicationService;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring", uses = {OrderPartMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public abstract class OrderMapper {
+@Component
+@RequiredArgsConstructor
+public class OrderMapper {
 
-    @Mapping(target = "orderId", source = "orderId", qualifiedByName = "mapOrderIdToUUID")
-    @Mapping(target = "clientEmail", source = "clientEmail", qualifiedByName = "mapEmailToString")
-    @Mapping(target = "orderParts", source = "orderParts")
-    public abstract OrderDTO toDto(Order order);
+    private final ProductApplicationService productService;
 
-    @Mapping(target = "orderId", source = "orderId", qualifiedByName = "mapUUIDToOrderId")
-    @Mapping(target = "clientEmail", source = "clientEmail", qualifiedByName = "mapStringToEmail")
-    @Mapping(target = "orderParts", source = "orderParts")
-    public abstract Order toEntity(OrderDTO orderDto);
+    public OrderResponseDTO toResponseDTO(Order order) {
+        if (order == null) {
+            return null;
+        }
 
-    @Named("mapUUIDToOrderId")
-    public OrderId mapUUIDToOrderId(UUID id) {
-        return new OrderId(id);
-    }
-
-    @Named("mapOrderIdToUUID")
-    public UUID mapOrderIdToUUID(OrderId orderId) {
-        return orderId.getId();
-    }
-
-    @Named("mapEmailToString")
-    public String mapEmailToString(Email email) {
-        return email.getEmailAddress();
-    }
-
-    @Named("mapStringToEmail")
-    public Email mapStringToEmail(String email) {
-        return Email.of(email);
-    }
-    public List<OrderPartDTO> mapToOrderPartDTOs(Map<UUID, Integer> orderPartsMap) {
-        return orderPartsMap.entrySet().stream()
-                .map(entry -> new OrderPartDTO(entry.getKey(), entry.getValue()))
+        List<OrderPartResponseDTO> partDTOs = order.getOrderParts().stream()
+                .map(this::toPartResponseDTO)
                 .collect(Collectors.toList());
+
+        return new OrderResponseDTO(
+                order.getId(),
+                order.getClientEmail() != null ? String.valueOf(order.getClientEmail()) : null,
+                partDTOs,
+                order.getStatus() != null ? order.getStatus().name() : null,
+                order.getSubmissionDate() != null ? order.getSubmissionDate().toString() : null
+        );
     }
 
-    public OrderDTO mapToOrderDTO(String clientEmail, List<OrderPartDTO> orderParts) {
-        OrderDTO dto = new OrderDTO();
-        dto.setOrderId(null);
-        dto.setClientEmail(clientEmail);
-        dto.setOrderParts(orderParts);
-        return dto;
+    public OrderPartResponseDTO toPartResponseDTO(OrderPart part) {
+        if (part == null) {
+            return null;
+        }
+
+        return new OrderPartResponseDTO(
+                part.getProduct() != null ? part.getProduct().getId() : null,
+                part.getProduct() != null ? part.getProduct().getName() : null,
+                part.getOrderQuantity()
+        );
+    }
+
+    public Map<Product, Integer> toProductQuantityMap(List<OrderPartRequestDTO> partDTOs) {
+        if (partDTOs == null) {
+            return Map.of();
+        }
+
+        return partDTOs.stream()
+                .collect(Collectors.toMap(
+                        dto -> productService.findById(dto.productId()),
+                        OrderPartRequestDTO::quantity
+                ));
     }
 }

@@ -28,7 +28,7 @@ public class MultipleDeliverysTest {
     @Autowired
     private ShoppingBasketUseCases shoppingBasketUseCases;
     @Autowired
-    private ThingCatalogUseCases thingCatalogUseCases;
+    private ProductCatalogUseCases productCatalogUseCases;
     @Autowired
     private StorageUnitUseCases storageUnitUseCases;
     @Autowired
@@ -51,7 +51,7 @@ public class MultipleDeliverysTest {
         clientTestHelper.registerAllClients();
 
         thingAndStockTestHelper = new ThingAndStockTestHelper(
-                thingCatalogUseCases, storageUnitUseCases );
+                productCatalogUseCases, storageUnitUseCases );
         thingAndStockTestHelper.addAllThings();
         thingAndStockTestHelper.addAllStorageUnits();
         thingAndStockTestHelper.addAllStock();
@@ -98,11 +98,11 @@ public class MultipleDeliverysTest {
         EmailType clientEmail3 = CLIENT_EMAIL[3];
 
 
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail3, (UUID) THING_DATA[8][0], 2 );
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail3, (UUID) THING_DATA[11][0], 2 );
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail3, (UUID) THING_DATA[14][0], 2 );
         // that basket could have been served from storage unit 4 or 7, but 4 is closer to the client
         UUID orderId = shoppingBasketUseCases.checkout( clientEmail3 );
@@ -130,11 +130,11 @@ public class MultipleDeliverysTest {
     public void testStorageUnitWithEnoughCapacityWins() {
         // given
         EmailType clientEmail3 = CLIENT_EMAIL[3];
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail3, (UUID) THING_DATA[8][0], 3 );
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail3, (UUID) THING_DATA[11][0], 3 );
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail3, (UUID) THING_DATA[14][0], 4 );
         // that basket could have been served from storage unit 4 or 7, 4 is closer to the client,
         // but only 7 has enough capacity
@@ -161,11 +161,11 @@ public class MultipleDeliverysTest {
     public void testTwoDeliveryPackages() {
         // given
         EmailType clientEmail6 = CLIENT_EMAIL[6];
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail6, (UUID) THING_DATA[10][0], 1 );
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail6, (UUID) THING_DATA[11][0], 1 );
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail6, (UUID) THING_DATA[12][0], 1 );
         // that basket needs two delivery packages (2 + 1 things) anyway, and there
         // are 2 options for the bigger one: 10+12 from 5, or 10+11 from 7. The first one is
@@ -199,15 +199,15 @@ public class MultipleDeliverysTest {
     public void testTwoBigDeliveryPackages() {
         // given
         EmailType clientEmail2 = CLIENT_EMAIL[2];
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail2, (UUID) THING_DATA[8][0], 2 );
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail2, (UUID) THING_DATA[9][0], 1 );
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail2, (UUID) THING_DATA[10][0], 4 );
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail2, (UUID) THING_DATA[11][0], 2 );
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail2, (UUID) THING_DATA[12][0], 10 );
         UUID orderId = shoppingBasketUseCases.checkout( clientEmail2 );
 
@@ -237,7 +237,7 @@ public class MultipleDeliverysTest {
     public void testOnlyOneSolution() {
         // given
         EmailType clientEmail6 = CLIENT_EMAIL[6];
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail6, (UUID) THING_DATA[12][0], 10 );
         UUID orderId = shoppingBasketUseCases.checkout( clientEmail6 );
 

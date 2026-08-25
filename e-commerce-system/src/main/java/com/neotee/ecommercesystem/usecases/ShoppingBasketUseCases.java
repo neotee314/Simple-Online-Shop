@@ -2,7 +2,7 @@ package com.neotee.ecommercesystem.usecases;
 
 
 
-import com.neotee.ecommercesystem.exception.ShopException;
+import com.neotee.ecommercesystem.exceptions.ShopException;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 
@@ -26,7 +26,7 @@ public interface ShoppingBasketUseCases {
      *      - the quantity <= 0,
      *      - the thing is not available in the requested quantity
      */
-    public void addThingToShoppingBasket(EmailType clientEmail, UUID thingId, int quantity );
+    public void addProductToShoppingBasket(EmailType clientEmail, UUID thingId, int quantity );
 
 
     /**
@@ -42,7 +42,7 @@ public interface ShoppingBasketUseCases {
      *      - the quantity <= 0,
      *      - the thing is not in the shopping basket in the requested quantity
      */
-    public void removeThingFromShoppingBasket( EmailType clientEmail, UUID thingId, int quantity );
+    public void removeProductFromShoppingBasket(EmailType clientEmail, UUID thingId, int quantity );
 
 
     /**

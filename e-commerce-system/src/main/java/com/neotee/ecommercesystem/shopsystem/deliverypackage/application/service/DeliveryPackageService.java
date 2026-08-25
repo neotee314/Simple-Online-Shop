@@ -3,11 +3,10 @@ package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.servic
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackage;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackageRepository;
-import com.neotee.ecommercesystem.shopsystem.order.application.service.OrderService;
 import com.neotee.ecommercesystem.shopsystem.order.domain.Order;
-import com.neotee.ecommercesystem.shopsystem.order.domain.OrderId;
+import com.neotee.ecommercesystem.domainprimitives.OrderId;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
-import com.neotee.ecommercesystem.shopsystem.storageunit.application.service.InventoryFulfillmentService;
+import com.neotee.ecommercesystem.shopsystem.storageunit.application.service.ProductAvailabilityFulfillmentService;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnit;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnitId;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,7 @@ import java.util.*;
 public class DeliveryPackageService {
 
     private final DeliveryPackageRepository deliveryPackageRepository;
-    private final InventoryFulfillmentService inventoryFulfillmentService;
+    private final ProductAvailabilityFulfillmentService inventoryFulfillmentService;
     private final OrderService orderService;
 
 

@@ -2,12 +2,11 @@ package com.neotee.ecommercesystem.usecases.masterdata;
 
 
 import com.neotee.ecommercesystem.usecases.StorageUnitUseCases;
-import com.neotee.ecommercesystem.usecases.ThingCatalogUseCases;
+import com.neotee.ecommercesystem.usecases.ProductCatalogUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 
@@ -20,16 +19,16 @@ import java.util.*;
 @SuppressWarnings("PMD")
 public class ThingAndStockMasterDataInitializer {
 
-    private ThingCatalogUseCases thingCatalogUseCases;
+    private ProductCatalogUseCases productCatalogUseCases;
     private StorageUnitUseCases storageUnitUseCases;
     private static Random random = new Random();
 
     public static final String EUR = "EUR";
 
     @Autowired
-    public ThingAndStockMasterDataInitializer( ThingCatalogUseCases thingCatalogUseCases,
+    public ThingAndStockMasterDataInitializer( ProductCatalogUseCases productCatalogUseCases,
                                                                 StorageUnitUseCases storageUnitUseCases ) {
-        this.thingCatalogUseCases = thingCatalogUseCases;
+        this.productCatalogUseCases = productCatalogUseCases;
         this.storageUnitUseCases = storageUnitUseCases;
     }
 
@@ -126,7 +125,7 @@ public class ThingAndStockMasterDataInitializer {
 
     public void addThingDataToCatalog( Object[] thingData ) {
         log.info( "... adding " + thingData[1] );
-        thingCatalogUseCases.addThingToCatalog( (UUID) thingData[0], (String) thingData[1], (String) thingData[2],
+        productCatalogUseCases.addProductToCatalog( (UUID) thingData[0], (String) thingData[1], (String) thingData[2],
                 (Float) thingData[3], (MoneyType) thingData[4], (MoneyType) thingData[5] );
     }
 

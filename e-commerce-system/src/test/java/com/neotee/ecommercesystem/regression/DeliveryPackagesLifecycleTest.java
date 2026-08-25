@@ -31,7 +31,7 @@ public class DeliveryPackagesLifecycleTest {
     @Autowired
     private ShoppingBasketUseCases shoppingBasketUseCases;
     @Autowired
-    private ThingCatalogUseCases thingCatalogUseCases;
+    private ProductCatalogUseCases productCatalogUseCases;
     @Autowired
     private StorageUnitUseCases storageUnitUseCases;
     @Autowired
@@ -52,16 +52,16 @@ public class DeliveryPackagesLifecycleTest {
         clientMasterDataInitializer.registerAllClients();
 
         thingAndStockMasterDataInitializer = new ThingAndStockMasterDataInitializer(
-                thingCatalogUseCases, storageUnitUseCases );
+                productCatalogUseCases, storageUnitUseCases );
         thingAndStockMasterDataInitializer.addAllThings();
         thingAndStockMasterDataInitializer.addAllStorageUnits();
         thingAndStockMasterDataInitializer.addAllStock();
 
         // put things in the shopping basket ...
         clientEmail = CLIENT_EMAIL[2];
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail, (UUID) THING_DATA[3][0], 2 );
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail, (UUID) THING_DATA[2][0], 1 );
     }
 

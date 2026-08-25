@@ -1,9 +1,9 @@
 package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.service;
 
+import com.neotee.ecommercesystem.anticorruption.DeliveryPackageUseCaseService;
 import com.neotee.ecommercesystem.exception.EntityIdNullException;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.dto.DeliveryPackageDTO;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.mapper.DeliveryPackageMapper;
-import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

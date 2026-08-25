@@ -1,5 +1,7 @@
 package com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain;
 
+import com.neotee.ecommercesystem.domainprimitives.ShoppingBasketId;
+import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -14,6 +16,8 @@ public interface ShoppingBasketRepository extends CrudRepository<ShoppingBasket,
     List<ShoppingBasket> findAll();
 
     Optional<ShoppingBasket> findByClientEmail(EmailType clientEmail);
+
+    Optional<ShoppingBasket> findByClient(Client client);
 }
 
 

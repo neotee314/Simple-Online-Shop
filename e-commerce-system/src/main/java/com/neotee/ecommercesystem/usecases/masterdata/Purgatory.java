@@ -17,7 +17,7 @@ public class Purgatory {
     @Autowired
     private OrderUseCases orderUseCases;
     @Autowired
-    private ThingCatalogUseCases thingCatalogUseCases;
+    private ProductCatalogUseCases productCatalogUseCases;
     @Autowired
     private StorageUnitUseCases storageUnitUseCases;
     @Autowired
@@ -30,6 +30,6 @@ public class Purgatory {
         shoppingBasketUseCases.emptyAllShoppingBaskets();
         storageUnitUseCases.deleteAllStorageUnits();
         clientRegistrationUseCases.deleteAllClients();
-        thingCatalogUseCases.deleteThingCatalog();
+        productCatalogUseCases.deleteProductCatalog();
     }
 }

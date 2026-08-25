@@ -28,7 +28,7 @@ public class OneDeliveryTest {
     @Autowired
     private ShoppingBasketUseCases shoppingBasketUseCases;
     @Autowired
-    private ThingCatalogUseCases thingCatalogUseCases;
+    private ProductCatalogUseCases productCatalogUseCases;
     @Autowired
     private StorageUnitUseCases storageUnitUseCases;
     @Autowired
@@ -56,7 +56,7 @@ public class OneDeliveryTest {
         clientMasterDataInitializer.registerAllClients();
 
         thingAndStockMasterDataInitializer = new ThingAndStockMasterDataInitializer(
-                thingCatalogUseCases, storageUnitUseCases );
+                productCatalogUseCases, storageUnitUseCases );
         thingAndStockMasterDataInitializer.addAllThings();
         thingAndStockMasterDataInitializer.addAllStorageUnits();
         thingAndStockMasterDataInitializer.addAllStock();
@@ -77,7 +77,7 @@ public class OneDeliveryTest {
         // when
         for ( int iClient = 0; iClient <= 5; iClient++ ) {
             EmailType clientEmail = CLIENT_EMAIL[iClient];
-            shoppingBasketUseCases.addThingToShoppingBasket( clientEmail, thingId7, 1 );
+            shoppingBasketUseCases.addProductToShoppingBasket( clientEmail, thingId7, 1 );
             orderIds[iClient] = shoppingBasketUseCases.checkout( clientEmail );
         }
 

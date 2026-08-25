@@ -1,191 +1,188 @@
 package com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain;
 
-import com.neotee.ecommercesystem.exception.ShopException;
-import com.neotee.ecommercesystem.domainprimitives.Email;
+import com.neotee.ecommercesystem.core.AggregateRoot;
+import com.neotee.ecommercesystem.domainprimitives.BasketState;
 import com.neotee.ecommercesystem.domainprimitives.Money;
-import com.neotee.ecommercesystem.exception.EntityIdNullException;
+import com.neotee.ecommercesystem.domainprimitives.ProductId;
+import com.neotee.ecommercesystem.domainprimitives.ShoppingBasketId;
+import com.neotee.ecommercesystem.exceptions.DomainValidationException;
+import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
-import com.neotee.ecommercesystem.shopsystem.product.domain.ProductId;
-import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.BasketState.*;
-
 @Entity
+@Table(name = "shopping_basket")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Setter
-@AllArgsConstructor
-@Table(name = "SHOPPING_BASKET")
-public class ShoppingBasket {
+public class ShoppingBasket extends AggregateRoot<ShoppingBasketId> {
 
-    @Id
-    private ShoppingBasketId id;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id", nullable = false, unique = true)
+    private Client client;
 
-    private Email clientEmail;
-
+    @Enumerated(EnumType.STRING)
     private BasketState basketState;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<ShoppingBasketPart> parts = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "shopping_basket_id")
+    private List<ShoppingBasketPart> parts;
 
-
-    public ShoppingBasket() {
-        this.id = new ShoppingBasketId();
+    protected ShoppingBasket(ShoppingBasketId basketId) {
+        this.id = basketId;
+        this.basketState = BasketState.EMPTY;
+        this.parts = new ArrayList<>();
     }
 
-    // Add a new part to the shopping basket
-    private void addPart(ShoppingBasketPart newPart) {
-        if (newPart == null || newPart.getQuantity() <= 0) {
-            throw new ShopException("Quantity must be greater than zero.");
-        }
-        this.setBasketState(FILLED);
-
-        for (ShoppingBasketPart existingPart : parts) {
-            if (existingPart.equals(newPart)) {
-                existingPart.increaseQuantity(newPart.getQuantity());
-                return;
-            }
-        }
-        parts.add(newPart);
+    protected ShoppingBasket(ShoppingBasketId basketId, Client client) {
+        this.id = basketId;
+        this.client = client;
+        this.basketState = BasketState.EMPTY;
+        this.parts = new ArrayList<>();
     }
 
-    public int removeReservedItems(ProductId productId, Integer quantityToRemove) {
-        if (productId == null || quantityToRemove == null || quantityToRemove < 0) throw new EntityIdNullException();
-        int reserved = getReservedQuantityForThing(productId);
-        int removed = Math.min(reserved, quantityToRemove);
-
-        for (int i = 0; i < removed; i++) {
-            removeItem(productId, 1);
-        }
-
-        return removed;
+    public static ShoppingBasket create(Client client) {
+        if (client == null)
+            throw new DomainValidationException("ShoppingBasket", "Client darf nicht null sein.");
+        return new ShoppingBasket(ShoppingBasketId.newId(), client);
     }
 
-
-    // Check if the shopping basket is empty
-    public boolean isEmpty() {
-        return parts.stream().allMatch(part -> part.getQuantity() == 0) || basketState == EMPTY;
+    public static ShoppingBasket create(ShoppingBasketId basketId, Client client) {
+        if (basketId == null)
+            throw new DomainValidationException("ShoppingBasket", "Basket ID darf nicht null sein.");
+        if (client == null)
+            throw new DomainValidationException("ShoppingBasket", "Client darf nicht null sein.");
+        return new ShoppingBasket(basketId, client);
     }
 
+    public void addItem(Product product, Integer quantity) {
+        if (product == null)
+            throw new DomainValidationException("ShoppingBasket", "Product darf nicht null sein.");
+        if (quantity == null || quantity <= 0)
+            throw new DomainValidationException("ShoppingBasket", "Quantity muss größer als 0 sein.");
 
-    public Integer getReservedQuantityForThing(ProductId productId) {
-        if (productId == null) {
-            throw new ShopException("thingId cannot be null");
-        }
-        return parts.stream()
-                .filter(part -> part.contains(productId))
-                .mapToInt(ShoppingBasketPart::getQuantity)
-                .sum();
-    }
-
-    public void addItem(Product product, Integer quantity, Money price) {
-        if (product == null || quantity < 0 || price == null || price.getAmount() < 0)
-            throw new ShopException("Invalid thing ID or quantity must be greater than 0");
-        // Add item to the shopping basket
-
-        ShoppingBasketPart part = getPartContainingThing(product);
-        if (part != null) {
-            part.increaseQuantity(quantity);
+        var existingPart = findPartByProduct(product);
+        if (existingPart != null) {
+            existingPart.increaseQuantity(quantity);
+            updateBasketState();
             return;
         }
 
-        part = new ShoppingBasketPart(product, quantity, price);
-        addPart(part);
+        var newPart = ShoppingBasketPart.create(product, quantity, product.getPurchasePrice());
+        parts.add(newPart);
+        updateBasketState();
     }
 
-    private ShoppingBasketPart getPartContainingThing(Product product) {
-        if (product == null) throw new EntityNotFoundException();
-        for (ShoppingBasketPart part : parts) {
-            if (part.getProduct().equals(product)) {
-                return part;
-            }
+    public void removeItem(Product product, Integer quantity) {
+        if (product == null)
+            throw new DomainValidationException("ShoppingBasket", "Product darf nicht null sein.");
+        if (quantity == null || quantity <= 0)
+            throw new DomainValidationException("ShoppingBasket", "Quantity muss größer als 0 sein.");
+
+        var part = findPartByProduct(product);
+        if (part == null)
+            throw new DomainValidationException("ShoppingBasket", "Produkt nicht im Warenkorb gefunden.");
+
+        var newQuantity = part.getQuantity() - quantity;
+        if (newQuantity > 0) {
+            part.decreaseQuantity(quantity);
+        } else if (newQuantity == 0) {
+            parts.remove(part);
+        } else {
+            throw new DomainValidationException("ShoppingBasket", "Kann nicht mehr entfernen als vorhanden ist.");
         }
-        return null;
+        updateBasketState();
     }
 
-    public void removeItem(ProductId productId, Integer quantity) {
-        if (productId == null || quantity <= 0)
-            throw new ShopException("Invalid thing ID or quantity must be greater than 0");
+    public void removeItem(Product product) {
+        if (product == null)
+            throw new DomainValidationException("ShoppingBasket", "Product darf nicht null sein.");
 
-        for (ShoppingBasketPart existingPart : parts) {
-            if (existingPart.contains(productId)) {
-                int newQuantity = existingPart.getQuantity() - quantity;
-                if (newQuantity > 0) {
-                    existingPart.decreaseQuantity(quantity);
-                    return;
-                } else if (newQuantity == 0) {
-                    parts.remove(existingPart);
-                    return;
-                } else throw new ShopException("Cannot remove more than existing quantity.");
-
-            }
+        var part = findPartByProduct(product);
+        if (part != null) {
+            parts.remove(part);
+            updateBasketState();
         }
-    }
-
-    public void removeItem(UUID thingId) {
-        if (thingId == null)
-            throw new ShopException("Invalid thing ID or quantity must be greater than 0");
-
-        for (ShoppingBasketPart existingPart : parts) {
-            if (existingPart.contains(thingId)) {
-                parts.remove(existingPart);
-                return;
-            }
-        }
-    }
-
-    public Map<Product, Integer> getPartsQuantityMap() {
-        return parts.stream()
-                .collect(Collectors.toMap(ShoppingBasketPart::getProduct, ShoppingBasketPart::getQuantity));
-    }
-
-    public Map<UUID, Integer> getBasketAsMapOfThingIdAndQuantities() {
-        return parts.stream()
-                .collect(Collectors.toMap(part -> part.getProduct().getProductId().getId(), ShoppingBasketPart::getQuantity));
-    }
-
-    public Money getAsMoneyValue() {
-        MoneyType totalValue = Money.of(0f, "EUR");
-        Money.of(0f, "EUR");
-        for (ShoppingBasketPart part : parts) {
-            Money price = part.getSalesPrice();
-            totalValue = totalValue.add(price.multiplyBy(part.getQuantity()));
-        }
-        return (Money) totalValue;
-    }
-
-    public void checkout() {
-        parts.clear();
-    }
-
-
-    public boolean contains(UUID thingId) {
-        if (thingId == null) throw new ShopException("Thing ID must not be null");
-        return parts.stream()
-                .anyMatch(part -> part.contains(thingId));
     }
 
     public void clear() {
         parts.clear();
-        this.basketState = EMPTY;
+        this.basketState = BasketState.EMPTY;
     }
 
-    public Money getTotalSalesPrice() {
-        MoneyType totalSalesPrice = Money.of(0f, "EUR");
-        for (ShoppingBasketPart part : parts) {
-            Money price = part.getSalesPrice();
-            totalSalesPrice = totalSalesPrice.add(price.multiplyBy(part.getQuantity()));
+    public boolean isEmpty() {
+        return parts.isEmpty() || basketState == BasketState.EMPTY;
+    }
+
+    public Money getTotalPrice() {
+        var total = Money.of(0f, "EUR");
+        for (var part : parts) {
+            total = (Money) total.add(part.getSalesPrice());
         }
-        return (Money) totalSalesPrice;
+        return (Money) total;
+    }
+
+    public boolean contains(Product product) {
+        if (product == null)
+            throw new DomainValidationException("ShoppingBasket", "Product darf nicht null sein.");
+        return findPartByProduct(product) != null;
+    }
+
+    public int getPartCount() {
+        return parts.size();
+    }
+
+    public int getTotalQuantity() {
+        return parts.stream()
+                .mapToInt(ShoppingBasketPart::getQuantity)
+                .sum();
+    }
+
+    public List<ShoppingBasketPart> getParts() {
+        return new ArrayList<>(parts);
+    }
+
+    public Integer getReservedQuantityForProduct(ProductId productId) {
+        if (productId == null)
+            throw new DomainValidationException("ShoppingBasket", "Product ID darf nicht null sein.");
+
+        return parts.stream()
+                .filter(part -> part.getProduct().getId().equals(productId))
+                .mapToInt(ShoppingBasketPart::getQuantity)
+                .sum();
+    }
+
+    public boolean hasItems() {
+        return !parts.isEmpty();
+    }
+
+    private ShoppingBasketPart findPartByProduct(Product product) {
+        if (product == null) return null;
+        return parts.stream()
+                .filter(part -> part.getProduct().getId().equals(product.getId()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void updateBasketState() {
+        this.basketState = parts.isEmpty() ? BasketState.EMPTY : BasketState.FILLED;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        var that = (ShoppingBasket) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

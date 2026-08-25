@@ -21,7 +21,7 @@ public class OrderTest {
     @Autowired
     private ShoppingBasketUseCases shoppingBasketUseCases;
     @Autowired
-    private ThingCatalogUseCases thingCatalogUseCases;
+    private ProductCatalogUseCases productCatalogUseCases;
     @Autowired
     private StorageUnitUseCases storageUnitUseCases;
     @Autowired
@@ -42,7 +42,7 @@ public class OrderTest {
         clientMasterDataInitializer.registerAllClients();
 
         thingAndStockMasterDataInitializer = new ThingAndStockMasterDataInitializer(
-                thingCatalogUseCases, storageUnitUseCases );
+                productCatalogUseCases, storageUnitUseCases );
         thingAndStockMasterDataInitializer.addAllThings();
         thingAndStockMasterDataInitializer.addAllStorageUnits();
         thingAndStockMasterDataInitializer.addAllStock();
@@ -58,16 +58,16 @@ public class OrderTest {
         Map<UUID, Integer> orderHistoryBefore = orderUseCases.getOrderHistory( clientEmail );
 
         // when
-        shoppingBasketUseCases.addThingToShoppingBasket( clientEmail, thingId1, 3 );
-        shoppingBasketUseCases.addThingToShoppingBasket( clientEmail, thingId2, 2 );
+        shoppingBasketUseCases.addProductToShoppingBasket( clientEmail, thingId1, 3 );
+        shoppingBasketUseCases.addProductToShoppingBasket( clientEmail, thingId2, 2 );
         shoppingBasketUseCases.checkout( clientEmail );
         Map<UUID, Integer> orderHistory1 = orderUseCases.getOrderHistory( clientEmail );
-        shoppingBasketUseCases.addThingToShoppingBasket( clientEmail, thingId1, 6 );
-        shoppingBasketUseCases.addThingToShoppingBasket( clientEmail, thingId2, 2 );
+        shoppingBasketUseCases.addProductToShoppingBasket( clientEmail, thingId1, 6 );
+        shoppingBasketUseCases.addProductToShoppingBasket( clientEmail, thingId2, 2 );
         shoppingBasketUseCases.checkout( clientEmail );
         Map<UUID, Integer> orderHistory2 = orderUseCases.getOrderHistory( clientEmail );
-        shoppingBasketUseCases.addThingToShoppingBasket( clientEmail, thingId1, 1 );
-        shoppingBasketUseCases.addThingToShoppingBasket( clientEmail, thingId2, 6 );
+        shoppingBasketUseCases.addProductToShoppingBasket( clientEmail, thingId1, 1 );
+        shoppingBasketUseCases.addProductToShoppingBasket( clientEmail, thingId2, 6 );
         shoppingBasketUseCases.checkout( clientEmail );
         Map<UUID, Integer> orderHistory3 = orderUseCases.getOrderHistory( clientEmail );
 

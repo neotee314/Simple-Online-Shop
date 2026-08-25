@@ -5,7 +5,6 @@ import com.neotee.ecommercesystem.exception.EntityNotFoundException;
 import com.neotee.ecommercesystem.exception.QuantityNegativeException;
 import com.neotee.ecommercesystem.exception.ThingQuantityNotAvailableException;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
-import com.neotee.ecommercesystem.shopsystem.product.domain.ProductId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;

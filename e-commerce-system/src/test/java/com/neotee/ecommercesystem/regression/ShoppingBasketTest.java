@@ -27,7 +27,7 @@ public class ShoppingBasketTest {
     @Autowired
     private ShoppingBasketUseCases shoppingBasketUseCases;
     @Autowired
-    private ThingCatalogUseCases thingCatalogUseCases;
+    private ProductCatalogUseCases productCatalogUseCases;
     @Autowired
     private StorageUnitUseCases storageUnitUseCases;
     @Autowired
@@ -50,7 +50,7 @@ public class ShoppingBasketTest {
         clientMasterDataInitializer.registerAllClients();
 
         thingAndStockMasterDataInitializer = new ThingAndStockMasterDataInitializer(
-                thingCatalogUseCases, storageUnitUseCases );
+                productCatalogUseCases, storageUnitUseCases );
         thingAndStockMasterDataInitializer.addAllThings();
         thingAndStockMasterDataInitializer.addAllStorageUnits();
         thingAndStockMasterDataInitializer.addAllStock();
@@ -68,37 +68,37 @@ public class ShoppingBasketTest {
         UUID thingId1 = (UUID) THING_DATA[1][0];
         UUID thingId2 = (UUID) THING_DATA[2][0];
         EmailType clientEmail0 = CLIENT_EMAIL[0];
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail0, thingId1, 5 );
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail0, thingId2, 15 );
 
         // when
-        shoppingBasketUseCases.removeThingFromShoppingBasket(
+        shoppingBasketUseCases.removeProductFromShoppingBasket(
                 clientEmail0, thingId1, 2 );
-        shoppingBasketUseCases.removeThingFromShoppingBasket(
+        shoppingBasketUseCases.removeProductFromShoppingBasket(
                 clientEmail0, thingId2, 4 );
-        shoppingBasketUseCases.removeThingFromShoppingBasket(
+        shoppingBasketUseCases.removeProductFromShoppingBasket(
                 clientEmail0, thingId2, 7 );
 
         // then
         assertThrows( ShopException.class,
-                () -> shoppingBasketUseCases.removeThingFromShoppingBasket(
+                () -> shoppingBasketUseCases.removeProductFromShoppingBasket(
                         clientEmail0, nonExistentThingId, 12 ) );
         assertThrows( ShopException.class,
-                () -> shoppingBasketUseCases.removeThingFromShoppingBasket(
+                () -> shoppingBasketUseCases.removeProductFromShoppingBasket(
                         nonExistingEmail, thingId5, 12 ) );
         assertThrows( ShopException.class,
-                () -> shoppingBasketUseCases.removeThingFromShoppingBasket(
+                () -> shoppingBasketUseCases.removeProductFromShoppingBasket(
                         clientEmail0, thingId5, -1 ) );
         assertThrows( ShopException.class,
-                () -> shoppingBasketUseCases.removeThingFromShoppingBasket(
+                () -> shoppingBasketUseCases.removeProductFromShoppingBasket(
                         clientEmail0, thingId0, 1 ) );
         assertThrows( ShopException.class,
-                () -> shoppingBasketUseCases.removeThingFromShoppingBasket(
+                () -> shoppingBasketUseCases.removeProductFromShoppingBasket(
                         clientEmail0, thingId1, 4 ) );
         assertThrows( ShopException.class,
-                () -> shoppingBasketUseCases.removeThingFromShoppingBasket(
+                () -> shoppingBasketUseCases.removeProductFromShoppingBasket(
                         clientEmail0, thingId2, 5 ) );
     }
 
@@ -117,10 +117,10 @@ public class ShoppingBasketTest {
         Map<UUID, Integer> orderHistoryBefore = orderUseCases.getOrderHistory( clientEmail3 );
 
         // when
-        shoppingBasketUseCases.addThingToShoppingBasket( clientEmail3, thingId1,
+        shoppingBasketUseCases.addProductToShoppingBasket( clientEmail3, thingId1,
                 stock1before-2 );
-        shoppingBasketUseCases.addThingToShoppingBasket( clientEmail3, thingId2, 4 );
-        shoppingBasketUseCases.addThingToShoppingBasket( clientEmail3, thingId3, 5 );
+        shoppingBasketUseCases.addProductToShoppingBasket( clientEmail3, thingId2, 4 );
+        shoppingBasketUseCases.addProductToShoppingBasket( clientEmail3, thingId3, 5 );
         shoppingBasketUseCases.checkout( clientEmail3 );
         int stock1after = storageUnitUseCases.getAvailableStock( thingId1 );
         int stock2after = storageUnitUseCases.getAvailableStock( thingId2 );
@@ -147,8 +147,8 @@ public class ShoppingBasketTest {
         UUID thingId2 = (UUID) THING_DATA[2][0];
 
         // when
-        shoppingBasketUseCases.addThingToShoppingBasket( clientEmail5, thingId2, 4 );
-        shoppingBasketUseCases.removeThingFromShoppingBasket( clientEmail5, thingId2, 4 );
+        shoppingBasketUseCases.addProductToShoppingBasket( clientEmail5, thingId2, 4 );
+        shoppingBasketUseCases.removeProductFromShoppingBasket( clientEmail5, thingId2, 4 );
 
         // then
         assertThrows( ShopException.class, () -> shoppingBasketUseCases.checkout( nonExistingEmail ) );

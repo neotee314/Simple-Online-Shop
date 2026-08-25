@@ -28,7 +28,7 @@ public class ProductCatalogTest {
     @Autowired
     private ShoppingBasketUseCases shoppingBasketUseCases;
     @Autowired
-    private ThingCatalogUseCases thingCatalogUseCases;
+    private ProductCatalogUseCases productCatalogUseCases;
     @Autowired
     private StorageUnitUseCases storageUnitUseCases;
     @Autowired
@@ -46,7 +46,7 @@ public class ProductCatalogTest {
         clientMasterDataInitializer.registerAllClients();
 
         thingAndStockMasterDataInitializer = new ThingAndStockMasterDataInitializer(
-                thingCatalogUseCases, storageUnitUseCases );
+                productCatalogUseCases, storageUnitUseCases );
         thingAndStockMasterDataInitializer.addAllThings();
         thingAndStockMasterDataInitializer.addAllStorageUnits();
     }
@@ -56,7 +56,7 @@ public class ProductCatalogTest {
         // given
         // when
 
-        MoneyType salesPrice = thingCatalogUseCases.getSalesPrice( (UUID) THING_DATA[4][0] );
+        MoneyType salesPrice = productCatalogUseCases.getSalesPrice( (UUID) THING_DATA[4][0] );
 
         // then
         assertEquals( THING_DATA[4][5], salesPrice );
@@ -95,12 +95,12 @@ public class ProductCatalogTest {
         UUID thingId = (UUID) THING_DATA[4][0];
 
         // when
-        assertDoesNotThrow( () -> thingCatalogUseCases.getSalesPrice( thingId ) );
-        thingCatalogUseCases.removeThingFromCatalog( thingId );
+        assertDoesNotThrow( () -> productCatalogUseCases.getSalesPrice( thingId ) );
+        productCatalogUseCases.removeProductFromCatalog( thingId );
 
         // then
         assertThrows( ShopException.class, () ->
-                thingCatalogUseCases.getSalesPrice( thingId ) );
+                productCatalogUseCases.getSalesPrice( thingId ) );
     }
 
 
@@ -113,7 +113,7 @@ public class ProductCatalogTest {
         // when
         // then
         assertThrows( ShopException.class,
-                () -> thingCatalogUseCases.removeThingFromCatalog( nonExistentThingId ) );
+                () -> productCatalogUseCases.removeProductFromCatalog( nonExistentThingId ) );
     }
 
 
@@ -128,7 +128,7 @@ public class ProductCatalogTest {
         // when
         // then
         assertThrows( ShopException.class,
-                () -> thingCatalogUseCases.removeThingFromCatalog( thingId ) );
+                () -> productCatalogUseCases.removeProductFromCatalog( thingId ) );
     }
 
 
@@ -144,17 +144,17 @@ public class ProductCatalogTest {
         storageUnitUseCases.addToStock( storageUnitId0, thingId4, 4 );
 
         // when
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail3, thingId3, 3 );
-        shoppingBasketUseCases.addThingToShoppingBasket(
+        shoppingBasketUseCases.addProductToShoppingBasket(
                 clientEmail4, thingId4, 4 );
         shoppingBasketUseCases.checkout( clientEmail4 );
 
         // then
         assertThrows( ShopException.class,
-                () -> thingCatalogUseCases.removeThingFromCatalog( thingId3 ) );
+                () -> productCatalogUseCases.removeProductFromCatalog( thingId3 ) );
         assertThrows( ShopException.class,
-                () -> thingCatalogUseCases.removeThingFromCatalog( thingId4 ) );
+                () -> productCatalogUseCases.removeProductFromCatalog( thingId4 ) );
     }
 
 
@@ -162,11 +162,11 @@ public class ProductCatalogTest {
     public void testClearThingCatalog() {
         // given
         // when
-        thingCatalogUseCases.deleteThingCatalog();
+        productCatalogUseCases.deleteProductCatalog();
 
         // then
         assertThrows( ShopException.class,
-                () -> thingCatalogUseCases.getSalesPrice( (UUID) THING_DATA[4][0] ) );
+                () -> productCatalogUseCases.getSalesPrice( (UUID) THING_DATA[4][0] ) );
     }
 
 }

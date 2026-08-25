@@ -35,7 +35,7 @@ public class ShoppingBasketRESTTest {
     @Autowired
     private ClientRegistrationUseCases clientRegistrationUseCases;
     @Autowired
-    private ThingCatalogUseCases thingCatalogUseCases;
+    private ProductCatalogUseCases productCatalogUseCases;
     @Autowired
     private StorageUnitUseCases storageUnitUseCases;
     @Autowired
@@ -59,14 +59,14 @@ public class ShoppingBasketRESTTest {
     @BeforeEach
     public void setUp() {
         shoppingBasketRESTHelper = new ShoppingBasketRESTHelper(
-                mockMvc, thingCatalogUseCases, storageUnitUseCases);
+                mockMvc, productCatalogUseCases, storageUnitUseCases);
         purgatory.deleteEverything();
 
         clientMasterDataInitializer = new ClientMasterDataInitializer(clientRegistrationUseCases);
         clientMasterDataInitializer.registerAllClients();
 
         thingAndStockMasterDataInitializer = new ThingAndStockMasterDataInitializer(
-                thingCatalogUseCases, storageUnitUseCases);
+                productCatalogUseCases, storageUnitUseCases);
         thingAndStockMasterDataInitializer.addAllThings();
         thingAndStockMasterDataInitializer.addAllStorageUnits();
         thingAndStockMasterDataInitializer.addAllStock();

@@ -1,29 +1,26 @@
 package com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain;
 
-import com.neotee.ecommercesystem.exception.ShopException;
+import com.neotee.ecommercesystem.core.AbstractEntity;
 import com.neotee.ecommercesystem.domainprimitives.Money;
+import com.neotee.ecommercesystem.domainprimitives.ProductId;
+import com.neotee.ecommercesystem.domainprimitives.ShoppingBasketPartId;
+import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
-import com.neotee.ecommercesystem.shopsystem.product.domain.ProductId;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import jakarta.persistence.*;
 
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Setter
-@NoArgsConstructor
-public class ShoppingBasketPart {
+public class ShoppingBasketPart extends AbstractEntity<ShoppingBasketPartId> {
 
-
-    @Id
-    private ShoppingBasketPartId id;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     private Integer quantity;
@@ -31,52 +28,65 @@ public class ShoppingBasketPart {
     @Embedded
     private Money salesPrice;
 
-
-
-    public ShoppingBasketPart(Product product, int quantity, Money price) {
-        if (product == null || quantity <= 0 || price == null)
-            throw new ShopException("Invalid thing ID or quantity must be greater than 0");
-        this.id = new ShoppingBasketPartId();
-        this.product = product;
-        this.quantity = quantity;
-        this.salesPrice = price;
+    protected ShoppingBasketPart(ShoppingBasketPartId partId) {
+        this.id = partId;
     }
 
-    // Increase the quantity of the part by the given amount
+    public static ShoppingBasketPart create(Product product, int quantity, Money price) {
+        if (product == null)
+            throw new DomainValidationException("ShoppingBasketPart", "Product darf nicht null sein.");
+        if (quantity <= 0)
+            throw new DomainValidationException("ShoppingBasketPart", "Quantity muss größer als 0 sein.");
+        if (price == null)
+            throw new DomainValidationException("ShoppingBasketPart", "Preis darf nicht null sein.");
+
+        var part = new ShoppingBasketPart(ShoppingBasketPartId.newId());
+        part.product = product;
+        part.quantity = quantity;
+        part.salesPrice = price;
+        return part;
+    }
+
     public void increaseQuantity(int quantity) {
+        if (quantity <= 0)
+            throw new DomainValidationException("ShoppingBasketPart", "Quantity muss größer als 0 sein.");
         this.quantity += quantity;
     }
 
-
     public void decreaseQuantity(int quantity) {
-        if (this.quantity - quantity >= 0) {
-            this.quantity -= quantity;
-        }
+        if (quantity <= 0)
+            throw new DomainValidationException("ShoppingBasketPart", "Quantity muss größer als 0 sein.");
+        if (this.quantity - quantity < 0)
+            throw new DomainValidationException("ShoppingBasketPart", "Kann nicht mehr entfernen als vorhanden ist.");
+        this.quantity -= quantity;
+    }
 
+    public UUID getProductId() {
+        return product.getId().getId();
     }
-    public UUID getThingId() {
-        return product.getProductId().getId() ;
-    }
+
     public boolean contains(ProductId productId) {
-        if (productId == null) throw new ShopException("Thing ID must not be null");
-        return this.product.getProductId().equals(productId);
+        if (productId == null)
+            throw new DomainValidationException("ShoppingBasketPart", "Product ID darf nicht null sein.");
+        return this.product.getId().equals(productId);
     }
 
-    public boolean contains(UUID thingId) {
-        if (thingId == null) throw new ShopException("Thing ID must not be null");
-        return this.product.getProductId().getId().equals(thingId);
+    public boolean contains(UUID productId) {
+        if (productId == null)
+            throw new DomainValidationException("ShoppingBasketPart", "Product ID darf nicht null sein.");
+        return this.product.getId().getId().equals(productId);
     }
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ShoppingBasketPart that = (ShoppingBasketPart) o;
-        return Objects.equals(getId(), that.getId());
+        var that = (ShoppingBasketPart) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getId());
+        return Objects.hash(id);
     }
-
 }

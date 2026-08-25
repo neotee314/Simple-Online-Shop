@@ -1,47 +1,56 @@
 package com.neotee.ecommercesystem.shopsystem.product.application.mapper;
 
-import com.neotee.ecommercesystem.shopsystem.product.application.dto.ProductResponseDto;
-import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
-import com.neotee.ecommercesystem.shopsystem.product.domain.ProductId;
 import com.neotee.ecommercesystem.domainprimitives.Money;
-import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
-import org.mapstruct.*;
+import com.neotee.ecommercesystem.domainprimitives.ProductId;
+import com.neotee.ecommercesystem.shopsystem.product.application.dto.ProductRequestDTO;
+import com.neotee.ecommercesystem.shopsystem.product.application.dto.ProductResponseDTO;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
+import org.springframework.stereotype.Component;
 
-import java.util.UUID;
+@Component
+public class ProductMapper {
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public interface ProductMapper {
+    public Product toEntity(ProductRequestDTO dto) {
+        if (dto == null) {
+            return null;
+        }
 
-    @Mapping(source = "id", target = "thingId", qualifiedByName = "uuidToThingId")
-    @Mapping(source = "purchasePrice", target = "purchasePrice", qualifiedByName = "floatToMoney")
-    @Mapping(source = "salePrice", target = "salesPrice", qualifiedByName = "floatToMoney")
-    Product toEntity(ProductResponseDto dto);
+        Money purchasePrice = (Money) Money.of(dto.purchasePrice(), "EUR");
+        Money salesPrice = (Money) Money.of(dto.salePrice(), "EUR");
 
-    @Mapping(source = "thingId", target = "id", qualifiedByName = "thingIdToUuid")
-    @Mapping(source = "purchasePrice", target = "purchasePrice", qualifiedByName = "moneyToFloat")
-    @Mapping(source = "salesPrice", target = "salePrice", qualifiedByName = "moneyToFloat")
-    ProductResponseDto toDTO(Product entity);
+        if (dto.stockQuantity() != null) {
+            return Product.create(
+                dto.name(),
+                dto.description(),
+                dto.size(),
+                purchasePrice,
+                salesPrice,
+                dto.stockQuantity()
+            );
+        }
 
-
-    @Named("uuidToThingId")
-    static ProductId uuidToThingId(UUID id) {
-        return id == null ? null : new ProductId(id);
+        return Product.create(
+            dto.name(),
+            dto.description(),
+            dto.size(),
+            purchasePrice,
+            salesPrice
+        );
     }
 
-    @Named("thingIdToUuid")
-    static UUID thingIdToUuid(ProductId productId) {
-        return productId == null ? null : productId.getId();
-    }
+    public ProductResponseDTO toResponseDTO(Product product) {
+        if (product == null) {
+            return null;
+        }
 
-    @Named("floatToMoney")
-    static Money floatToMoney(Float value) {
-        if (value == null) return null;
-        MoneyType moneyType =  Money.of(value,"EUR");
-        return (Money) moneyType;
-    }
-
-    @Named("moneyToFloat")
-    static Float moneyToFloat(Money money) {
-        return money == null ? null : money.getAmount();
+        return new ProductResponseDTO(
+            product.getId(),
+            product.getName(),
+            product.getDescription(),
+            product.getSize(),
+            product.getPurchasePrice() != null ? product.getPurchasePrice().getAmount() : null,
+            product.getSalesPrice() != null ? product.getSalesPrice().getAmount() : null,
+            product.getStockQuantity()
+        );
     }
 }

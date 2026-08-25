@@ -26,7 +26,7 @@ public class StorageUnitManagementTest {
     @Autowired
     private StorageUnitUseCases storageUnitUseCases;
     @Autowired
-    private ThingCatalogUseCases thingCatalogUseCases;
+    private ProductCatalogUseCases productCatalogUseCases;
 
     @Autowired
     private Purgatory purgatory;
@@ -40,7 +40,7 @@ public class StorageUnitManagementTest {
         purgatory.deleteEverything();
 
         thingAndStockMasterDataInitializer = new ThingAndStockMasterDataInitializer(
-                thingCatalogUseCases, storageUnitUseCases );
+                productCatalogUseCases, storageUnitUseCases );
         thingAndStockMasterDataInitializer.addAllThings();
 
         homeAddress1 = FactoryMethodInvoker.instantiateHomeAddress(

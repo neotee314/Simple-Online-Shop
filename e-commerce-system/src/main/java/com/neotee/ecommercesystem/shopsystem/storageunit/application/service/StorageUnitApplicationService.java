@@ -1,6 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.storageunit.application.service;
 
-import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
+import com.neotee.ecommercesystem.anticorruption.StorageUnitUseCasesService;
 import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.AvailableStockDTO;
 import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.StockResponseDTO;
 import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.StorageUnitRequestDTO;
@@ -8,7 +8,6 @@ import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.Storage
 import com.neotee.ecommercesystem.shopsystem.storageunit.application.mapper.StorageUnitMapper;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnitId;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnitRepository;
-import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

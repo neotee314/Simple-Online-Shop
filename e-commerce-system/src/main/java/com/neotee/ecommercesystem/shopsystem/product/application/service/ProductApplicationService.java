@@ -1,90 +1,108 @@
 package com.neotee.ecommercesystem.shopsystem.product.application.service;
 
 import com.neotee.ecommercesystem.domainprimitives.Money;
-import com.neotee.ecommercesystem.exception.EntityIdNullException;
-import com.neotee.ecommercesystem.exception.ValueObjectNullOrEmptyException;
-import com.neotee.ecommercesystem.shopsystem.product.application.dto.ProductRequestDto;
-import com.neotee.ecommercesystem.shopsystem.product.application.dto.ProductResponseDto;
-import com.neotee.ecommercesystem.shopsystem.product.application.dto.SalesPriceDto;
-import com.neotee.ecommercesystem.shopsystem.product.application.mapper.ProductMapper;
+import com.neotee.ecommercesystem.domainprimitives.ProductId;
+import com.neotee.ecommercesystem.exceptions.DomainValidationException;
+import com.neotee.ecommercesystem.exceptions.EntityNotFoundException;
+import com.neotee.ecommercesystem.shopsystem.product.application.dto.SalesPriceDTO;
+import com.neotee.ecommercesystem.shopsystem.product.application.port.out.ProductAvailabilityPort;
+import com.neotee.ecommercesystem.shopsystem.product.application.port.out.ProductOrderHistoryPort;
+import com.neotee.ecommercesystem.shopsystem.product.application.port.out.ProductReservationPort;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
-import com.neotee.ecommercesystem.shopsystem.product.domain.ProductId;
 import com.neotee.ecommercesystem.shopsystem.product.domain.ProductRepository;
-import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ProductApplicationService {
+
     private final ProductRepository productRepository;
-    private final ProductMapper productMapper;
-    private final ProductCatalogService productCatalogService;
+    private final ProductReservationPort productReservationPort;
+    private final ProductAvailabilityPort productAvailabilityPort;
+    private final ProductOrderHistoryPort productOrderHistoryPort;
 
-    public List<ProductResponseDto> searchThingsByName(String name) {
-        if (name == null || name.isEmpty()) throw new ValueObjectNullOrEmptyException();
-        List<ProductResponseDto> productResponseDtos = new ArrayList<>();
-        List<Product> products = productRepository.findByName(name);
-        for (Product product : products) {
-            ProductResponseDto productResponseDto = new ProductResponseDto();
-            productResponseDto = productMapper.toDTO(product);
-            productResponseDtos.add(productResponseDto);
-        }
-        return productResponseDtos;
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
 
-    public ProductResponseDto getThingById(UUID thingId) {
-        if (thingId == null) throw new EntityIdNullException();
-        Product product = productRepository.findByThingId(new ProductId(thingId));
-        return productMapper.toDTO(product);
-
+    public List<Product> searchProductsByName(String name) {
+        return productRepository.findByName(name);
     }
 
-    public void changeSalesPrice(UUID thingId, SalesPriceDto salesPriceDto) {
-        if (thingId == null) throw new EntityIdNullException();
-        if (salesPriceDto == null) throw new ValueObjectNullOrEmptyException();
-        Product product = productRepository.findByThingId(new ProductId(thingId));
-        MoneyType money  = Money.of(salesPriceDto.getSalesPrice(),salesPriceDto.getCurrency());
-        product.setSalesPrice((Money) money);
+    public Product getProductById(ProductId productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("ProductApplicationService", "Produkt nicht gefunden."));
+    }
+
+    public Product findById(ProductId productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("ProductApplicationService", "Produkt nicht gefunden."));
+    }
+
+
+    public Product addProduct(Product product) {
+        return productRepository.save(product);
+    }
+
+
+    public void changeSalesPrice(ProductId productId, SalesPriceDTO salesPriceDTO) {
+        if (productId == null)
+            throw new DomainValidationException("ProductApplicationService", "Product ID darf nicht null sein.");
+
+        if (salesPriceDTO == null)
+            throw new DomainValidationException("ProductApplicationService", "Sales Price DTO darf nicht null sein.");
+
+
+        var product = findById(productId);
+        var newSalesPrice = (Money) Money.of(salesPriceDTO.salesPrice(), salesPriceDTO.currency());
+
+        product.updatePrice(product.getPurchasePrice(), newSalesPrice);
         productRepository.save(product);
     }
 
 
-    public void removeThingFromCatalog(UUID thingId) {
-        productCatalogService.removeThingFromCatalog(thingId);
+    public void removeProduct(ProductId productId) {
+        if (productId == null)
+            throw new DomainValidationException("ProductApplicationService", "Product ID darf nicht null sein.");
+
+        if (productAvailabilityPort.isInStock(productId))
+            throw new DomainValidationException("ProductApplicationService", "Produkt hat noch Lagerbestand.");
+
+
+        if (productReservationPort.isReservedInAnyBasket(productId))
+            throw new DomainValidationException("ProductApplicationService", "Produkt ist noch in einem Warenkorb reserviert.");
+
+
+        if (productOrderHistoryPort.isPartOfCompletedOrder(productId))
+            throw new DomainValidationException("ProductApplicationService", "Produkt ist Teil einer abgeschlossenen Bestellung.");
+
+
+        productRepository.deleteById(productId);
     }
 
-    public MoneyType getSalesPrice(UUID thingId) {
-        return productCatalogService.getSalesPrice(thingId);
-
+    public void deleteAllProducts() {
+        productRepository.deleteAll();
     }
 
-    public void deleteThingCatalog() {
-        productCatalogService.deleteThingCatalog();
+    public void updateStock(ProductId productId, int quantity) {
+        if (productId == null)
+            throw new DomainValidationException("ProductApplicationService", "Product ID darf nicht null sein.");
+
+        var product = findById(productId);
+        product.increaseStock(quantity);
+        productRepository.save(product);
     }
 
-    public void addThingToCatalog(ProductRequestDto dto) {
-        if (dto == null) throw new ValueObjectNullOrEmptyException();
-        MoneyType salesPrice = Money.of(dto.getSalePrice(),"EUR");
-        MoneyType purchasePrice = Money.of(dto.getPurchasePrice(),"EUR");
-        UUID thingId = UUID.randomUUID();
-        productCatalogService.addThingToCatalog(thingId,dto.getName(),dto.getDescription(),dto.getSize(),
-                salesPrice,purchasePrice);
+    public void decreaseStock(ProductId productId, int quantity) {
+        if (productId == null)
+            throw new DomainValidationException("ProductApplicationService", "Product ID darf nicht null sein.");
 
-    }
-
-    public List<ProductResponseDto> getAllThings() {
-        List<Product> products = productRepository.findAll();
-        List<ProductResponseDto> productResponseDtos = new ArrayList<>();
-        for (Product product : products) {
-            productResponseDtos.add(productMapper.toDTO(product));
-        }
-        return productResponseDtos;
+        var product = findById(productId);
+        product.decreaseStock(quantity);
+        productRepository.save(product);
     }
 }

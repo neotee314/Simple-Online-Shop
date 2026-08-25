@@ -4,12 +4,10 @@ import com.neotee.ecommercesystem.exception.EntityNotFoundException;
 import com.neotee.ecommercesystem.exception.ThingNotInShoppingBasketException;
 import com.neotee.ecommercesystem.exception.ThingQuantityNotAvailableException;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasket;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketId;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketPartRepository;
+import com.neotee.ecommercesystem.domainprimitives.ShoppingBasketId;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketRepository;
 import com.neotee.ecommercesystem.shopsystem.storageunit.application.service.ReservedQuantityService;
-import com.neotee.ecommercesystem.shopsystem.product.application.service.ReservationCheckServiceInterface;
-import com.neotee.ecommercesystem.shopsystem.product.domain.ProductId;
+import com.neotee.ecommercesystem.shopsystem.product.application.port.out.ProductReservationPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ReservationService implements ReservationCheckServiceInterface, ReservedQuantityService {
+public class ReservationService implements ProductReservationPort, ReservedQuantityService {
     private final ShoppingBasketRepository shoppingBasketRepository;
     private final ShoppingBasketPartRepository shoppingBasketPartRepository;
 

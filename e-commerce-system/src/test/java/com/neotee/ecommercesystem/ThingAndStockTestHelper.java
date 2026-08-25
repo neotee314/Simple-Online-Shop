@@ -16,16 +16,16 @@ import java.util.*;
 @SuppressWarnings("PMD")
 public class ThingAndStockTestHelper {
 
-    private ThingCatalogUseCases thingCatalogUseCases;
+    private ProductCatalogUseCases productCatalogUseCases;
     private StorageUnitUseCases storageUnitUseCases;
     private static Random random = new Random();
 
     public static final String EUR = "EUR";
 
     @Autowired
-    public ThingAndStockTestHelper( ThingCatalogUseCases thingCatalogUseCases,
+    public ThingAndStockTestHelper( ProductCatalogUseCases productCatalogUseCases,
                                                      StorageUnitUseCases storageUnitUseCases ) {
-        this.thingCatalogUseCases = thingCatalogUseCases;
+        this.productCatalogUseCases = productCatalogUseCases;
         this.storageUnitUseCases = storageUnitUseCases;
     }
 
@@ -117,7 +117,7 @@ public class ThingAndStockTestHelper {
     }
 
     public void addThingDataToCatalog( Object[] thingData ) {
-        thingCatalogUseCases.addThingToCatalog( (UUID) thingData[0], (String) thingData[1], (String) thingData[2],
+        productCatalogUseCases.addProductToCatalog( (UUID) thingData[0], (String) thingData[1], (String) thingData[2],
                 (Float) thingData[3], (MoneyType) thingData[4], (MoneyType) thingData[5] );
     }
 

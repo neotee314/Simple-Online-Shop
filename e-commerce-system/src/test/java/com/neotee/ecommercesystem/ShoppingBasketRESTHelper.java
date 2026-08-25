@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class ShoppingBasketRESTHelper {
     private MockMvc mockMvc;
-    private ThingCatalogUseCases thingCatalogUseCases;
+    private ProductCatalogUseCases productCatalogUseCases;
     private StorageUnitUseCases storageUnitUseCases;
 
     private static final ResultMatcher CREATED = status().isCreated();
@@ -34,13 +34,13 @@ public class ShoppingBasketRESTHelper {
 
 
     public ShoppingBasketRESTHelper(MockMvc mockMvc,
-                                    ThingCatalogUseCases thingCatalogUseCases,
+                                    ProductCatalogUseCases productCatalogUseCases,
                                     StorageUnitUseCases storageUnitUseCases) {
         this.mockMvc = mockMvc;
-        this.thingCatalogUseCases = thingCatalogUseCases;
+        this.productCatalogUseCases = productCatalogUseCases;
         this.storageUnitUseCases = storageUnitUseCases;
         thingAndStockMasterDataInitializer = new ThingAndStockMasterDataInitializer(
-                thingCatalogUseCases, storageUnitUseCases);
+                productCatalogUseCases, storageUnitUseCases);
     }
 
     /**
