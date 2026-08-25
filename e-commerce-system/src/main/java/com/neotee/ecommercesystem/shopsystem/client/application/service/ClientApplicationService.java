@@ -1,68 +1,147 @@
 package com.neotee.ecommercesystem.shopsystem.client.application.service;
 
+import com.neotee.ecommercesystem.domainprimitives.ClientId;
 import com.neotee.ecommercesystem.domainprimitives.Email;
-import com.neotee.ecommercesystem.exception.EntityNotFoundException;
-import com.neotee.ecommercesystem.exception.ValueObjectNullOrEmptyException;
-import com.neotee.ecommercesystem.shopsystem.client.application.dto.ClientDTO;
-import com.neotee.ecommercesystem.shopsystem.client.application.mapper.ClientMapper;
+import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
+import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
-import com.neotee.ecommercesystem.shopsystem.client.domain.ClientId;
 import com.neotee.ecommercesystem.shopsystem.client.domain.ClientRepository;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.ShoppingBasketDTO;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.mapper.ShoppingBasketMapper;
-import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ClientApplicationService {
+
     private final ClientRepository clientRepository;
-    private final ClientMapper clientMapper;
-    private final ClientRegistrationUseCases clientRegistrationUseCases;
-    private final ShoppingBasketMapper shoppingBasketMapper;
 
-    public ClientDTO findClientDTOByEmail(String emailAddress) {
-        if (emailAddress == null || emailAddress.isEmpty()) throw new ValueObjectNullOrEmptyException();
-        Email email = Email.of(emailAddress);
-        Client client = clientRepository.findByEmail(email);
-        if (client == null) throw new EntityNotFoundException();
-        return clientMapper.toDto(client);
+
+    public Client findByEmail(Email email) {
+        if (email == null) {
+            throw new DomainValidationException("email", "E-Mail darf nicht null sein.");
+        }
+
+        return clientRepository.findByEmail(email)
+                .orElseThrow(() -> new DomainValidationException("email", "Client mit dieser E-Mail nicht gefunden."));
     }
 
-    public ClientDTO findById(UUID id) {
-        ClientId clientId = new ClientId(id);
-        Client client = clientRepository.findById(clientId).orElseThrow(EntityNotFoundException::new);
-        return clientMapper.toDto(client);
+    public Client findById(ClientId clientId) {
+        if (clientId == null) {
+            throw new DomainValidationException("clientId", "Client ID darf nicht null sein.");
+        }
+
+        return clientRepository.findById(clientId)
+                .orElseThrow(() -> new DomainValidationException("clientId", "Client nicht gefunden."));
     }
 
-    public List<ClientDTO> getAll() {
-        List<ClientDTO> clientDTOS = new ArrayList<>();
-        clientRepository.findAll().forEach(client -> clientDTOS.add(clientMapper.toDto(client)));
-        return clientDTOS;
+    public List<Client> findAll() {
+        List<Client> clients = clientRepository.findAll();
+        if (clients.isEmpty()) {
+            throw new DomainValidationException("clients", "Keine Clients gefunden.");
+        }
+        return clients;
     }
 
-    public void register(ClientDTO clientDTO) {
-        if (clientDTO == null) throw new EntityNotFoundException();
-        Client client = clientMapper.toEntity(clientDTO);
-        clientRegistrationUseCases.register(client.getName(), client.getEmail(), client.getHomeAddress());
+    public boolean existsByEmail(Email email) {
+        if (email == null) {
+            throw new DomainValidationException("email", "E-Mail darf nicht null sein.");
+        }
+        return clientRepository.findByEmail(email).isPresent();
     }
 
-    public void updateAddress(ClientDTO clientDTO) {
-        if (clientDTO == null) throw new EntityNotFoundException();
-        Client client = clientMapper.toEntity(clientDTO);
-        clientRegistrationUseCases.changeAddress(client.getEmail(), client.getHomeAddress());
+    
+    public Client registerClient(String name, Email email, HomeAddress homeAddress) {
+        if (existsByEmail(email)) {
+            throw new DomainValidationException("email", "Ein Client mit dieser E-Mail existiert bereits.");
+        }
+
+        Client client = Client.create(name, email, homeAddress);
+        return clientRepository.save(client);
     }
 
-    public ShoppingBasketDTO getBasketOf(UUID clientId) {
-        if (clientId == null) throw new EntityNotFoundException();
-        Client client = clientRepository.findById(new ClientId(clientId)).
-                orElseThrow(EntityNotFoundException::new);
-        ShoppingBasketDTO dto = shoppingBasketMapper.toDto(client.getShoppingBasket());
-        return dto;
+    
+    public Client updateClient(ClientId clientId, String name, Email email, HomeAddress homeAddress) {
+        var client = findById(clientId);
+        clientRepository.findByEmail(email)
+                .ifPresent(existing -> {
+                    if (!existing.getId().equals(clientId)) {
+                        throw new DomainValidationException("email", "Diese E-Mail wird bereits von einem anderen Client verwendet.");
+                    }
+                });
+
+        client.updateName(name);
+        client.setEmail(email);
+        client.changeAddress(homeAddress);
+
+        return clientRepository.save(client);
     }
+
+    
+    public Client updateClientName(ClientId clientId, String newName) {
+        if (clientId == null) {
+            throw new DomainValidationException("clientId", "Client ID darf nicht null sein.");
+        }
+        if (newName == null || newName.isBlank()) {
+            throw new DomainValidationException("name", "Name darf nicht leer sein.");
+        }
+
+        Client client = findById(clientId);
+        client.updateName(newName);
+        return clientRepository.save(client);
+    }
+
+    
+    public Client changeClientAddress(ClientId clientId, HomeAddress newAddress) {
+        if (clientId == null) {
+            throw new DomainValidationException("clientId", "Client ID darf nicht null sein.");
+        }
+        if (newAddress == null) {
+            throw new DomainValidationException("homeAddress", "Adresse darf nicht null sein.");
+        }
+
+        Client client = findById(clientId);
+        client.changeAddress(newAddress);
+        return clientRepository.save(client);
+    }
+
+    
+    public Client changeClientEmail(ClientId clientId, Email newEmail) {
+        if (clientId == null) {
+            throw new DomainValidationException("clientId", "Client ID darf nicht null sein.");
+        }
+        if (newEmail == null) {
+            throw new DomainValidationException("email", "E-Mail darf nicht null sein.");
+        }
+
+        // Check if new email already exists (except for the same client)
+        clientRepository.findByEmail(newEmail)
+                .ifPresent(existing -> {
+                    if (!existing.getId().equals(clientId)) {
+                        throw new DomainValidationException("email", "Diese E-Mail wird bereits von einem anderen Client verwendet.");
+                    }
+                });
+
+        Client client = findById(clientId);
+        client.setEmail(newEmail);
+        return clientRepository.save(client);
+    }
+
+    
+    public void deleteClient(ClientId clientId) {
+        if (clientId == null) {
+            throw new DomainValidationException("clientId", "Client ID darf nicht null sein.");
+        }
+
+        Client client = findById(clientId);
+        clientRepository.delete(client);
+    }
+
+    
+    public void deleteAllClients() {
+        clientRepository.deleteAll();
+    }
+
 }

@@ -2,6 +2,7 @@ package com.neotee.ecommercesystem;
 
 
 
+import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
 
 import java.io.File;
@@ -38,7 +39,7 @@ public class FactoryMethodInvoker {
             instance = factoryMethod.invoke( null, emailAsString );
         } catch (Exception e) {
             if ( e instanceof InvocationTargetException && ( (InvocationTargetException) e ).getTargetException()
-                    instanceof ShopException ) throw new ShopException( e.getMessage() );
+                    instanceof ShopException) throw new ShopException( e.getMessage() );
             fail( "Failed to invoke factory method 'of' for '" + emailAsString + "'", e );
         }
         assertNotNull( instance );

@@ -4,8 +4,8 @@ import com.neotee.ecommercesystem.exception.EntityIdNullException;
 import com.neotee.ecommercesystem.exception.EntityNotFoundException;
 import com.neotee.ecommercesystem.exception.QuantityNegativeException;
 import com.neotee.ecommercesystem.exception.ThingQuantityNotAvailableException;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.ThingId;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
+import com.neotee.ecommercesystem.shopsystem.product.domain.ProductId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
@@ -25,27 +25,27 @@ public class StockLevel {
     private StockLevelId stockLevelId;
 
     @ManyToOne
-    private Thing thing;
+    private Product product;
 
     private Integer quantityInStock ;
 
-    public StockLevel(Thing thing, Integer quantityInStock) {
-        if (thing == null || quantityInStock == null) throw new EntityNotFoundException();
+    public StockLevel(Product product, Integer quantityInStock) {
+        if (product == null || quantityInStock == null) throw new EntityNotFoundException();
         if (quantityInStock < 0) throw new QuantityNegativeException();
         this.stockLevelId = new StockLevelId();
-        this.thing = thing;
+        this.product = product;
         this.quantityInStock = quantityInStock;
 
     }
 
-    public boolean contains(Thing thing) {
-        if (thing == null) throw new EntityNotFoundException();
-        return this.thing.getThingId().getId().equals(thing.getThingId().getId());
+    public boolean contains(Product product) {
+        if (product == null) throw new EntityNotFoundException();
+        return this.product.getProductId().getId().equals(product.getProductId().getId());
     }
 
-    public boolean contains(ThingId thingId) {
-        if (thingId == null) throw new EntityIdNullException();
-        return this.thing.getThingId().getId().equals(thingId.getId());
+    public boolean contains(ProductId productId) {
+        if (productId == null) throw new EntityIdNullException();
+        return this.product.getProductId().getId().equals(productId.getId());
     }
 
     public void addToQuantity(Integer quantity) {

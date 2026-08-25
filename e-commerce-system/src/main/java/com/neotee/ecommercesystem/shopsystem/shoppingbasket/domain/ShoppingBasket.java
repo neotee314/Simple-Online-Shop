@@ -1,11 +1,11 @@
 package com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain;
 
-import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.Money;
 import com.neotee.ecommercesystem.exception.EntityIdNullException;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.ThingId;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
+import com.neotee.ecommercesystem.shopsystem.product.domain.ProductId;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -59,13 +59,13 @@ public class ShoppingBasket {
         parts.add(newPart);
     }
 
-    public int removeReservedItems(ThingId thingId, Integer quantityToRemove) {
-        if (thingId == null || quantityToRemove == null || quantityToRemove < 0) throw new EntityIdNullException();
-        int reserved = getReservedQuantityForThing(thingId);
+    public int removeReservedItems(ProductId productId, Integer quantityToRemove) {
+        if (productId == null || quantityToRemove == null || quantityToRemove < 0) throw new EntityIdNullException();
+        int reserved = getReservedQuantityForThing(productId);
         int removed = Math.min(reserved, quantityToRemove);
 
         for (int i = 0; i < removed; i++) {
-            removeItem(thingId, 1);
+            removeItem(productId, 1);
         }
 
         return removed;
@@ -78,47 +78,47 @@ public class ShoppingBasket {
     }
 
 
-    public Integer getReservedQuantityForThing(ThingId thingId) {
-        if (thingId == null) {
+    public Integer getReservedQuantityForThing(ProductId productId) {
+        if (productId == null) {
             throw new ShopException("thingId cannot be null");
         }
         return parts.stream()
-                .filter(part -> part.contains(thingId))
+                .filter(part -> part.contains(productId))
                 .mapToInt(ShoppingBasketPart::getQuantity)
                 .sum();
     }
 
-    public void addItem(Thing thing, Integer quantity, Money price) {
-        if (thing == null || quantity < 0 || price == null || price.getAmount() < 0)
+    public void addItem(Product product, Integer quantity, Money price) {
+        if (product == null || quantity < 0 || price == null || price.getAmount() < 0)
             throw new ShopException("Invalid thing ID or quantity must be greater than 0");
         // Add item to the shopping basket
 
-        ShoppingBasketPart part = getPartContainingThing(thing);
+        ShoppingBasketPart part = getPartContainingThing(product);
         if (part != null) {
             part.increaseQuantity(quantity);
             return;
         }
 
-        part = new ShoppingBasketPart(thing, quantity, price);
+        part = new ShoppingBasketPart(product, quantity, price);
         addPart(part);
     }
 
-    private ShoppingBasketPart getPartContainingThing(Thing thing) {
-        if (thing == null) throw new EntityNotFoundException();
+    private ShoppingBasketPart getPartContainingThing(Product product) {
+        if (product == null) throw new EntityNotFoundException();
         for (ShoppingBasketPart part : parts) {
-            if (part.getThing().equals(thing)) {
+            if (part.getProduct().equals(product)) {
                 return part;
             }
         }
         return null;
     }
 
-    public void removeItem(ThingId thingId, Integer quantity) {
-        if (thingId == null || quantity <= 0)
+    public void removeItem(ProductId productId, Integer quantity) {
+        if (productId == null || quantity <= 0)
             throw new ShopException("Invalid thing ID or quantity must be greater than 0");
 
         for (ShoppingBasketPart existingPart : parts) {
-            if (existingPart.contains(thingId)) {
+            if (existingPart.contains(productId)) {
                 int newQuantity = existingPart.getQuantity() - quantity;
                 if (newQuantity > 0) {
                     existingPart.decreaseQuantity(quantity);
@@ -144,14 +144,14 @@ public class ShoppingBasket {
         }
     }
 
-    public Map<Thing, Integer> getPartsQuantityMap() {
+    public Map<Product, Integer> getPartsQuantityMap() {
         return parts.stream()
-                .collect(Collectors.toMap(ShoppingBasketPart::getThing, ShoppingBasketPart::getQuantity));
+                .collect(Collectors.toMap(ShoppingBasketPart::getProduct, ShoppingBasketPart::getQuantity));
     }
 
     public Map<UUID, Integer> getBasketAsMapOfThingIdAndQuantities() {
         return parts.stream()
-                .collect(Collectors.toMap(part -> part.getThing().getThingId().getId(), ShoppingBasketPart::getQuantity));
+                .collect(Collectors.toMap(part -> part.getProduct().getProductId().getId(), ShoppingBasketPart::getQuantity));
     }
 
     public Money getAsMoneyValue() {

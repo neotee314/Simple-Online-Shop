@@ -1,10 +1,10 @@
 package com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.mapper;
 
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.ShoppingBasketPartDto;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketPart;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketPartId;
-import com.neotee.ecommercesystem.shopsystem.thing.application.service.ThingService;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
+import com.neotee.ecommercesystem.shopsystem.product.application.service.ProductService;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -17,7 +17,7 @@ import java.util.UUID;
 public abstract class ShoppingBasketPartMapper {
 
     @Autowired
-    private ThingService thingService;
+    private ProductService productService;
 
     @Mapping(target = "thingId", source = "thing", qualifiedByName = "mapThingToUUID")
     @Mapping(target = "quantity", source = "quantity")
@@ -39,14 +39,14 @@ public abstract class ShoppingBasketPartMapper {
     }
 
     @Named("mapThingToUUID")
-    public UUID mapThingToUUID(Thing thing) {
-        return thing.getThingId().getId();
+    public UUID mapThingToUUID(Product product) {
+        return product.getProductId().getId();
     }
     @Named("mapUUIDToThing")
-    public Thing mapUUIDToThing(UUID thingId) {
-        Thing thing = thingService.findById(thingId);
-        if (thing == null) return null;
-        return thing;
+    public Product mapUUIDToThing(UUID thingId) {
+        Product product = productService.findById(thingId);
+        if (product == null) return null;
+        return product;
     }
 
 }

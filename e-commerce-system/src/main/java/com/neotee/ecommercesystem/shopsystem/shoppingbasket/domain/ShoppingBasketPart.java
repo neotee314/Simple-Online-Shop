@@ -1,9 +1,9 @@
 package com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain;
 
-import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Money;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.ThingId;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
+import com.neotee.ecommercesystem.shopsystem.product.domain.ProductId;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,7 +24,7 @@ public class ShoppingBasketPart {
     private ShoppingBasketPartId id;
 
     @ManyToOne
-    private Thing thing;
+    private Product product;
 
     private Integer quantity;
 
@@ -33,11 +33,11 @@ public class ShoppingBasketPart {
 
 
 
-    public ShoppingBasketPart(Thing thing, int quantity, Money price) {
-        if (thing == null || quantity <= 0 || price == null)
+    public ShoppingBasketPart(Product product, int quantity, Money price) {
+        if (product == null || quantity <= 0 || price == null)
             throw new ShopException("Invalid thing ID or quantity must be greater than 0");
         this.id = new ShoppingBasketPartId();
-        this.thing = thing;
+        this.product = product;
         this.quantity = quantity;
         this.salesPrice = price;
     }
@@ -55,16 +55,16 @@ public class ShoppingBasketPart {
 
     }
     public UUID getThingId() {
-        return thing.getThingId().getId() ;
+        return product.getProductId().getId() ;
     }
-    public boolean contains(ThingId thingId) {
-        if (thingId == null) throw new ShopException("Thing ID must not be null");
-        return this.thing.getThingId().equals(thingId);
+    public boolean contains(ProductId productId) {
+        if (productId == null) throw new ShopException("Thing ID must not be null");
+        return this.product.getProductId().equals(productId);
     }
 
     public boolean contains(UUID thingId) {
         if (thingId == null) throw new ShopException("Thing ID must not be null");
-        return this.thing.getThingId().getId().equals(thingId);
+        return this.product.getProductId().getId().equals(thingId);
     }
 
     @Override

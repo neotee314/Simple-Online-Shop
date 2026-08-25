@@ -8,9 +8,9 @@ import com.neotee.ecommercesystem.shopsystem.order.application.service.OrderServ
 import com.neotee.ecommercesystem.shopsystem.order.domain.OrderId;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketRepository;
 import com.neotee.ecommercesystem.shopsystem.storageunit.application.service.InventoryFulfillmentService;
-import com.neotee.ecommercesystem.shopsystem.thing.application.service.ThingService;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.ThingId;
+import com.neotee.ecommercesystem.shopsystem.product.application.service.ProductService;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
+import com.neotee.ecommercesystem.shopsystem.product.domain.ProductId;
 import com.neotee.ecommercesystem.usecases.ShoppingBasketUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
@@ -28,7 +28,7 @@ import java.util.List;
 public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
 
     private final ShoppingBasketRepository shoppingBasketRepository;
-    private final ThingService thingService;
+    private final ProductService productService;
     private final OrderService orderService;
     private final DeliveryPackageService deliveryPackageService;
     private final ClientBasketServiceInterface clientBasketServiceInterface;
@@ -45,9 +45,9 @@ public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
         int currentReserved = reservationService.getTotalReservedInAllBaskets(thingId);
         if (currentInventory < quantity + currentReserved)
             throw new ThingQuantityNotAvailableException();
-        Money price = thingService.getSalesPrice(thingId);
-        Thing thing = thingService.findById(thingId);
-        shoppingBasket.addItem(thing, quantity, price);
+        Money price = productService.getSalesPrice(thingId);
+        Product product = productService.findById(thingId);
+        shoppingBasket.addItem(product, quantity, price);
         shoppingBasketRepository.save(shoppingBasket);
     }
 
@@ -57,10 +57,10 @@ public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
         // Find the shopping basket for the client
         ShoppingBasket shoppingBasket = shoppingBasketRepository.findByClientEmail(clientEmail)
                 .orElseThrow(EntityNotFoundException::new);
-        if (!thingService.existsById(thingId)) throw new EntityNotFoundException();
+        if (!productService.existsById(thingId)) throw new EntityNotFoundException();
         if (!shoppingBasket.contains(thingId)) throw new ThingNotInShoppingBasketException();
         // Remove item from the shopping basket
-        shoppingBasket.removeItem(new ThingId(thingId), quantity);
+        shoppingBasket.removeItem(new ProductId(thingId), quantity);
         shoppingBasketRepository.save(shoppingBasket);
     }
 
@@ -88,7 +88,7 @@ public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
     public int getReservedStockInShoppingBaskets(UUID thingId) {
         List<ShoppingBasket> allBaskets = shoppingBasketRepository.findAll();
         return allBaskets.stream()
-                .mapToInt(basket -> basket.getReservedQuantityForThing(new ThingId(thingId)))
+                .mapToInt(basket -> basket.getReservedQuantityForThing(new ProductId(thingId)))
                 .sum();
     }
 
@@ -111,7 +111,7 @@ public class ShoppingBasketUseCasesService implements ShoppingBasketUseCases {
         if (basket.isEmpty()) throw new ShoppingBasketEmptyException();
 
         // Create a new order
-        Map<Thing, Integer> bastketPartQuantityMap = basket.getPartsQuantityMap();
+        Map<Product, Integer> bastketPartQuantityMap = basket.getPartsQuantityMap();
         OrderId orderId = orderService.createOrder(bastketPartQuantityMap, (Email) clientEmail);
 
         //create Delievery packages

@@ -1,7 +1,7 @@
 package com.neotee.ecommercesystem.regression;
 
 
-import com.neotee.ecommercesystem.*;
+import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.usecases.masterdata.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

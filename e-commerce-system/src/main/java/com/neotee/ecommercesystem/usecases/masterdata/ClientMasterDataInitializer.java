@@ -1,14 +1,13 @@
 package com.neotee.ecommercesystem.usecases.masterdata;
 
 
-import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
 import com.neotee.ecommercesystem.usecases.ClientType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 
 import java.util.Random;

@@ -1,10 +1,10 @@
 package com.neotee.ecommercesystem.shopsystem.storageunit.application.mapper;
 
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.StockLevelDTO;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StockLevel;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StockLevelId;
-import com.neotee.ecommercesystem.shopsystem.thing.application.service.ThingService;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
+import com.neotee.ecommercesystem.shopsystem.product.application.service.ProductService;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -17,7 +17,7 @@ import java.util.UUID;
 public abstract class StockLevelMapper {
 
     @Autowired
-    protected ThingService thingService;
+    protected ProductService productService;
 
     @Mapping(target = "stockLevelId", source = "stockLevelId", qualifiedByName = "mapStockLevelIdToUUID")
     @Mapping(target = "thingId", source = "thing", qualifiedByName = "mapThingToUUID")
@@ -40,12 +40,12 @@ public abstract class StockLevelMapper {
     }
 
     @Named("mapThingToUUID")
-    public UUID mapThingToUUID(Thing thing) {
-        return thing.getThingId().getId();
+    public UUID mapThingToUUID(Product product) {
+        return product.getProductId().getId();
     }
 
     @Named("mapUUIDToThing")
-    public Thing mapUUIDToThing(UUID thingId) {
-        return thingService.findById(thingId);
+    public Product mapUUIDToThing(UUID thingId) {
+        return productService.findById(thingId);
     }
 }

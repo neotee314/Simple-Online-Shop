@@ -1,9 +1,9 @@
 package com.neotee.ecommercesystem.shopsystem.deliverypackage.domain;
 
-import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.shopsystem.order.domain.Order;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnit;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -45,17 +45,17 @@ public class DeliveryPackage {
         return this.storageUnit.getStorageId().getId().equals(storageUnitId);
     }
 
-    public Map<Thing, Integer> createParts(Map<Thing, Integer> inputItems) {
-        Map<Thing, Integer> usedItems = new HashMap<>();
+    public Map<Product, Integer> createParts(Map<Product, Integer> inputItems) {
+        Map<Product, Integer> usedItems = new HashMap<>();
 
-        Map<Thing, Integer> itemsCopy = new HashMap<>(inputItems);
+        Map<Product, Integer> itemsCopy = new HashMap<>(inputItems);
 
-        for (Map.Entry<Thing, Integer> entry : itemsCopy.entrySet()) {
-            Thing thingId = entry.getKey();
+        for (Map.Entry<Product, Integer> entry : itemsCopy.entrySet()) {
+            Product productId = entry.getKey();
             int quantity = entry.getValue();
 
-            parts.add(new DeliveryPackagePart(thingId, quantity));
-            usedItems.put(thingId, quantity);
+            parts.add(new DeliveryPackagePart(productId, quantity));
+            usedItems.put(productId, quantity);
         }
 
         return usedItems;

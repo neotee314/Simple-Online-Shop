@@ -1,11 +1,11 @@
 package com.neotee.ecommercesystem.regression;
 
+import com.neotee.ecommercesystem.exception.ShopException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.neotee.ecommercesystem.*;
 import com.neotee.ecommercesystem.usecases.masterdata.*;
 import com.neotee.ecommercesystem.usecases.*;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;

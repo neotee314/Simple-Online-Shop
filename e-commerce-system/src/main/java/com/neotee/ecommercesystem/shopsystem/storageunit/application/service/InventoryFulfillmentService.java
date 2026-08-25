@@ -3,17 +3,16 @@ package com.neotee.ecommercesystem.shopsystem.storageunit.application.service;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
 import com.neotee.ecommercesystem.exception.EntityNotFoundException;
 import com.neotee.ecommercesystem.exception.ThingQuantityNotAvailableException;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.*;
-import com.neotee.ecommercesystem.shopsystem.thing.application.service.InventoryServiceInterface;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.ThingId;
+import com.neotee.ecommercesystem.shopsystem.product.application.service.InventoryServiceInterface;
+import com.neotee.ecommercesystem.shopsystem.product.domain.ProductId;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -34,17 +33,17 @@ public class InventoryFulfillmentService implements InventoryServiceInterface {
     }
 
 
-    public void removeFromStock(StorageUnit storageUnit, Map<Thing, Integer> thingQuantityMap) {
-        for (Thing thing : thingQuantityMap.keySet()) {
-            storageUnit.removeFromStock(thing.getThingId(), thingQuantityMap.get(thing));
+    public void removeFromStock(StorageUnit storageUnit, Map<Product, Integer> thingQuantityMap) {
+        for (Product product : thingQuantityMap.keySet()) {
+            storageUnit.removeFromStock(product.getProductId(), thingQuantityMap.get(product));
             storageUnitRepository.save(storageUnit);
         }
     }
 
 
     @Transactional
-    public List<StorageUnitId> getContributingStorageUnit(Map<Thing, Integer> items, ZipCode clientZipCode) {
-        Map<Thing, Integer> remainingItems = new HashMap<>(items);
+    public List<StorageUnitId> getContributingStorageUnit(Map<Product, Integer> items, ZipCode clientZipCode) {
+        Map<Product, Integer> remainingItems = new HashMap<>(items);
         List<StorageUnitId> contributorMap = new ArrayList<>();
         List<StorageUnit> storageUnits = new ArrayList<>(findAll());
         while (!remainingItems.isEmpty()) {
@@ -56,7 +55,7 @@ public class InventoryFulfillmentService implements InventoryServiceInterface {
             StorageUnit storageUnit = findById(storageId.getId());
             if (storageUnit == null) break;
 
-            Map<Thing, Integer> servableItems = storageUnit.getServableItems(remainingItems);
+            Map<Product, Integer> servableItems = storageUnit.getServableItems(remainingItems);
             if (!servableItems.isEmpty()) {
                 servableItems.keySet().forEach(remainingItems::remove);
                 contributorMap.add(storageId);
@@ -69,7 +68,7 @@ public class InventoryFulfillmentService implements InventoryServiceInterface {
     }
 
     public List<StorageUnitId> sortStorageUnits(List<StorageUnit> storageUnits,
-                                                Map<Thing, Integer> unfulfilledItems,
+                                                Map<Product, Integer> unfulfilledItems,
                                                 ZipCode clientZipCode) {
         return storageUnits.stream()
                 .sorted(new StorageUnitComparator(unfulfilledItems, clientZipCode))
@@ -89,7 +88,7 @@ public class InventoryFulfillmentService implements InventoryServiceInterface {
     public Boolean isInStock(UUID thingId) {
         List<StorageUnit> storageUnits = findAll();
         return storageUnits.stream()
-                .anyMatch(unit -> unit.contains(new ThingId(thingId)));
+                .anyMatch(unit -> unit.contains(new ProductId(thingId)));
     }
 
     @Override

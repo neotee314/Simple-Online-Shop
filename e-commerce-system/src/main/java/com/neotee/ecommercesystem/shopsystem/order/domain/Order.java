@@ -4,7 +4,7 @@ import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.exception.EntityIdNullException;
 import com.neotee.ecommercesystem.exception.QuantityNegativeException;
 import com.neotee.ecommercesystem.exception.ValueObjectNullOrEmptyException;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,19 +38,19 @@ public class Order {
         this.clientEmail = clientEmail;
     }
 
-    public void addOrderParts(Map<Thing, Integer> partsWithQuantity) {
+    public void addOrderParts(Map<Product, Integer> partsWithQuantity) {
         if (partsWithQuantity == null || partsWithQuantity.isEmpty()) {
             throw new EntityNotFoundException();
         }
-        for (Map.Entry<Thing, Integer> entry : partsWithQuantity.entrySet()) {
-            Thing thing = entry.getKey();
+        for (Map.Entry<Product, Integer> entry : partsWithQuantity.entrySet()) {
+            Product product = entry.getKey();
             Integer quantity = entry.getValue();
 
             if (quantity <= 0) {
                 throw new QuantityNegativeException();
             }
 
-            OrderPart part = new OrderPart(thing, quantity);
+            OrderPart part = new OrderPart(product, quantity);
             addOrderPart(part);
         }
     }
@@ -82,10 +82,10 @@ public class Order {
     }
 
 
-    public Map<Thing, Integer> getOrderLineItemsMap() {
-        Map<Thing, Integer> partsWithQuantity = new HashMap<>();
+    public Map<Product, Integer> getOrderLineItemsMap() {
+        Map<Product, Integer> partsWithQuantity = new HashMap<>();
         for (OrderPart orderPart : orderParts) {
-            partsWithQuantity.put(orderPart.getThing(), orderPart.getOrderQuantity());
+            partsWithQuantity.put(orderPart.getProduct(), orderPart.getOrderQuantity());
         }
         return partsWithQuantity;
     }

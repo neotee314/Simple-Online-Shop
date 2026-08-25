@@ -1,7 +1,7 @@
 package com.neotee.ecommercesystem.usecases;
 
 
-import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 

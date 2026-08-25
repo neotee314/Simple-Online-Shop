@@ -1,6 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.payment.domain;
 
-import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.Money;
 import jakarta.persistence.Embedded;
@@ -9,8 +9,6 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.UUID;
 
 @Entity
 @Getter

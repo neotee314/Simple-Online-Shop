@@ -1,6 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.delivery.domain;
 
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
@@ -16,7 +16,7 @@ public class DeliveryContent {
     private DeliveryContentId deliveryContentId;
 
     @ManyToOne
-    private Thing thing;
+    private Product product;
 
     private Integer quantity;
 

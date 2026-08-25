@@ -1,6 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.payment.domain;
 
-import com.neotee.ecommercesystem.GenericId;
+import com.neotee.ecommercesystem.domainprimitives.GenericId;
 import jakarta.persistence.Embeddable;
 
 import java.util.UUID;

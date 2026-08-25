@@ -1,64 +1,86 @@
 package com.neotee.ecommercesystem.shopsystem.client.application.controller;
 
-import com.neotee.ecommercesystem.shopsystem.client.application.dto.ClientDTO;
+import com.neotee.ecommercesystem.domainprimitives.ClientId;
+import com.neotee.ecommercesystem.domainprimitives.Email;
+import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
+import com.neotee.ecommercesystem.domainprimitives.ZipCode;
+import com.neotee.ecommercesystem.shopsystem.client.application.dto.ClientRequestDto;
+import com.neotee.ecommercesystem.shopsystem.client.application.dto.ClientResponseDto;
+import com.neotee.ecommercesystem.shopsystem.client.application.mapper.ClientMapper;
 import com.neotee.ecommercesystem.shopsystem.client.application.service.ClientApplicationService;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.ShoppingBasketDTO;
+import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/clients")
-@Tag(name = "Client Management", description = "Verwaltung von Kunden")
+@RequestMapping("/api/v1/clients")
 @RequiredArgsConstructor
 public class ClientController {
-    private final ClientApplicationService clientApplicationService;
 
-    @Operation(summary = "Get All Clients", description = "Returns all clients")
-    @GetMapping("/all")
-    public ResponseEntity<List<ClientDTO>> getAllClients() {
-        List<ClientDTO> clientDTOS = clientApplicationService.getAll();
-        return new ResponseEntity<>(clientDTOS, HttpStatus.OK);
-    }
+    private final ClientApplicationService clientService;
+    private final ClientMapper clientMapper;
 
-    @Operation(summary = "Get Client by Email", description = "Returns the client for the given Email")
+    @Operation(summary = "Get All Clients")
     @GetMapping
-    public ResponseEntity<ClientDTO> getClientByEmail(@RequestParam(name = "email", required = false) String email) {
-        ClientDTO clientDTO = clientApplicationService.findClientDTOByEmail(email);
-        return new ResponseEntity<>(clientDTO, HttpStatus.OK);
-    }
-    @Operation(summary = "Get Client by Id", description = "Returns the client for the given Id")
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<ClientDTO> getClientById(@PathVariable UUID id) {
-        ClientDTO clientDTO = clientApplicationService.findById(id);
-        return new ResponseEntity<>(clientDTO, HttpStatus.OK);
+    public ResponseEntity<List<ClientResponseDto>> getAllClients() {
+        return ResponseEntity.ok(
+                clientService.findAll().stream()
+                        .map(clientMapper::toDto)
+                        .collect(Collectors.toList())
+        );
     }
 
-    @Operation(summary = "Get ShoppingBasket of a Client", description = "Returns the ShoppingBasket of Client for the given Id")
-    @GetMapping(value = "/{clientId}/basket")
-    public ResponseEntity<ShoppingBasketDTO> getBasketOfClient(@PathVariable UUID clientId) {
-        ShoppingBasketDTO shoppingBasketDTO = clientApplicationService.getBasketOf(clientId);
-        return new ResponseEntity<>(shoppingBasketDTO, HttpStatus.OK);
+    @Operation(summary = "Get Client by Email")
+    @GetMapping("/email")
+    public ResponseEntity<ClientResponseDto> getClientByEmail(@RequestParam String email) {
+        Client client = clientService.findByEmail(Email.of(email));
+        return ResponseEntity.ok(clientMapper.toDto(client));
     }
 
-    @Operation(summary = "Register a client", description = "Add a client to System")
+    @Operation(summary = "Get Client by Id")
+    @GetMapping("/{id}")
+    public ResponseEntity<ClientResponseDto> getClientById(@PathVariable ClientId id) {
+        Client client = clientService.findById(id);
+        return ResponseEntity.ok(clientMapper.toDto(client));
+    }
+
+    @Operation(summary = "Register a client")
     @PostMapping
-    public ResponseEntity<Void> registerClient(@RequestBody ClientDTO clientDTO) {
-        clientApplicationService.register(clientDTO);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<ClientResponseDto> registerClient(@Valid @RequestBody ClientRequestDto request) {
+        Client client = clientService.registerClient(
+                request.name(),
+                Email.of(request.email()),
+                (HomeAddress) HomeAddress.of(request.street(), request.city(), ZipCode.of(request.zipCode()))
+        );
+        return new ResponseEntity<>(clientMapper.toDto(client), HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Change Address", description = "Change address of Client")
-    @PatchMapping
-    public ResponseEntity<Void> updateAddress(@RequestBody ClientDTO clientDTO) {
-        clientApplicationService.updateAddress(clientDTO);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @Operation(summary = "Update Client")
+    @PutMapping("/{id}")
+    public ResponseEntity<ClientResponseDto> updateClient(
+            @PathVariable ClientId id,
+            @Valid @RequestBody ClientRequestDto request) {
+
+        var client = clientService.updateClient(
+                id,
+                request.name(),
+                Email.of(request.email()),
+                (HomeAddress) HomeAddress.of(request.street(), request.city(), ZipCode.of(request.zipCode()))
+        );
+        return ResponseEntity.ok(clientMapper.toDto(client));
     }
 
+    @Operation(summary = "Delete Client")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteClient(@PathVariable ClientId id) {
+        clientService.deleteClient(id);
+        return ResponseEntity.noContent().build();
+    }
 }

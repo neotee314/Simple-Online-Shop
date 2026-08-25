@@ -1,10 +1,8 @@
 package com.neotee.ecommercesystem.regression;
 
 import org.junit.jupiter.api.Test;
-import com.neotee.ecommercesystem.ShopException;
-import com.neotee.ecommercesystem.usecases.*;
+import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
-import com.neotee.ecommercesystem.usecases.masterdata.*;
 
 import static com.neotee.ecommercesystem.usecases.masterdata.FactoryMethodInvoker.instantiateEmail;
 import static org.junit.jupiter.api.Assertions.*;

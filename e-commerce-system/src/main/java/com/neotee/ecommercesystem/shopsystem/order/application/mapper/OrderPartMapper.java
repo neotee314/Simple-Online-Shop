@@ -2,8 +2,8 @@ package com.neotee.ecommercesystem.shopsystem.order.application.mapper;
 
 import com.neotee.ecommercesystem.shopsystem.order.application.dto.OrderPartDTO;
 import com.neotee.ecommercesystem.shopsystem.order.domain.OrderPart;
-import com.neotee.ecommercesystem.shopsystem.thing.application.service.ThingService;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
+import com.neotee.ecommercesystem.shopsystem.product.application.service.ProductService;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -16,7 +16,7 @@ import java.util.UUID;
 public abstract class OrderPartMapper {
 
     @Autowired
-    protected ThingService thingService;
+    protected ProductService productService;
 
     @Mapping(target = "thingId", source = "thing", qualifiedByName = "mapThingToUUID")
     @Mapping(target = "quantity", source = "orderQuantity")
@@ -27,12 +27,12 @@ public abstract class OrderPartMapper {
     public abstract OrderPart toEntity(OrderPartDTO orderPartDTO);
 
     @Named("mapThingToUUID")
-    public UUID mapThingToUUID(Thing thing) {
-        return thing.getThingId().getId();
+    public UUID mapThingToUUID(Product product) {
+        return product.getProductId().getId();
     }
 
     @Named("mapUUIDToThing")
-    public Thing mapUUIDToThing(UUID thingId) {
-        return thingService.findById(thingId);
+    public Product mapUUIDToThing(UUID thingId) {
+        return productService.findById(thingId);
     }
 }

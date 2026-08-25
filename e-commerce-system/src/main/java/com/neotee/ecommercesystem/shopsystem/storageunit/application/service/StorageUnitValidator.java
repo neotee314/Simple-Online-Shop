@@ -1,6 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.storageunit.application.service;
 
-import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
 
 import java.util.UUID;

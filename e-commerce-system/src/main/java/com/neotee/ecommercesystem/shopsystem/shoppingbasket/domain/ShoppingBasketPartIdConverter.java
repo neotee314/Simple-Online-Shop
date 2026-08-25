@@ -1,6 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain;
 
-import com.neotee.ecommercesystem.GenericIdConverter;
+import com.neotee.ecommercesystem.domainprimitives.GenericIdConverter;
 import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)

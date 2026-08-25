@@ -1,6 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.delivery.application.service;
 
-import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.exception.ValueObjectNullOrEmptyException;
 import com.neotee.ecommercesystem.shopsystem.delivery.domain.Delivery;

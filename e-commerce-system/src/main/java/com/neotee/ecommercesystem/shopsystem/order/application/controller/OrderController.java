@@ -1,14 +1,7 @@
 package com.neotee.ecommercesystem.shopsystem.order.application.controller;
 
-import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.shopsystem.order.application.dto.OrderDTO;
-import com.neotee.ecommercesystem.shopsystem.order.application.dto.OrderPartDTO;
-import com.neotee.ecommercesystem.shopsystem.order.application.service.OrdeUseCaseService;
 import com.neotee.ecommercesystem.shopsystem.order.application.service.OrderApplicationService;
-import com.neotee.ecommercesystem.shopsystem.order.domain.Order;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.ThingRepository;
-import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

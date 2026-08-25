@@ -8,8 +8,8 @@ import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBaske
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketPartRepository;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketRepository;
 import com.neotee.ecommercesystem.shopsystem.storageunit.application.service.ReservedQuantityService;
-import com.neotee.ecommercesystem.shopsystem.thing.application.service.ReservationCheckServiceInterface;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.ThingId;
+import com.neotee.ecommercesystem.shopsystem.product.application.service.ReservationCheckServiceInterface;
+import com.neotee.ecommercesystem.shopsystem.product.domain.ProductId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +30,7 @@ public class ReservationService implements ReservationCheckServiceInterface, Res
 
         // Calculate the total reserved quantity for the item across all baskets
         Integer total = allBaskets.stream()
-                .mapToInt(basket -> basket.getReservedQuantityForThing(new ThingId(thingId)))
+                .mapToInt(basket -> basket.getReservedQuantityForThing(new ProductId(thingId)))
                 .sum();  // Sum the total
         return total;
     }
@@ -47,7 +47,7 @@ public class ReservationService implements ReservationCheckServiceInterface, Res
             ShoppingBasket basket = shoppingBasketRepository.findById(basketId)
                     .orElseThrow(EntityNotFoundException::new);
 
-            int removed = basket.removeReservedItems(new ThingId(thingId), quantityToRemove - totalRemoved);
+            int removed = basket.removeReservedItems(new ProductId(thingId), quantityToRemove - totalRemoved);
             totalRemoved += removed;
 
             shoppingBasketRepository.save(basket);

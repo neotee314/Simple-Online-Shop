@@ -1,11 +1,11 @@
 package com.neotee.ecommercesystem.domainprimitives;
 
-import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Embeddable;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -30,31 +30,31 @@ public class Email implements EmailType {
 
     private void validate(String email) {
         if (email == null || email.trim().isEmpty()) {
-            throw new ShopException("E-Mail-Adresse darf nicht leer sein.");
+            throw new DomainValidationException("email", "E-Mail-Adresse darf nicht leer sein.");
         }
 
         if (!EMAIL_PATTERN.matcher(email).matches()) {
-            throw new ShopException("Ungültiges E-Mail-Format.");
+            throw new DomainValidationException("email", "Ungültiges E-Mail-Format.");
         }
 
         String[] parts = email.split("@");
         if (parts.length != 2) {
-            throw new ShopException("E-Mail muss genau ein '@' enthalten.");
+            throw new DomainValidationException("email", "E-Mail muss genau ein '@' enthalten.");
         }
 
         String localPart = parts[0];
         String domainPart = parts[1];
 
         if (localPart.isEmpty() || domainPart.isEmpty()) {
-            throw new ShopException("Lokaler Teil oder Domain fehlt.");
+            throw new DomainValidationException("email", "Lokaler Teil oder Domain fehlt.");
         }
 
         if (localPart.contains(" ") || domainPart.contains(" ")) {
-            throw new ShopException("E-Mail darf keine Leerzeichen enthalten.");
+            throw new DomainValidationException("email", "E-Mail darf keine Leerzeichen enthalten.");
         }
 
         if (localPart.contains("..") || domainPart.contains("..")) {
-            throw new ShopException("E-Mail darf keine doppelten Punkte enthalten.");
+            throw new DomainValidationException("email", "E-Mail darf keine doppelten Punkte enthalten.");
         }
 
         boolean domainValid = false;
@@ -66,14 +66,14 @@ public class Email implements EmailType {
         }
 
         if (!domainValid) {
-            throw new ShopException("Ungültige Domain-Endung.");
+            throw new DomainValidationException("email", "Ungültige Domain-Endung.");
         }
     }
 
     @Override
     public EmailType sameIdentifyerDifferentDomain(String newDomain) {
         if (newDomain == null || newDomain.trim().isEmpty()) {
-            throw new ShopException("Domain darf nicht leer sein.");
+            throw new DomainValidationException("domain", "Domain darf nicht leer sein.");
         }
 
         String localPart = emailAddress.split("@")[0];
@@ -83,7 +83,7 @@ public class Email implements EmailType {
     @Override
     public EmailType sameDomainDifferentIdentifyer(String newIdentifyer) {
         if (newIdentifyer == null || newIdentifyer.trim().isEmpty()) {
-            throw new ShopException("Benutzername darf nicht leer sein.");
+            throw new DomainValidationException("identifier", "Benutzername darf nicht leer sein.");
         }
 
         String domainPart = emailAddress.split("@")[1];

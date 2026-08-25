@@ -1,7 +1,7 @@
 package com.neotee.ecommercesystem.shopsystem.deliverypackage.domain;
 
 
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,16 +18,16 @@ public class DeliveryPackagePart {
     private DeliveryPackagePartId id;
 
     @ManyToOne
-    private Thing thing;
+    private Product product;
     private int quantity;
 
-    public DeliveryPackagePart(Thing thing, int quantity) {
+    public DeliveryPackagePart(Product product, int quantity) {
         this.id = new DeliveryPackagePartId();
-        this.thing = thing;
+        this.product = product;
         this.quantity = quantity;
     }
 
     public UUID getThingId() {
-        return thing.getThingId().getId();
+        return product.getProductId().getId();
     }
 }

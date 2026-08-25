@@ -3,74 +3,41 @@ package com.neotee.ecommercesystem.shopsystem.client.application.mapper;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
-import com.neotee.ecommercesystem.shopsystem.client.application.dto.ClientDTO;
+import com.neotee.ecommercesystem.shopsystem.client.application.dto.ClientRequestDto;
+import com.neotee.ecommercesystem.shopsystem.client.application.dto.ClientResponseDto;
 import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
-import com.neotee.ecommercesystem.shopsystem.client.domain.ClientId;
-import com.neotee.ecommercesystem.usecases.domainprimitivetypes.ZipCodeType;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
-import org.mapstruct.ReportingPolicy;
+import org.springframework.stereotype.Component;
 
-import java.util.UUID;
+@Component
+public class ClientMapper {
 
+    public Client toEntity(ClientRequestDto dto) {
+        var email = Email.of(dto.email());
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
-public abstract class ClientMapper {
-    @Mapping(target = "clientId", source = "id", qualifiedByName = "mapUUIDToClientId")
-    @Mapping(target = "homeAddress", source = ".", qualifiedByName = "mapCityAndZipCodeAndStreetToAddress")
-    @Mapping(target = "email", source = "emailString", qualifiedByName = "mapStringToEmail")
-    public abstract Client toEntity(ClientDTO clientDTO);
+        var zipCode = (ZipCode) ZipCode.of(dto.zipCode());
+        var homeAddress = (HomeAddress) HomeAddress.of(
+                dto.street(),
+                dto.city(),
+                zipCode
+        );
 
-    @Mapping(target = "id", source = "clientId", qualifiedByName = "mapClientIdToUUID")
-    @Mapping(target = "city", source = "homeAddress", qualifiedByName = "mapHomeAddressToCity")
-    @Mapping(target = "street", source = "homeAddress", qualifiedByName = "mapHomeAddressToStreet")
-    @Mapping(target = "zipCodeString", source = "homeAddress", qualifiedByName = "mapHomeAddressToZipCode")
-    @Mapping(target = "emailString", source = "email", qualifiedByName = "mapEmailToString")
-    public abstract ClientDTO toDto(Client client);
-
-
-    @Named("mapUUIDToClientId")
-    public ClientId mapUUIDToClientId(UUID id) {
-        return new ClientId(id);
+        return Client.create(dto.name(), email, homeAddress);
     }
 
-    @Named("mapClientIdToUUID")
-    public UUID mapClientIdToUUID(ClientId clientId) {
-        return clientId.getId();
+    public ClientResponseDto toDto(Client client) {
+        if (client == null) {
+            return null;
+        }
+
+        return new ClientResponseDto(
+                client.getId() != null ? client.getId() : null,
+                client.getName(),
+                client.getEmail() != null ? client.getEmail().getEmailAddress() : null,
+                client.getHomeAddress() != null ? client.getHomeAddress().getStreet() : null,
+                client.getHomeAddress() != null ? client.getHomeAddress().getCity() : null,
+                client.getHomeAddress() != null && client.getHomeAddress().getZipCode() != null
+                        ? client.getHomeAddress().getZipCode().getZipCode()
+                        : null
+        );
     }
-
-
-    @Named("mapCityAndZipCodeAndStreetToAddress")
-    public HomeAddress mapCityAndZipCodeAndStreetToAddress(ClientDTO clientDTO) {
-        ZipCodeType zipCodeObj = ZipCode.of(clientDTO.getZipCodeString());
-        return (HomeAddress) HomeAddress.of(clientDTO.getStreet(), clientDTO.getCity(), zipCodeObj);
-    }
-
-
-    @Named("mapHomeAddressToCity")
-    public String mapHomeAddressToCity(HomeAddress homeAddress) {
-        return homeAddress.getCity();
-    }
-
-    @Named("mapHomeAddressToStreet")
-    public String mapHomeAddressToStreet(HomeAddress homeAddress) {
-        return homeAddress.getStreet();
-    }
-
-    @Named("mapHomeAddressToZipCode")
-    public String mapHomeAddressToZipCode(HomeAddress homeAddress) {
-        return homeAddress.getZipCode().getZipCode();
-    }
-
-    @Named("mapEmailToString")
-    public String mapEmailToString(Email email) {
-        return email.getEmailAddress();
-    }
-
-    @Named("mapStringToEmail")
-    public Email mapStringToEmail(String email) {
-        return Email.of(email);
-    }
-
 }

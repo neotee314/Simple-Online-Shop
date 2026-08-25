@@ -2,8 +2,8 @@ package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.mapper
 
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.dto.DeliveryPackagePartDTO;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackagePart;
-import com.neotee.ecommercesystem.shopsystem.thing.application.service.ThingService;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
+import com.neotee.ecommercesystem.shopsystem.product.application.service.ProductService;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import org.mapstruct.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import java.util.UUID;
 public abstract class DeliveryPackagePartMapper {
 
     @Autowired
-    protected ThingService thingService;
+    protected ProductService productService;
 
     @Mapping(target = "thingId", source = "thing", qualifiedByName = "mapThingToUUID")
     public abstract DeliveryPackagePartDTO toDto(DeliveryPackagePart part);
@@ -23,13 +23,13 @@ public abstract class DeliveryPackagePartMapper {
     public abstract DeliveryPackagePart toEntity(DeliveryPackagePartDTO partDto);
 
     @Named("mapThingToUUID")
-    public UUID mapThingToUUID(Thing thing) {
-        return thing.getThingId().getId();
+    public UUID mapThingToUUID(Product product) {
+        return product.getProductId().getId();
     }
 
     @Named("mapUUIDToThing")
-    public Thing mapUUIDToThing(UUID id) {
-        return thingService.findById(id);
+    public Product mapUUIDToThing(UUID id) {
+        return productService.findById(id);
     }
 
     public DeliveryPackagePartDTO map(UUID thingId, Integer quantity) {

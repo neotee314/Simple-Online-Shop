@@ -1,17 +1,17 @@
 package com.neotee.ecommercesystem.shopsystem.storageunit.domain;
 
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 
 import java.util.Comparator;
 import java.util.Map;
 
 
 public class StorageUnitComparator implements Comparator<StorageUnit> {
-    private final Map<Thing, Integer> unfulfilledItems;
+    private final Map<Product, Integer> unfulfilledItems;
     private final ZipCode clientZipCode;
 
-    public StorageUnitComparator(Map<Thing, Integer> unfulfilledItems, ZipCode clientZipCode) {
+    public StorageUnitComparator(Map<Product, Integer> unfulfilledItems, ZipCode clientZipCode) {
         this.unfulfilledItems = unfulfilledItems;
         this.clientZipCode = clientZipCode;
     }

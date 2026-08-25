@@ -2,8 +2,8 @@ package com.neotee.ecommercesystem.shopsystem.order.domain;
 
 import com.neotee.ecommercesystem.exception.EntityIdNullException;
 import com.neotee.ecommercesystem.exception.QuantityNegativeException;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.ThingId;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
+import com.neotee.ecommercesystem.shopsystem.product.domain.ProductId;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,7 +23,7 @@ public class OrderPart {
     private OrderPartId id;
 
     @ManyToOne
-    private Thing thing;
+    private Product product;
 
     private Integer orderQuantity;
 
@@ -43,11 +43,11 @@ public class OrderPart {
 
 
 
-    public OrderPart(Thing thing, int quantity) {
-        if (thing == null) throw new EntityIdNullException();
+    public OrderPart(Product product, int quantity) {
+        if (product == null) throw new EntityIdNullException();
         if (quantity <= 0) throw new QuantityNegativeException();
         this.id = new OrderPartId();
-        this.thing = thing;
+        this.product = product;
         this.orderQuantity = quantity;
     }
 
@@ -60,11 +60,11 @@ public class OrderPart {
 
     public boolean contains(UUID thingId) {
         if (thingId == null) throw new EntityIdNullException();
-        return this.thing.getThingId().getId().equals(thingId);
+        return this.product.getProductId().getId().equals(thingId);
     }
 
 
-    public ThingId getThingId() {
-        return thing.getThingId();
+    public ProductId getThingId() {
+        return product.getProductId();
     }
 }

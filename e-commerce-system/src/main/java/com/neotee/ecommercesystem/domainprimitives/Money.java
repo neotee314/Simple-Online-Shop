@@ -1,12 +1,11 @@
 package com.neotee.ecommercesystem.domainprimitives;
 
-import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
-import jakarta.persistence.*;
+import jakarta.persistence.Embeddable;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,13 +31,13 @@ public class Money implements MoneyType {
 
     private void validate(Float amount, String currency) {
         if (amount == null || amount < 0) {
-            throw new ShopException("Amount must be non-null and >= 0");
+            throw new DomainValidationException("amount", "Amount must be non-null and >= 0");
         }
         if (currency == null || currency.trim().isEmpty()) {
-            throw new ShopException("Currency must not be null or empty");
+            throw new DomainValidationException("currency", "Currency must not be null or empty");
         }
         if (!ALLOWED_CURRENCIES.contains(currency)) {
-            throw new ShopException("Currency must be one of: " + ALLOWED_CURRENCIES);
+            throw new DomainValidationException("currency", "Currency must be one of: " + ALLOWED_CURRENCIES);
         }
     }
 
@@ -52,7 +51,7 @@ public class Money implements MoneyType {
     public MoneyType subtract(MoneyType other) {
         checkSameCurrency(other);
         if (this.amount < other.getAmount()) {
-            throw new ShopException("Cannot subtract more than the current amount");
+            throw new DomainValidationException("amount", "Cannot subtract more than the current amount");
         }
         return new Money(this.amount - other.getAmount(), this.currency);
     }
@@ -60,7 +59,7 @@ public class Money implements MoneyType {
     @Override
     public MoneyType multiplyBy(int factor) {
         if (factor < 0) {
-            throw new ShopException("Factor must be >= 0");
+            throw new DomainValidationException("factor", "Factor must be >= 0");
         }
         return new Money(this.amount * factor, this.currency);
     }
@@ -73,10 +72,10 @@ public class Money implements MoneyType {
 
     private void checkSameCurrency(MoneyType other) {
         if (other == null) {
-            throw new ShopException("Other money cannot be null");
+            throw new DomainValidationException("currency", "Other money cannot be null");
         }
         if (!this.currency.equals(other.getCurrency())) {
-            throw new ShopException("Currency mismatch: " + this.currency + " vs " + other.getCurrency());
+            throw new DomainValidationException("currency", "Currency mismatch: " + this.currency + " vs " + other.getCurrency());
         }
     }
 

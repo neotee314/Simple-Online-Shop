@@ -1,14 +1,14 @@
 package com.neotee.ecommercesystem.shopsystem.storageunit.application.service;
 
-import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
 import com.neotee.ecommercesystem.exception.EntityNotFoundException;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnit;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnitId;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnitRepository;
-import com.neotee.ecommercesystem.shopsystem.thing.application.service.ThingService;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.ThingId;
+import com.neotee.ecommercesystem.shopsystem.product.application.service.ProductService;
+import com.neotee.ecommercesystem.shopsystem.product.domain.ProductId;
 import com.neotee.ecommercesystem.usecases.StorageUnitUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class StorageUnitUseCasesService implements StorageUnitUseCases {
 
     private final StorageUnitRepository storageUnitRepository;
     private final ReservedQuantityService reservationServiceInterface;
-    private final ThingService thingService;
+    private final ProductService productService;
 
     @Override
     public UUID addNewStorageUnit(HomeAddressType address, String name) {
@@ -43,8 +43,8 @@ public class StorageUnitUseCasesService implements StorageUnitUseCases {
     public void addToStock(UUID storageUnitId, UUID thingId, int addedQuantity) {
         StorageUnit storageUnit = storageUnitRepository.findById(new StorageUnitId(storageUnitId))
                 .orElseThrow(EntityNotFoundException::new);
-        Thing thing = thingService.findById(thingId);
-        storageUnit.addToStock(thing, addedQuantity);
+        Product product = productService.findById(thingId);
+        storageUnit.addToStock(product, addedQuantity);
         storageUnitRepository.save(storageUnit);
     }
 
@@ -54,7 +54,7 @@ public class StorageUnitUseCasesService implements StorageUnitUseCases {
         StorageUnit storageUnit = storageUnitRepository.findById(new StorageUnitId(storageUnitId))
                 .orElseThrow(EntityNotFoundException::new);
         int reserved = reservationServiceInterface.getTotalReservedInAllBaskets(thingId);
-        ThingId id = new ThingId(thingId);
+        ProductId id = new ProductId(thingId);
         int currentInventory = storageUnit.getQuantityOf(id);
 
         if (removedQuantity > currentInventory + reserved)
@@ -78,15 +78,15 @@ public class StorageUnitUseCasesService implements StorageUnitUseCases {
         StorageUnit storageUnit = storageUnitRepository.findById(new StorageUnitId(storageUnitId))
                 .orElseThrow(EntityNotFoundException::new);
         int reserved = reservationServiceInterface.getTotalReservedInAllBaskets(thingId);
-        Thing thing = thingService.findById(thingId);
-        if (thing == null) throw new EntityNotFoundException();
+        Product product = productService.findById(thingId);
+        if (product == null) throw new EntityNotFoundException();
 
         if (newTotalQuantity < reserved) {
             int toRemove = reserved - newTotalQuantity;
             reservationServiceInterface.removeFromReservedQuantity(thingId, toRemove);
         }
 
-        storageUnit.changeStockTo(thing, newTotalQuantity);
+        storageUnit.changeStockTo(product, newTotalQuantity);
         storageUnitRepository.save(storageUnit);
     }
 

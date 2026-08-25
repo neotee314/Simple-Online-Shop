@@ -6,8 +6,8 @@ import com.neotee.ecommercesystem.exception.EntityNotFoundException;
 import com.neotee.ecommercesystem.shopsystem.order.domain.Order;
 import com.neotee.ecommercesystem.shopsystem.order.domain.OrderId;
 import com.neotee.ecommercesystem.shopsystem.order.domain.OrderRepository;
-import com.neotee.ecommercesystem.shopsystem.thing.application.service.OrderedItemsServiceInterface;
-import com.neotee.ecommercesystem.shopsystem.thing.domain.Thing;
+import com.neotee.ecommercesystem.shopsystem.product.application.service.OrderedItemsServiceInterface;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
@@ -24,7 +24,7 @@ public class OrderService implements OrderedItemsServiceInterface {
 
     // 1. Create a new order
     @Transactional
-    public OrderId createOrder(Map<Thing, Integer> thingQuantityMap, Email clientEmail) {
+    public OrderId createOrder(Map<Product, Integer> thingQuantityMap, Email clientEmail) {
         // Create a new order
         Order order = new Order(clientEmail);
 
@@ -74,7 +74,7 @@ public class OrderService implements OrderedItemsServiceInterface {
 
 
     @Transactional
-    public Map<Thing, Integer> getOrderLineItemsMap(OrderId orderId) {
+    public Map<Product, Integer> getOrderLineItemsMap(OrderId orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(EntityNotFoundException::new);
         return order.getOrderLineItemsMap();

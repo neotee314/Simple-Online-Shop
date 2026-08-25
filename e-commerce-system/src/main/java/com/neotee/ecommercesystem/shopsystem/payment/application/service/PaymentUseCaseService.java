@@ -1,15 +1,13 @@
 package com.neotee.ecommercesystem.shopsystem.payment.application.service;
 
-import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.Money;
-import com.neotee.ecommercesystem.shopsystem.client.application.service.ClientService;
 import com.neotee.ecommercesystem.shopsystem.payment.domain.Payment;
 import com.neotee.ecommercesystem.usecases.PaymentUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 

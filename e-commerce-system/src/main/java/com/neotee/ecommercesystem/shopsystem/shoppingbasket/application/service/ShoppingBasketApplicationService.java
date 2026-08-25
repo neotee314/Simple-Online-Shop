@@ -11,7 +11,7 @@ import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBaske
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketId;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketPart;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketRepository;
-import com.neotee.ecommercesystem.shopsystem.thing.application.service.ThingService;
+import com.neotee.ecommercesystem.shopsystem.product.application.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +25,7 @@ public class ShoppingBasketApplicationService {
     private final ShoppingBasketMapper basketMapper;
     private final ShoppingBasketPartMapper partMapper;
     private final ShoppingBasketUseCasesService shoppingBasketUseCasesService;
-    private final ThingService thingService;
+    private final ProductService productService;
 
     public ShoppingBasketDTO getBasketByClientId(UUID clientId) {
         if (clientId == null ) throw new EntityIdNullException();
@@ -40,9 +40,9 @@ public class ShoppingBasketApplicationService {
                 EntityNotFoundException::new);
         if (request == null || request.getThingId() == null) throw new EntityIdNullException();
         if (request.getQuantity() < 0) throw new QuantityNegativeException();
-        if (!thingService.existsById(request.getThingId())) throw new EntityNotFoundException();
+        if (!productService.existsById(request.getThingId())) throw new EntityNotFoundException();
         ShoppingBasketPart part = partMapper.toEntity(request);
-        Money price = thingService.getSalesPrice(part.getThingId());
+        Money price = productService.getSalesPrice(part.getThingId());
         part.setSalesPrice(price);
         shoppingBasketUseCasesService.addThingToShoppingBasket(shoppingBasket.getClientEmail(), part.getThingId(), part.getQuantity());
     }
@@ -64,7 +64,7 @@ public class ShoppingBasketApplicationService {
             throw new EntityIdNullException();
         }
         ShoppingBasket shoppingBasket = shoppingBasketRepository.findById(new ShoppingBasketId(basketId)).orElseThrow(EntityNotFoundException::new);
-        if (!thingService.existsById(thingId)) throw new EntityNotFoundException();
+        if (!productService.existsById(thingId)) throw new EntityNotFoundException();
         if (!shoppingBasket.contains(thingId)) throw new ThingNotInShoppingBasketException();
         shoppingBasket.removeItem(thingId);
         shoppingBasketRepository.save(shoppingBasket);

@@ -1,13 +1,13 @@
 package com.neotee.ecommercesystem.domainprimitives;
 
-import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.ZipCodeType;
+import jakarta.persistence.Embedded;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
-import jakarta.persistence.*;
+import jakarta.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
@@ -34,13 +34,13 @@ public class HomeAddress implements HomeAddressType {
 
     private void validate(String street, String city, ZipCodeType zipCode) {
         if (street == null || street.trim().isEmpty()) {
-            throw new ShopException("Straßenname darf nicht leer sein.");
+            throw new DomainValidationException("street", "Straßenname darf nicht leer sein.");
         }
         if (city == null || city.trim().isEmpty()) {
-            throw new ShopException("Stadt darf nicht leer sein.");
+            throw new DomainValidationException("city", "Stadt darf nicht leer sein.");
         }
         if (zipCode == null) {
-            throw new ShopException("Postleitzahl darf nicht null sein.");
+            throw new DomainValidationException("zipCode", "Postleitzahl darf nicht null sein.");
         }
     }
 

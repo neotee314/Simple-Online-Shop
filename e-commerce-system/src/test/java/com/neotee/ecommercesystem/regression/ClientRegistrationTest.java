@@ -1,6 +1,6 @@
 package com.neotee.ecommercesystem.regression;
 
-import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.usecases.*;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
 import com.neotee.ecommercesystem.usecases.masterdata.*;

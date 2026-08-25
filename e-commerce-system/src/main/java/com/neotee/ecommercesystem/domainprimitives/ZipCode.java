@@ -1,12 +1,11 @@
 package com.neotee.ecommercesystem.domainprimitives;
 
-import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.ZipCodeType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
-import jakarta.persistence.*;
+import jakarta.persistence.Embeddable;
 import java.util.Objects;
 
 @Embeddable
@@ -16,13 +15,13 @@ public class ZipCode implements ZipCodeType {
 
     private String zipCode;
 
-    private ZipCode(String zipCode)  {
-
+    private ZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
+
     public static ZipCodeType of(String zipCode) {
         if (zipCode == null || !isValidZipCode(zipCode)) {
-            throw new ShopException("Invalid zip code");
+            throw new DomainValidationException("zipCode", "Invalid zip code");
         }
         return new ZipCode(zipCode);
     }
@@ -43,13 +42,16 @@ public class ZipCode implements ZipCodeType {
     }
 
     @Override
-    public int difference(ZipCodeType otherZipCode) throws ShopException {
-        if (otherZipCode == null) throw new ShopException("Invalid zip code");
+    public int difference(ZipCodeType otherZipCode) throws DomainValidationException {
+        if (otherZipCode == null) {
+            throw new DomainValidationException("otherZipCode", "Invalid zip code");
+        }
+
         String thisZip = this.toString();
         String otherZip = otherZipCode.toString();
 
         if (thisZip.length() != otherZip.length()) {
-            throw new ShopException("Zip codes must be of same length");
+            throw new DomainValidationException("zipCode", "Zip codes must be of same length");
         }
 
         int firstDiffPos = -1;
@@ -81,7 +83,6 @@ public class ZipCode implements ZipCodeType {
 
         return positionDifference;
     }
-
 
     @Override
     public boolean equals(Object obj) {

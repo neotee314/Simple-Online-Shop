@@ -1,6 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.service;
 
-import com.neotee.ecommercesystem.ShopException;
+import com.neotee.ecommercesystem.exception.ShopException;
 import com.neotee.ecommercesystem.exception.EntityIdNullException;
 import com.neotee.ecommercesystem.exception.EntityNotFoundException;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackage;
