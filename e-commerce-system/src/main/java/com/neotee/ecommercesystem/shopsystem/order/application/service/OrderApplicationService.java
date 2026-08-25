@@ -24,10 +24,7 @@ public class OrderApplicationService {
     }
 
     public List<Order> findByClientEmail(Email clientEmail) {
-        var orders = orderRepository.findByClientEmail(clientEmail);
-        if (orders.isEmpty())
-            throw new DomainValidationException("OrderApplicationService", "Keine Bestellungen für diesen Client gefunden.");
-        return orders;
+        return orderRepository.findByClientEmail(clientEmail);
     }
 
 

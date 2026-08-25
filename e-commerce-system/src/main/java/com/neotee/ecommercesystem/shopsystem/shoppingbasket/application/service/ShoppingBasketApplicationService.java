@@ -13,6 +13,7 @@ import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBaske
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketPart;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketRepository;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.port.out.FindProductForShoppingBasketPort;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.port.out.DecreaseStockPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ public class ShoppingBasketApplicationService {
     private final ShoppingBasketRepository basketRepository;
     private final CreateOrderPort createOrderPort;
     private final FindProductForShoppingBasketPort findProductPort;
+    private final DecreaseStockPort decreaseStockPort;
 
     public ShoppingBasket getBasketByClient(Client client) {
         return findOrCreateBasket(client);
@@ -67,7 +69,7 @@ public class ShoppingBasketApplicationService {
     public ShoppingBasket removeItemWithQuantity(ShoppingBasketId basketId, ProductId productId, int quantity) {
         var basket = findBasketById(basketId);
         var product = findProductPort.findById(productId);
-        basket.removeItem(product,quantity);
+        basket.removeItem(product, quantity);
         return basketRepository.save(basket);
     }
 
@@ -89,6 +91,7 @@ public class ShoppingBasketApplicationService {
 
         for (var part : basket.getParts()) {
             createOrderPort.createOrder(client, part.getProduct(), part.getQuantity());
+            decreaseStockPort.decreaseStock(part.getProduct().getId(), part.getQuantity());
         }
 
         basket.clear();
@@ -141,7 +144,6 @@ public class ShoppingBasketApplicationService {
         return basketRepository.findById(shoppingBasketId).orElseThrow(() -> new EntityNotFoundException("ShoppingBasketApplicationService",
                 "Basket for this client does not exist"));
     }
-
 
 
 }

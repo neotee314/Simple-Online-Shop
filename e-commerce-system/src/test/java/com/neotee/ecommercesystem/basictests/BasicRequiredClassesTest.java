@@ -25,8 +25,8 @@ public class BasicRequiredClassesTest {
             "OrderPart",
             "ShoppingBasket",
             "ShoppingBasketRepository",
-            "Thing",
-            "ThingRepository",
+            "Product",
+            "ProductRepository",
             "StorageUnit",
             "StorageUnitRepository"
     };

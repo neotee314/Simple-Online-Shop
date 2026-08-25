@@ -39,7 +39,7 @@ public class DomainPrimitivesUsageRulesTest {
     @ArchTest
     static final ArchRule thingShouldReferenceMoney =
             classes()
-                    .that().haveSimpleName( "Thing" )
+                    .that().haveSimpleName( "Product" )
                     .should().dependOnClassesThat().haveFullyQualifiedName( MONEY_CLASS )
-                    .because( "Thing should use Money instead of float or whatever else" );
+                    .because( "Product should use Money instead of float or whatever else" );
 }

@@ -6,7 +6,6 @@ import jakarta.transaction.Transactional;
 import com.neotee.ecommercesystem.ClientMasterDataInitializer;
 import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
 import com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static com.neotee.ecommercesystem.ClientMasterDataInitializer.CLIENT_EMAIL;
 import static com.neotee.ecommercesystem.FactoryMethodInvoker.instantiateEmail;
-
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,8 +29,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 @Transactional
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
 public class ShoppingBasketRESTTest {
     @Autowired
     private ClientRegistrationUseCases clientRegistrationUseCases;
