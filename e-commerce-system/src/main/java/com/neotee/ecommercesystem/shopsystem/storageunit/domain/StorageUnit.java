@@ -196,15 +196,16 @@ public class StorageUnit extends AggregateRoot<StorageUnitId> {
 
         var servableItems = new LinkedHashMap<Product, Integer>();
 
-        requiredItems.entrySet().stream()
-                .sorted(Map.Entry.<Product, Integer>comparingByValue().reversed())
-                .forEach(entry -> {
-                    var product = entry.getKey();
-                    var quantity = entry.getValue();
-                    if (hasSufficientQuantityOf(product, quantity)) {
-                        servableItems.put(product, quantity);
-                    }
-                });
+        for (var entry : requiredItems.entrySet()) {
+            var product = entry.getKey();
+            var required = entry.getValue();
+            var available = getQuantityOf(product);
+
+            if (available > 0) {
+                var taken = Math.min(available, required);
+                servableItems.put(product, taken);
+            }
+        }
 
         return servableItems;
     }

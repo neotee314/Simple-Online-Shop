@@ -91,21 +91,11 @@ public class ShoppingBasketApplicationService {
         var basket = findBasketById(basketId);
         var client = basket.getClient();
         var event = basket.checkout(client);
-        var orderId = processCheckoutEvent(event);
+        var orderId = createOrderPort.createOrderWithItems(event.client(), event.items());
         basketRepository.save(basket);
         return orderId;
     }
 
-    private OrderId processCheckoutEvent(CheckoutEvent event) {
-        var orderId = OrderId.newId();
-
-        for (var entry : event.items().entrySet()) {
-            createOrderPort.addOrderPart(orderId, event.client(), entry.getKey(), entry.getValue());
-            stockPort.decreaseStock(entry.getKey().getId(), entry.getValue());
-        }
-
-        return orderId;
-    }
 
     public void deleteAllBaskets() {
         basketRepository.deleteAll();

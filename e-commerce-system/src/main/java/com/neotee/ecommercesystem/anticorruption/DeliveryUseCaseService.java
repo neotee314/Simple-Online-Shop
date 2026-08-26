@@ -6,11 +6,13 @@ import com.neotee.ecommercesystem.usecases.ClientType;
 import com.neotee.ecommercesystem.usecases.DeliveryUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class DeliveryUseCaseService implements DeliveryUseCases {
 
     private final DeliveryService deliveryService;

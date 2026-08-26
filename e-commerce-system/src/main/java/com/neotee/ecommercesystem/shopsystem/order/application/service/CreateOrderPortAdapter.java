@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 @Component
 @RequiredArgsConstructor
 public class CreateOrderPortAdapter implements CreateOrderPort {
@@ -50,6 +53,34 @@ public class CreateOrderPortAdapter implements CreateOrderPort {
         orderRepository.save(order);
     }
 
+    @Override
+    public OrderId createOrderWithItems(Client client, Map<Product, Integer> items) {
+        System.out.println(">>> createOrderWithItems START, items: " + items.size());
+
+        var order = Order.create(client);
+        System.out.println(">>> Order created, events: " + order.getDomainEvents().size());
+
+        for (var entry : items.entrySet()) {
+            var orderPart = OrderPart.create(entry.getKey(), entry.getValue());
+            order.addOrderPart(orderPart);
+        }
+
+        // ✅ Event ها رو قبل از ذخیره کردن بگیر
+        var events = new ArrayList<>(order.getDomainEvents());
+        System.out.println(">>> Events to publish: " + events.size());
+
+        var savedOrder = orderRepository.save(order);
+        System.out.println(">>> Order saved");
+
+        // ✅ Event ها رو بعد از ذخیره منتشر کن
+        for (Object event : events) {
+            System.out.println(">>> Publishing event: " + event.getClass().getSimpleName());
+            eventPublisher.publishEvent(event);
+        }
+        order.clearEvents();
+
+        return savedOrder.getId();
+    }
     private void publishEvents(Order order) {
         for (Object event : order.getDomainEvents()) {
             eventPublisher.publishEvent(event);

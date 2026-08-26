@@ -28,7 +28,7 @@ public class DeliveryPackage extends AggregateRoot<DeliveryPackageId> {
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "delivery_package_id")
     private List<DeliveryPackagePart> parts;
 

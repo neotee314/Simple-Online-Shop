@@ -3,6 +3,7 @@ package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.servic
 import com.neotee.ecommercesystem.domainprimitives.DeliveryPackageId;
 import com.neotee.ecommercesystem.domainprimitives.OrderId;
 import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;
+import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.port.out.FindOrderPort;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.port.out.FindStorageUnitsPort;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.port.out.UpdateStorageUnitPort;
@@ -42,23 +43,42 @@ public class DeliveryPackageApplicationService {
     }
 
     public List<StorageUnit> getContributingStorageUnitsForOrder(OrderId orderId) {
-        var storageUnitIds = deliveryPackageRepository.findByOrderId(orderId).stream()
-                .map(DeliveryPackage::getStorageUnitId)
-                .distinct()
-                .collect(Collectors.toList());
+        var order = findOrderPort.findById(orderId);
+        if (order == null) {
+            throw new DomainValidationException("Delivery", "Order nicht gefunden.");
+        }
 
-        return storageUnitIds.stream()
-                .map(findStorageUnitsPort::findById)
-                .collect(Collectors.toList());
-    }
+        var items = order.getOrderLineItemsMap();
+        if (items.isEmpty()) {
+            throw new DomainValidationException("Delivery", "Order hat keine Artikel.");
+        }
 
-    public List<StockLevel> getItemsForOrderAndStorageUnit(OrderId orderId, StorageUnitId storageUnitId) {
-        var deliveryPackage = deliveryPackageRepository.findByOrderIdAndStorageUnitId(orderId, storageUnitId)
-                .orElseThrow(() -> new RuntimeException("Lieferpaket nicht gefunden."));
+        var clientZipCode = order.getClient().getHomeAddress().getZipCode();
+        var allStorageUnits = findStorageUnitsPort.findAll();
 
-        return deliveryPackage.getParts().stream()
-                .map(part ->StockLevel.create(part.getProduct(), part.getQuantity()))
-                .collect(Collectors.toList());
+        var contributingStorageUnits = new ArrayList<StorageUnit>();
+
+        for (var storageUnit : allStorageUnits) {
+            // ✅ بررسی کن که StorageUnit میتونه کل سفارش رو تأمین کنه
+            boolean canFulfillAll = true;
+            for (var entry : items.entrySet()) {
+                var product = entry.getKey();
+                var quantity = entry.getValue();
+                if (!storageUnit.hasSufficientQuantityOf(product, quantity)) {
+                    canFulfillAll = false;
+                    break;
+                }
+            }
+
+            if (canFulfillAll) {
+                contributingStorageUnits.add(storageUnit);
+            }
+        }
+
+        // مرتب‌سازی بر اساس نزدیک‌ترین فاصله
+        contributingStorageUnits.sort(Comparator.comparingInt(su -> su.getDistanceToClient(clientZipCode)));
+
+        return contributingStorageUnits;
     }
 
     public List<DeliveryPackage> createDeliveryPackages(OrderId orderId) {
@@ -75,11 +95,13 @@ public class DeliveryPackageApplicationService {
         var deliveryPackages = new ArrayList<DeliveryPackage>();
         var remainingItems = new HashMap<>(items);
 
+        // ✅ مرتب‌سازی بر اساس نزدیک‌ترین فاصله
         storageUnits.sort(Comparator.comparingInt(su -> su.getDistanceToClient(clientZipCode)));
 
         for (var storageUnit : storageUnits) {
             if (remainingItems.isEmpty()) break;
 
+            // ✅ فقط محصولاتی که موجودی کافی دارن رو بردار
             var servableItems = storageUnit.getServableItems(remainingItems);
             if (servableItems.isEmpty()) continue;
 
@@ -87,14 +109,19 @@ public class DeliveryPackageApplicationService {
             deliveryPackage.addParts(servableItems);
 
             for (var entry : servableItems.entrySet()) {
-                storageUnit.removeFromStock(entry.getKey().getId(), entry.getValue());
+                var product = entry.getKey();
+                var quantity = entry.getValue();
+                storageUnit.removeFromStock(product.getId(), quantity);
             }
             updateStorageUnitPort.update(storageUnit);
 
             var savedPackage = deliveryPackageRepository.save(deliveryPackage);
             deliveryPackages.add(savedPackage);
 
-            servableItems.keySet().forEach(remainingItems::remove);
+            // ✅ محصولات تأمین شده رو از لیست حذف کن
+            for (var product : servableItems.keySet()) {
+                remainingItems.remove(product);
+            }
         }
 
         if (deliveryPackages.isEmpty())
@@ -102,26 +129,14 @@ public class DeliveryPackageApplicationService {
 
         return deliveryPackages;
     }
-
-    public DeliveryPackage createDeliveryPackage(Order order, StorageUnit storageUnit, Map<Product, Integer> items) {
-        var deliveryPackage = DeliveryPackage.create(storageUnit, order);
-        deliveryPackage.addParts(items);
-        return deliveryPackageRepository.save(deliveryPackage);
-    }
-
-
-
-    public Map<Product, Integer> getItemsForOrderAndStorageUnitAsProductMap(OrderId orderId, StorageUnitId storageUnitId) {
-        var deliveryPackage = findByOrderIdAndStorageUnitId(orderId, storageUnitId);
-        return deliveryPackage.getItemsAsProductMap();
+    public void deleteAllDeliveryPackages() {
+        deliveryPackageRepository.deleteAll();
     }
 
     public Map<UUID, Integer> getItemsForOrderAndStorageUnitAsUuidMap(OrderId orderId, StorageUnitId storageUnitId) {
+        var order = findOrderPort.findById(orderId);
+        findStorageUnitsPort.findById(storageUnitId);
         var deliveryPackage = findByOrderIdAndStorageUnitId(orderId, storageUnitId);
         return deliveryPackage.getItemsAsUuidMap();
-    }
-
-    public void deleteAllDeliveryPackages() {
-        deliveryPackageRepository.deleteAll();
     }
 }

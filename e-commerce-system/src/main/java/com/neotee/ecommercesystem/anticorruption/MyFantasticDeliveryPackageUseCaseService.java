@@ -38,11 +38,7 @@ public class MyFantasticDeliveryPackageUseCaseService implements DeliveryPackage
             throw new DomainValidationException("MyFantasticDeliveryPackageUseCaseService", "Order ID darf nicht null sein.");
         if (storageUnitId == null)
             throw new DomainValidationException("MyFantasticDeliveryPackageUseCaseService", "Storage Unit ID darf nicht null sein.");
-
-        return deliveryPackageApplicationService.getItemsForOrderAndStorageUnitAsUuidMap(
-                OrderId.of(orderId),
-                StorageUnitId.of(storageUnitId)
-        );
+        return deliveryPackageApplicationService.getItemsForOrderAndStorageUnitAsUuidMap(OrderId.of(orderId), StorageUnitId.of(storageUnitId));
     }
 
     @Override
