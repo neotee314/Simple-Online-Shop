@@ -4,20 +4,20 @@ import com.neotee.ecommercesystem.domainprimitives.DeliveryPackageId;
 import com.neotee.ecommercesystem.domainprimitives.OrderId;
 import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
+import com.neotee.ecommercesystem.exceptions.EntityNotFoundException;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.port.out.FindOrderPort;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.port.out.FindStorageUnitsPort;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.port.out.UpdateStorageUnitPort;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackage;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackageRepository;
+import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.service.DeliveryPackageDomainService;
 import com.neotee.ecommercesystem.shopsystem.order.domain.Order;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
-import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StockLevel;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,116 +27,148 @@ public class DeliveryPackageApplicationService {
     private final FindOrderPort findOrderPort;
     private final FindStorageUnitsPort findStorageUnitsPort;
     private final UpdateStorageUnitPort updateStorageUnitPort;
+    private final DeliveryPackageDomainService domainService;
 
-    public DeliveryPackage findById(DeliveryPackageId packageId) {
-        return deliveryPackageRepository.findById(packageId)
-                .orElseThrow(() -> new RuntimeException("Lieferpaket nicht gefunden."));
+    public List<DeliveryPackage> createDeliveryPackages(
+            OrderId orderId
+    ) {
+        var order = findOrder(orderId);
+        var storageUnits = findStorageUnitsPort.findAll();
+
+        System.out.println("\n================ DELIVERY PACKAGE CREATION DEBUG ================");
+        System.out.println("Order ID: " + orderId.getId());
+
+        System.out.println("\nStorageUnits received from FindStorageUnitsPort:");
+
+        for (int i = 0; i < storageUnits.size(); i++) {
+            StorageUnit storageUnit = storageUnits.get(i);
+
+            System.out.println(
+                    "StorageUnit[" + i + "]"
+                            + " ID=" + storageUnit.getId().getId()
+            );
+
+            System.out.println(
+                    "  StorageUnit object=" + storageUnit
+            );
+        }
+
+        System.out.println("\nCalling domainService.createPackages(...)");
+
+        var packages =
+                domainService.createPackages(
+                        order,
+                        storageUnits
+                );
+
+        System.out.println("\nPackages created by DomainService:");
+
+        for (DeliveryPackage pkg : packages) {
+
+            System.out.println(
+                    "DeliveryPackage ID=" + pkg.getId().getId()
+            );
+
+            System.out.println(
+                    "  StorageUnit ID="
+                            + pkg.getStorageUnit().getId().getId()
+            );
+
+            System.out.println(
+                    "  Products:"
+            );
+
+            pkg.getItemsAsUuidMap().forEach((productId, quantity) ->
+                    System.out.println(
+                            "    Product ID=" + productId
+                                    + " quantity=" + quantity
+                    )
+            );
+        }
+
+        System.out.println("===============================================================\n");
+
+        savePackages(packages);
+
+        return packages;
     }
 
-    public List<DeliveryPackage> findByOrderId(OrderId orderId) {
-        return deliveryPackageRepository.findByOrderId(orderId);
+    public Map<UUID, Integer> getItemsForOrderAndStorageUnitAsUuidMap(
+            OrderId orderId,
+            StorageUnitId storageUnitId
+    ) {
+        return deliveryPackageRepository.findByOrderId(orderId)
+                .stream()
+                .filter(p -> p.getStorageUnit().getId().equals(storageUnitId))
+                .findFirst()
+                .map(DeliveryPackage::getItemsAsUuidMap)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "DeliveryPackageApplicationService",
+                        "Lieferpaket nicht gefunden."
+                ));
+    }
+    private Order findOrder(OrderId orderId) {
+        var order = findOrderPort.findById(orderId);
+
+        if (order == null) {
+            throw new EntityNotFoundException(
+                    "DeliveryPackageApplicationService",
+                    "Bestellung nicht gefunden."
+            );
+        }
+
+        return order;
     }
 
-    public DeliveryPackage findByOrderIdAndStorageUnitId(OrderId orderId, StorageUnitId storageUnitId) {
-        return deliveryPackageRepository.findByOrderIdAndStorageUnitId(orderId, storageUnitId)
-                .orElseThrow(() -> new RuntimeException("Lieferpaket nicht gefunden."));
+    private void savePackages(
+            List<DeliveryPackage> packages
+    ) {
+        packages.forEach(packageItem -> {
+            updateStorageUnitPort.update(
+                    packageItem.getStorageUnit()
+            );
+            deliveryPackageRepository.save(packageItem);
+        });
     }
 
     public List<StorageUnit> getContributingStorageUnitsForOrder(OrderId orderId) {
-        var order = findOrderPort.findById(orderId);
-        if (order == null) {
-            throw new DomainValidationException("Delivery", "Order nicht gefunden.");
+        var packages = deliveryPackageRepository.findByOrderId(orderId);
+
+        if (packages.isEmpty()) {
+            throw new EntityNotFoundException(
+                    "DeliveryPackageApplicationService",
+                    "Keine Lieferpakete für die Bestellung gefunden."
+            );
         }
 
-        var items = order.getOrderLineItemsMap();
-        if (items.isEmpty()) {
-            throw new DomainValidationException("Delivery", "Order hat keine Artikel.");
-        }
-
-        var clientZipCode = order.getClient().getHomeAddress().getZipCode();
-        var allStorageUnits = findStorageUnitsPort.findAll();
-
-        var contributingStorageUnits = new ArrayList<StorageUnit>();
-
-        for (var storageUnit : allStorageUnits) {
-            // ✅ بررسی کن که StorageUnit میتونه کل سفارش رو تأمین کنه
-            boolean canFulfillAll = true;
-            for (var entry : items.entrySet()) {
-                var product = entry.getKey();
-                var quantity = entry.getValue();
-                if (!storageUnit.hasSufficientQuantityOf(product, quantity)) {
-                    canFulfillAll = false;
-                    break;
-                }
-            }
-
-            if (canFulfillAll) {
-                contributingStorageUnits.add(storageUnit);
-            }
-        }
-
-        // مرتب‌سازی بر اساس نزدیک‌ترین فاصله
-        contributingStorageUnits.sort(Comparator.comparingInt(su -> su.getDistanceToClient(clientZipCode)));
-
-        return contributingStorageUnits;
+        return packages.stream()
+                .map(DeliveryPackage::getStorageUnit)
+                .toList();
+    }
+    public List<DeliveryPackage> findByOrderId(
+            OrderId orderId
+    ) {
+        return deliveryPackageRepository.findByOrderId(orderId);
     }
 
-    public List<DeliveryPackage> createDeliveryPackages(OrderId orderId) {
-        var order = findOrderPort.findById(orderId);
-        if (order == null)
-            throw new RuntimeException("Order nicht gefunden.");
-
-        var items = order.getOrderLineItemsMap();
-        if (items.isEmpty())
-            throw new RuntimeException("Order hat keine Artikel.");
-
-        var clientZipCode = order.getClient().getHomeAddress().getZipCode();
-        var storageUnits = findStorageUnitsPort.findAll();
-        var deliveryPackages = new ArrayList<DeliveryPackage>();
-        var remainingItems = new HashMap<>(items);
-
-        // ✅ مرتب‌سازی بر اساس نزدیک‌ترین فاصله
-        storageUnits.sort(Comparator.comparingInt(su -> su.getDistanceToClient(clientZipCode)));
-
-        for (var storageUnit : storageUnits) {
-            if (remainingItems.isEmpty()) break;
-
-            // ✅ فقط محصولاتی که موجودی کافی دارن رو بردار
-            var servableItems = storageUnit.getServableItems(remainingItems);
-            if (servableItems.isEmpty()) continue;
-
-            var deliveryPackage = DeliveryPackage.create(storageUnit, order);
-            deliveryPackage.addParts(servableItems);
-
-            for (var entry : servableItems.entrySet()) {
-                var product = entry.getKey();
-                var quantity = entry.getValue();
-                storageUnit.removeFromStock(product.getId(), quantity);
-            }
-            updateStorageUnitPort.update(storageUnit);
-
-            var savedPackage = deliveryPackageRepository.save(deliveryPackage);
-            deliveryPackages.add(savedPackage);
-
-            // ✅ محصولات تأمین شده رو از لیست حذف کن
-            for (var product : servableItems.keySet()) {
-                remainingItems.remove(product);
-            }
-        }
-
-        if (deliveryPackages.isEmpty())
-            throw new RuntimeException("Keine Storage Unit konnte die Bestellung erfüllen.");
-
-        return deliveryPackages;
+    public DeliveryPackage findByOrderIdAndStorageUnitId(
+            OrderId orderId,
+            StorageUnitId storageUnitId
+    ) {
+        return deliveryPackageRepository
+                .findByOrderIdAndStorageUnitId(
+                        orderId,
+                        storageUnitId
+                )
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "DeliveryPackageApplicationService",
+                                "Lieferpaket nicht gefunden."
+                        )
+                );
     }
+
     public void deleteAllDeliveryPackages() {
         deliveryPackageRepository.deleteAll();
-    }
-
-    public Map<UUID, Integer> getItemsForOrderAndStorageUnitAsUuidMap(OrderId orderId, StorageUnitId storageUnitId) {
-        var order = findOrderPort.findById(orderId);
-        findStorageUnitsPort.findById(storageUnitId);
-        var deliveryPackage = findByOrderIdAndStorageUnitId(orderId, storageUnitId);
-        return deliveryPackage.getItemsAsUuidMap();
     }
 }

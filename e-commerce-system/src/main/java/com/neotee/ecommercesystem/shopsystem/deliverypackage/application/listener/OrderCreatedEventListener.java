@@ -13,14 +13,10 @@ public class OrderCreatedEventListener {
 
     private final DeliveryPackageApplicationService deliveryPackageService;
 
-    @EventListener public void onOrderCreated(OrderCreatedEvent event) {
-        System.out.println(">>> OrderCreatedEvent received: " + event.orderId().getId());
-        try {
-            deliveryPackageService.createDeliveryPackages(event.orderId());
-            System.out.println(">>> DeliveryPackages created successfully");
-        } catch (Exception e) {
-            System.err.println(">>> Error creating delivery packages: " + e.getMessage());
-            e.printStackTrace();
-        }
+    @EventListener
+    public void onOrderCreated(OrderCreatedEvent event) {
+
+        deliveryPackageService.createDeliveryPackages(event.orderId());
+
     }
 }

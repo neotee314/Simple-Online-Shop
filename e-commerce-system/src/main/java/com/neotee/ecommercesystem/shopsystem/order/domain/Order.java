@@ -3,6 +3,7 @@ package com.neotee.ecommercesystem.shopsystem.order.domain;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.OrderId;
 import com.neotee.ecommercesystem.domainprimitives.OrderStatus;
+import com.neotee.ecommercesystem.domainprimitives.ZipCode;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
 import com.neotee.ecommercesystem.shopsystem.core.AggregateRoot;
@@ -22,7 +23,7 @@ import java.util.*;
 @Getter
 public class Order extends AggregateRoot<OrderId> {
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id")
     private List<OrderPart> orderParts;
 
@@ -217,6 +218,10 @@ public class Order extends AggregateRoot<OrderId> {
                 .anyMatch(p -> p.getProduct().equals(product));
     }
 
+    public ZipCode getClientZipCode() {
+        return client.getHomeAddress().getZipCode();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -229,4 +234,6 @@ public class Order extends AggregateRoot<OrderId> {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+
 }

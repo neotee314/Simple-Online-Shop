@@ -17,11 +17,11 @@ import java.util.Objects;
 @Getter
 public class DeliveryPackagePart extends AbstractEntity<DeliveryPackagePartId> {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    private int quantity;
+    private Integer quantity;
 
     protected DeliveryPackagePart(DeliveryPackagePartId partId) {
         this.id = partId;

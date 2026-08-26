@@ -213,6 +213,58 @@ public class DeliveryPackageRESTTest {
 
         Map<UUID, Map<UUID, Integer>> storageUnitMap = Map.of(STORAGE_UNIT_ID[5], map10_12_quantity_1_1, STORAGE_UNIT_ID[4], map11_quantity_1);
 
+        System.out.println("\n================ STORAGE UNIT DEBUG ================");
+
+        System.out.println("Storage Units:");
+
+        for (int i = 0; i < ThingAndStockMasterDataInitializer.STORAGE_UNIT_NUMOF; i++) {
+            UUID storageUnitId = ThingAndStockMasterDataInitializer.STORAGE_UNIT_ID[i];
+
+            System.out.println(
+                    "StorageUnit[" + i + "]"
+                            + " ID=" + storageUnitId
+                            + " address=" + ThingAndStockMasterDataInitializer.STORAGE_UNIT_ADDRESS[i]
+            );
+        }
+
+        System.out.println("\nRelevant products:");
+
+        for (int thingIndex : new int[]{10, 11, 12}) {
+            UUID productId = (UUID) ThingAndStockMasterDataInitializer.THING_DATA[thingIndex][0];
+            String productName = (String) ThingAndStockMasterDataInitializer.THING_DATA[thingIndex][1];
+            String distribution = (String) ThingAndStockMasterDataInitializer.THING_DATA[thingIndex][6];
+
+            Integer[] stock =
+                    ThingAndStockMasterDataInitializer.THING_STOCK.get(productId);
+
+            System.out.println(
+                    "Product[" + thingIndex + "]"
+                            + " ID=" + productId
+                            + " name=" + productName
+                            + " distribution=" + distribution
+                            + " stock=" + Arrays.toString(stock)
+            );
+        }
+
+        System.out.println("\nExpected mapping:");
+
+        storageUnitMap.forEach((storageUnitId, products) -> {
+            System.out.println("StorageUnit ID=" + storageUnitId);
+            System.out.println(
+                    "  index="
+                            + thingAndStockMasterDataInitializer.findStorageUnitIndex(storageUnitId)
+            );
+
+            products.forEach((productId, quantity) ->
+                    System.out.println(
+                            "  product=" + productId
+                                    + " quantity=" + quantity
+                    )
+            );
+        });
+
+        System.out.println("====================================================\n");
+
         checkDeliveryPackage(orderId, storageUnitMap);
     }
 
@@ -257,7 +309,116 @@ public class DeliveryPackageRESTTest {
         checkDeliveryPackage(orderId, storageUnitMap);
     }
 
-    public void checkDeliveryPackage(UUID orderId,
+    public void checkDeliveryPackage(
+            UUID orderId,
+            Map<UUID, Map<UUID, Integer>> storageUnitMap
+    ) throws Exception {
+
+        String deliveryPackageUri =
+                "/api/v1/deliveryPackages?orderId=" + orderId;
+
+        ResultActions resultActions = mockMvc.perform(get(deliveryPackageUri))
+                .andExpect(status().isOk());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = resultActions.andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        DeliveryPackageResponseDTO[] response =
+                objectMapper.readValue(json, DeliveryPackageResponseDTO[].class);
+
+        System.out.println("\n================ DELIVERY PACKAGE DEBUG ================");
+        System.out.println("Order ID: " + orderId);
+
+        System.out.println("\nEXPECTED storageUnitMap:");
+        storageUnitMap.forEach((storageUnitId, products) -> {
+            System.out.println("  StorageUnit ID: " + storageUnitId);
+            products.forEach((productId, quantity) ->
+                    System.out.println(
+                            "      Product ID: " + productId +
+                                    " | quantity: " + quantity
+                    )
+            );
+        });
+
+        System.out.println("\nACTUAL response:");
+        for (DeliveryPackageResponseDTO dto : response) {
+
+            UUID actualStorageUnitId = dto.storageUnitId().getId();
+
+            System.out.println("  DeliveryPackage ID: " + dto.id().getId());
+            System.out.println("  Order ID: " + dto.orderId().getId());
+            System.out.println("  StorageUnit ID: " + actualStorageUnitId);
+            System.out.println("  Total quantity: " + dto.totalQuantity());
+            System.out.println("  Part count: " + dto.partCount());
+
+            for (DeliveryPackagePartResponseDTO part : dto.parts()) {
+                System.out.println(
+                        "      Product ID: " + part.productId().getId() +
+                                " | quantity: " + part.quantity() +
+                                " | name: " + part.productName()
+                );
+            }
+        }
+
+        System.out.println("\nEXPECTED StorageUnit IDs:");
+        storageUnitMap.keySet()
+                .forEach(id -> System.out.println("  " + id));
+
+        System.out.println("\nACTUAL StorageUnit IDs:");
+        Arrays.stream(response)
+                .map(dto -> dto.storageUnitId().getId())
+                .forEach(id -> System.out.println("  " + id));
+
+        System.out.println("\n========================================================\n");
+
+        assertEquals(storageUnitMap.size(), response.length);
+
+        for (DeliveryPackageResponseDTO dto : response) {
+
+            UUID storageUnitId = dto.storageUnitId().getId();
+
+            System.out.println(
+                    "Checking actual StorageUnit ID: " + storageUnitId
+            );
+
+            Map<UUID, Integer> expectedMap =
+                    storageUnitMap.get(storageUnitId);
+
+            System.out.println(
+                    "Expected map for this StorageUnit: " + expectedMap
+            );
+
+            assertNotNull(expectedMap);
+
+            List<DeliveryPackagePartResponseDTO> parts = dto.parts();
+
+            assertEquals(expectedMap.size(), parts.size());
+
+            for (Map.Entry<UUID, Integer> entry : expectedMap.entrySet()) {
+
+                UUID thingId = entry.getKey();
+                Integer expectedQuantity = entry.getValue();
+
+                boolean found = false;
+
+                for (DeliveryPackagePartResponseDTO part : parts) {
+
+                    UUID actualThingId = part.productId().getId();
+
+                    if (actualThingId.equals(thingId)) {
+                        assertEquals(expectedQuantity, part.quantity());
+                        found = true;
+                        break;
+                    }
+                }
+
+                assertTrue(found);
+            }
+        }
+    }
+    public void checkDeliveryPackaged(UUID orderId,
                                      Map<UUID, Map<UUID, Integer>> storageUnitMap) throws Exception {
         String deliveryPackageUri = "/api/v1/deliveryPackages?orderId=" + orderId.toString();
         ResultActions resultActions = mockMvc.perform(get(deliveryPackageUri))

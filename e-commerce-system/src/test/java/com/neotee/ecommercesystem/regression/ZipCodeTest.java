@@ -149,6 +149,70 @@ class ZipCodeTest {
         assertTrue(diff3a < diff2a, "Difference 01234-01823 must be smaller than difference 01234-04233");
 
     }
+    @Test
+    public void testDifferenceGrowsWhenDifferenceMovesLeft() {
+        ZipCodeType base = instantiateZipCode("12345");
+
+        ZipCodeType diffLast = instantiateZipCode("12346");
+        ZipCodeType diffFourth = instantiateZipCode("12355");
+        ZipCodeType diffThird = instantiateZipCode("12545");
+        ZipCodeType diffSecond = instantiateZipCode("13345");
+        ZipCodeType diffFirst = instantiateZipCode("22345");
+
+        int d5 = base.difference(diffLast);
+        int d4 = base.difference(diffFourth);
+        int d3 = base.difference(diffThird);
+        int d2 = base.difference(diffSecond);
+        int d1 = base.difference(diffFirst);
+
+        System.out.println("Difference tests:");
+        System.out.println("last digit   = " + d5);
+        System.out.println("4th digit    = " + d4);
+        System.out.println("3rd digit    = " + d3);
+        System.out.println("2nd digit    = " + d2);
+        System.out.println("1st digit    = " + d1);
+
+        assertTrue(d5 > 0);
+        assertTrue(d5 < d4);
+        assertTrue(d4 < d3);
+        assertTrue(d3 < d2);
+        assertTrue(d2 < d1);
+    }
+
+    @Test
+    public void testZipCodeDistanceIsIndependentOfAllDigitsAfterFirstDifference() {
+
+        ZipCodeType base = instantiateZipCode("51234");
+
+        String[] candidates = {
+                "61234",
+                "61235",
+                "61299",
+                "69999"
+        };
+
+        int expected = base.difference(
+                instantiateZipCode(candidates[0])
+        );
+
+        System.out.println("\n=== FIRST DIGIT DISTANCE TEST ===");
+
+        for (String candidate : candidates) {
+            int actual = base.difference(
+                    instantiateZipCode(candidate)
+            );
+
+            System.out.println(
+                    base + " -> " + candidate + " = " + actual
+            );
+
+            assertEquals(
+                    expected,
+                    actual,
+                    "All ZIPs differing first at digit 1 must have same distance"
+            );
+        }
+    }
 
 
     /**

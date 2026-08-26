@@ -6,29 +6,23 @@ import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import java.util.Comparator;
 import java.util.Map;
 
+public final class StorageUnitComparator {
 
-public class StorageUnitComparator implements Comparator<StorageUnit> {
-    private final Map<Product, Integer> unfulfilledItems;
-    private final ZipCode clientZipCode;
-
-    public StorageUnitComparator(Map<Product, Integer> unfulfilledItems, ZipCode clientZipCode) {
-        this.unfulfilledItems = unfulfilledItems;
-        this.clientZipCode = clientZipCode;
+    private StorageUnitComparator() {
     }
 
-    @Override
-    public int compare(StorageUnit su1, StorageUnit su2) {
-        int contribCompare = Integer.compare(
-                su2.getTotalContributingItems(unfulfilledItems),
-                su1.getTotalContributingItems(unfulfilledItems)
-        );
-        if (contribCompare != 0) {
-            return contribCompare;
-        }
-        return Integer.compare(
-                su1.getDistanceToClient(clientZipCode),
-                su2.getDistanceToClient(clientZipCode)
-        );
+    public static Comparator<StorageUnit> forOrder(
+            Map<Product, Integer> items,
+            ZipCode clientZipCode
+    ) {
+        return Comparator
+                .comparingDouble(
+                        (StorageUnit unit) ->
+                                -unit.getTotalWeightOfServableItems(items)  // ✅ بر اساس وزن کل
+                )
+                .thenComparingInt(
+                        unit ->
+                                unit.getDistanceToClient(clientZipCode)
+                );
     }
 }
-

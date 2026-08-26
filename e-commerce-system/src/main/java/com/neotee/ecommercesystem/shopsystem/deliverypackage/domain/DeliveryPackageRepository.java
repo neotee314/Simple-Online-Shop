@@ -17,6 +17,7 @@ public interface DeliveryPackageRepository extends CrudRepository<DeliveryPackag
     @Override
     List<DeliveryPackage> findAll();
 
+    @Query("SELECT d FROM DeliveryPackage d WHERE d.order.id = :orderId")
     List<DeliveryPackage> findByOrderId(OrderId orderId);
 
     @Query("SELECT d FROM DeliveryPackage d WHERE d.order.id = :orderId AND d.storageUnit.id = :storageUnitId")

@@ -152,14 +152,6 @@ public class DeliveryPackage extends AggregateRoot<DeliveryPackageId> {
     }
 
 
-    public Map<Product, Integer> getItemsAsProductMap() {
-        return parts.stream()
-                .collect(Collectors.toMap(
-                        DeliveryPackagePart::getProduct,
-                        DeliveryPackagePart::getQuantity
-                ));
-    }
-
     public Map<UUID, Integer> getItemsAsUuidMap() {
         return parts.stream()
                 .collect(Collectors.toMap(
@@ -170,7 +162,7 @@ public class DeliveryPackage extends AggregateRoot<DeliveryPackageId> {
 
     private DeliveryPackagePart findPartByProduct(Product product) {
         return parts.stream()
-                .filter(part -> part.getProduct().getId().equals(product.getId()))
+                .filter(part -> part.getProduct().equals(product))
                 .findFirst()
                 .orElse(null);
     }

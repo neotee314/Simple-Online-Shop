@@ -44,17 +44,24 @@ public class ZipCode implements ZipCodeType {
     @Override
     public int difference(ZipCodeType otherZipCode) throws DomainValidationException {
         if (otherZipCode == null) {
-            throw new DomainValidationException("otherZipCode", "Invalid zip code");
+            throw new DomainValidationException(
+                    "otherZipCode",
+                    "Invalid zip code"
+            );
         }
 
         String thisZip = this.toString();
         String otherZip = otherZipCode.toString();
 
         if (thisZip.length() != otherZip.length()) {
-            throw new DomainValidationException("zipCode", "Zip codes must be of same length");
+            throw new DomainValidationException(
+                    "zipCode",
+                    "Zip codes must be of same length"
+            );
         }
 
         int firstDiffPos = -1;
+
         for (int i = 0; i < thisZip.length(); i++) {
             if (thisZip.charAt(i) != otherZip.charAt(i)) {
                 firstDiffPos = i;
@@ -62,26 +69,32 @@ public class ZipCode implements ZipCodeType {
             }
         }
 
+        // Same ZIP code
         if (firstDiffPos == -1) {
             return 0;
         }
 
-        // Base difference based on position (more left = more significant)
-        int positionDifference = (thisZip.length() - firstDiffPos) * 1000;
+        // Difference grows according to how significant
+        // the first differing digit is.
+        int baseDifference =
+                (thisZip.length() - firstDiffPos) * 1000;
 
+        // Special handling for the first digit:
+        // 0 and 9 are considered adjacent.
         if (firstDiffPos == 0) {
-            int thisDigit = Character.getNumericValue(thisZip.charAt(0));
-            int otherDigit = Character.getNumericValue(otherZip.charAt(0));
+            int thisDigit = Character.digit(thisZip.charAt(0), 10);
+            int otherDigit = Character.digit(otherZip.charAt(0), 10);
 
-            // Calculate circular distance (0 and 9 are adjacent)
-            int digitDiff = Math.abs(thisDigit - otherDigit);
-            digitDiff = Math.min(digitDiff, 10 - digitDiff);
+            int digitDifference = Math.abs(thisDigit - otherDigit);
+            digitDifference = Math.min(
+                    digitDifference,
+                    10 - digitDifference
+            );
 
-            // Add distance to base (closer digits = smaller total difference)
-            return positionDifference + digitDiff;
+            return baseDifference + digitDifference;
         }
 
-        return positionDifference;
+        return baseDifference;
     }
 
     @Override
