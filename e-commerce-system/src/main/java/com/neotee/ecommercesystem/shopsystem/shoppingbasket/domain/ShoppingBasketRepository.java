@@ -4,6 +4,7 @@ import com.neotee.ecommercesystem.domainprimitives.ClientId;
 import com.neotee.ecommercesystem.domainprimitives.ShoppingBasketId;
 import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -20,6 +21,7 @@ public interface ShoppingBasketRepository extends CrudRepository<ShoppingBasket,
 
     Optional<ShoppingBasket> findByClient(Client client);
 
+    @Query("SELECT sb FROM ShoppingBasket sb WHERE sb.client.id = :clientId")
     Optional<ShoppingBasket> findByClientId(ClientId clientId);
 }
 

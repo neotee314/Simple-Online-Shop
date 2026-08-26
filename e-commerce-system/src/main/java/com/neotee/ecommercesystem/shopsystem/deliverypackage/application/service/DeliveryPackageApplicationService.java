@@ -7,7 +7,6 @@ import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.port.ou
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.port.out.FindStorageUnitsPort;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.port.out.UpdateStorageUnitPort;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackage;
-import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackagePart;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackageRepository;
 import com.neotee.ecommercesystem.shopsystem.order.domain.Order;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
@@ -15,7 +14,6 @@ import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StockLevel;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -1,7 +1,5 @@
 package com.neotee.ecommercesystem.shopsystem.storageunit.application.service;
 
-import com.neotee.ecommercesystem.domainprimitives.ProductId;
-import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.product.application.port.out.ProductAvailabilityPort;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnitRepository;

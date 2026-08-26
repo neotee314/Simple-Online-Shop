@@ -109,7 +109,7 @@ public class MyFantasticShoppingBasketUseCaseService implements ShoppingBasketUs
         var client = clientApplicationService.findByEmail((Email) clientEmail);
         var basket = basketService.getBasketByClient(client);
 
-        if (basket.getParts().isEmpty())
+        if (basket.isEmpty())
             throw new DomainValidationException("MyFantasticShoppingBasketUseCaseService", "Warenkorb ist leer.");
 
         var orderId = basketService.checkout(basket.getId());

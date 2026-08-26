@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -66,5 +67,10 @@ public class MyFantasticProductCatalogService implements ProductCatalogUseCases 
     @Override
     public void deleteProductCatalog() {
         productApplicationService.deleteAllProducts();
+    }
+
+    @Override
+    public List<Product> getall() {
+        return productApplicationService.getAllProducts();
     }
 }

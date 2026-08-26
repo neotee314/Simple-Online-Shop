@@ -10,8 +10,8 @@ import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @Transactional
+@AutoConfigureMockMvc
 public class ClientRESTTest {
     @Autowired
     private ClientRegistrationUseCases clientRegistrationUseCases;
@@ -98,9 +99,9 @@ public class ClientRESTTest {
                 .andExpect( jsonPath( "$.name" ).value( name ) )
                 // id is position 0 (cannot be tested with current API structure), name is position 1,
                 // email is 2, home address is 3)
-                .andExpect( jsonPath( "$..emailString" ).value( email4.toString() ) )
+                .andExpect( jsonPath( "$..email" ).value( email4.toString() ) )
                 .andExpect( jsonPath( "$..city" ).value( homeAddress4.getCity() ) )
-                .andExpect( jsonPath( "$..zipCodeString" ).value(
+                .andExpect( jsonPath( "$..zipCode" ).value(
                         homeAddress4.getZipCode().toString() ) );
     }
 

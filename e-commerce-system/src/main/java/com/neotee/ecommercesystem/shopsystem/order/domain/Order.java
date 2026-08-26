@@ -1,11 +1,12 @@
 package com.neotee.ecommercesystem.shopsystem.order.domain;
 
-import com.neotee.ecommercesystem.core.AggregateRoot;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.OrderId;
 import com.neotee.ecommercesystem.domainprimitives.OrderStatus;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
+import com.neotee.ecommercesystem.shopsystem.core.AggregateRoot;
+import com.neotee.ecommercesystem.shopsystem.order.domain.event.OrderCreatedEvent;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -34,6 +35,9 @@ public class Order extends AggregateRoot<OrderId> {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    @Transient
+    private List<Object> domainEvents = new ArrayList<>();
+
     protected Order(OrderId orderId) {
         this.id = orderId;
         this.orderParts = new ArrayList<>();
@@ -53,7 +57,9 @@ public class Order extends AggregateRoot<OrderId> {
         if (client == null) {
             throw new DomainValidationException("client", "Client darf nicht null sein.");
         }
-        return new Order(OrderId.newId(), client);
+        var order = new Order(OrderId.newId(), client);
+        order.registerEvent(new OrderCreatedEvent(order.getId()));
+        return order;
     }
 
     public static Order create(OrderId orderId, Client client) {
@@ -64,6 +70,21 @@ public class Order extends AggregateRoot<OrderId> {
             throw new DomainValidationException("client", "Client darf nicht null sein.");
         }
         return new Order(orderId, client);
+    }
+
+    private void registerEvent(Object event) {
+        if (domainEvents == null) {
+            domainEvents = new ArrayList<>();
+        }
+        domainEvents.add(event);
+    }
+
+    public List<Object> getDomainEvents() {
+        return new ArrayList<>(domainEvents);
+    }
+
+    public void clearEvents() {
+        domainEvents.clear();
     }
 
     public Email getClientEmail() {
@@ -195,8 +216,6 @@ public class Order extends AggregateRoot<OrderId> {
         return orderParts.stream()
                 .anyMatch(p -> p.getProduct().equals(product));
     }
-
-
 
     @Override
     public boolean equals(Object o) {

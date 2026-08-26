@@ -1,7 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.product.application.service;
 
 import com.neotee.ecommercesystem.domainprimitives.ProductId;
-import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.exceptions.EntityNotFoundException;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import com.neotee.ecommercesystem.shopsystem.product.domain.ProductRepository;

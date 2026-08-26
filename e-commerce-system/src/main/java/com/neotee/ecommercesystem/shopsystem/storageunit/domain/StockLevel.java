@@ -1,6 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.storageunit.domain;
 
-import com.neotee.ecommercesystem.core.AbstractEntity;
+import com.neotee.ecommercesystem.shopsystem.core.AbstractEntity;
 import com.neotee.ecommercesystem.domainprimitives.ProductId;
 import com.neotee.ecommercesystem.domainprimitives.StockLevelId;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;

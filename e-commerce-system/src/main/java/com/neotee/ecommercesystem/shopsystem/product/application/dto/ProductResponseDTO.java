@@ -1,9 +1,10 @@
 package com.neotee.ecommercesystem.shopsystem.product.application.dto;
 
-import com.neotee.ecommercesystem.domainprimitives.ProductId;
+
+import java.util.UUID;
 
 public record ProductResponseDTO(
-    ProductId id,
+    UUID id,
     String name,
     String description,
     Float size,

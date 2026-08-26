@@ -1,6 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.deliverypackage.domain;
 
-import com.neotee.ecommercesystem.core.AggregateRoot;
+import com.neotee.ecommercesystem.shopsystem.core.AggregateRoot;
 import com.neotee.ecommercesystem.domainprimitives.DeliveryPackageId;
 import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;

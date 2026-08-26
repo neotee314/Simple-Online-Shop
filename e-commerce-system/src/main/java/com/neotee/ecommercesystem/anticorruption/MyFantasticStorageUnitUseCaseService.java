@@ -45,7 +45,7 @@ public class MyFantasticStorageUnitUseCaseService implements StorageUnitUseCases
             throw new DomainValidationException("MyFantasticStorageUnitUseCaseService", "Storage Unit ID darf nicht null sein.");
         if (thingId == null)
             throw new DomainValidationException("MyFantasticStorageUnitUseCaseService", "Thing ID darf nicht null sein.");
-        if (addedQuantity <= 0)
+        if (addedQuantity < 0)
             throw new DomainValidationException("MyFantasticStorageUnitUseCaseService", "Quantity muss größer als 0 sein.");
 
         storageUnitApplicationService.addToStock(
@@ -57,17 +57,17 @@ public class MyFantasticStorageUnitUseCaseService implements StorageUnitUseCases
 
     @Override
     @Transactional
-    public void removeFromStock(UUID storageUnitId, UUID thingId, int removedQuantity) {
+    public void removeFromStock(UUID storageUnitId, UUID productId, int removedQuantity) {
         if (storageUnitId == null)
             throw new DomainValidationException("MyFantasticStorageUnitUseCaseService", "Storage Unit ID darf nicht null sein.");
-        if (thingId == null)
+        if (productId == null)
             throw new DomainValidationException("MyFantasticStorageUnitUseCaseService", "Thing ID darf nicht null sein.");
-        if (removedQuantity <= 0)
+        if (removedQuantity < 0)
             throw new DomainValidationException("MyFantasticStorageUnitUseCaseService", "Quantity muss größer als 0 sein.");
 
         storageUnitApplicationService.removeFromStock(
                 StorageUnitId.of(storageUnitId),
-                ProductId.of(thingId),
+                ProductId.of(productId),
                 removedQuantity
         );
     }

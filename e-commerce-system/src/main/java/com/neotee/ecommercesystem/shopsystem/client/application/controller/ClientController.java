@@ -27,8 +27,9 @@ public class ClientController {
     private final ClientApplicationService clientService;
     private final ClientMapper clientMapper;
 
+    
     @Operation(summary = "Get All Clients")
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<ClientResponseDto>> getAllClients() {
         return ResponseEntity.ok(
                 clientService.findAll().stream()
@@ -38,9 +39,11 @@ public class ClientController {
     }
 
     @Operation(summary = "Get Client by Email")
-    @GetMapping("/email")
-    public ResponseEntity<ClientResponseDto> getClientByEmail(@RequestParam String email) {
-        Client client = clientService.findByEmail(Email.of(email));
+    @GetMapping
+    public ResponseEntity<ClientResponseDto> getClientByEmail(@RequestParam(required = false) String email) {
+        if (email == null || email.isEmpty())
+            return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();
+        var client = clientService.findByEmail(Email.of(email));
         return ResponseEntity.ok(clientMapper.toDto(client));
     }
 

@@ -1,22 +1,25 @@
 package com.neotee.ecommercesystem.shoppingbasket;
 
 
-import com.neotee.ecommercesystem.*;
+import com.neotee.ecommercesystem.basictests.ShoppingBasketRESTHelper;
+import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
+import com.neotee.ecommercesystem.usecases.ProductCatalogUseCases;
+import com.neotee.ecommercesystem.usecases.ShoppingBasketUseCases;
+import com.neotee.ecommercesystem.usecases.StorageUnitUseCases;
+import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import jakarta.transaction.Transactional;
 import com.neotee.ecommercesystem.ClientMasterDataInitializer;
 import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
 import com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import com.neotee.ecommercesystem.usecases.*;
-import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.neotee.ecommercesystem.ThingAndStockTestHelper.*;
+import static com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,6 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 @Transactional
+@AutoConfigureMockMvc
 public class ShoppingBasketRESTTest {
     @Autowired
     private ClientRegistrationUseCases clientRegistrationUseCases;
@@ -153,9 +157,10 @@ public class ShoppingBasketRESTTest {
         shoppingBasketRESTHelper.getQueryShoppingBasket(clientEmail0, startQuantityMap);
     }
 
-
     @Test
     public void testDeleteThingFromShoppingBasket() throws Exception {
+
+
         // given
         UUID thingId1 = (UUID) THING_DATA[1][0];
         UUID thingId2 = (UUID) THING_DATA[2][0];
@@ -176,7 +181,6 @@ public class ShoppingBasketRESTTest {
         shoppingBasketRESTHelper.addThingToShoppingBasket(shoppingBasketId6, thingId1, 1);
         shoppingBasketRESTHelper.addThingToShoppingBasket(shoppingBasketId6, thingId2, 2);
         shoppingBasketRESTHelper.addThingToShoppingBasket(shoppingBasketId6, thingId3, 3);
-
         shoppingBasketRESTHelper.getQueryShoppingBasket(clientEmail6, quantityMap1);
 
         shoppingBasketRESTHelper.deleteThingFromShoppingBasket(shoppingBasketId6, thingId2);

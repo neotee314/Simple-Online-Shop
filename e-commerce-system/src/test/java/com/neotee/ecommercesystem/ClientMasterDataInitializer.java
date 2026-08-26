@@ -102,20 +102,20 @@ public class ClientMasterDataInitializer {
     static {
         mockClients = new ClientType[CLIENT_NAME.length];
         for ( int i = 0; i < CLIENT_NAME.length; i++ ) {
-            mockClients[i] = new com.neotee.ecommercesystem.usecases.masterdata.MockClient(
+            mockClients[i] = new MockClient(
                     CLIENT_NAME[i], CLIENT_EMAIL[i], CLIENT_ADDRESS[i] );
         }
         // TODO - remove and replace by current _norepo, in M3
         assertThrows( ShopException.class, () -> {
-            new com.neotee.ecommercesystem.usecases.masterdata.MockClient( "No one",
+            new MockClient( "No one",
                     FactoryMethodInvoker.instantiateEmail( null ),
                     CLIENT_ADDRESS[0] ); }, "Check your email validation!"  );
         assertThrows( ShopException.class, () -> {
-            new com.neotee.ecommercesystem.usecases.masterdata.MockClient( "No one",
+            new MockClient( "No one",
                     FactoryMethodInvoker.instantiateEmail( "Max..Gideon.Hammer@example.com" ),
                     CLIENT_ADDRESS[0] ); }, "Check your email validation!" );
         assertThrows( ShopException.class, () -> {
-            new com.neotee.ecommercesystem.usecases.masterdata.MockClient( "No one",
+            new MockClient( "No one",
                     FactoryMethodInvoker.instantiateEmail( "test@example.42" ),
                     CLIENT_ADDRESS[0] ); }, "Check your email validation!"  );
         assertThrows( ShopException.class, () -> {

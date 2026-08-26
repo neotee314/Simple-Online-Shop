@@ -3,16 +3,13 @@ package com.neotee.ecommercesystem.shopsystem.order.application.api;
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.OrderId;
 import com.neotee.ecommercesystem.shopsystem.client.application.service.ClientApplicationService;
-import com.neotee.ecommercesystem.shopsystem.order.application.dto.OrderRequestDTO;
 import com.neotee.ecommercesystem.shopsystem.order.application.dto.OrderResponseDTO;
 import com.neotee.ecommercesystem.shopsystem.order.application.mapper.OrderMapper;
 import com.neotee.ecommercesystem.shopsystem.order.application.service.OrderApplicationService;
 import com.neotee.ecommercesystem.shopsystem.product.application.service.ProductApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

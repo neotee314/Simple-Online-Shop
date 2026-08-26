@@ -9,7 +9,6 @@ import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.Storage
 import com.neotee.ecommercesystem.shopsystem.storageunit.application.mapper.StorageUnitMapper;
 import com.neotee.ecommercesystem.shopsystem.storageunit.application.service.StorageUnitApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

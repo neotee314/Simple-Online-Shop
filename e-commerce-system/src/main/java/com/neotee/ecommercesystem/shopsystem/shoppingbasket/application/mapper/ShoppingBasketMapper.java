@@ -1,10 +1,5 @@
 package com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.mapper;
 
-import com.neotee.ecommercesystem.domainprimitives.ClientId;
-import com.neotee.ecommercesystem.domainprimitives.ShoppingBasketId;
-import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
-import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.ShoppingBasketPartRequestDTO;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.ShoppingBasketPartResponseDTO;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.ShoppingBasketResponseDTO;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasket;
@@ -13,7 +8,6 @@ import com.neotee.ecommercesystem.shopsystem.product.application.service.Product
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Component

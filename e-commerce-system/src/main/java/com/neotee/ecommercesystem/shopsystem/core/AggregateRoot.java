@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.core;
+package com.neotee.ecommercesystem.shopsystem.core;
 
 public abstract class AggregateRoot<ID> extends AbstractEntity<ID> {
 

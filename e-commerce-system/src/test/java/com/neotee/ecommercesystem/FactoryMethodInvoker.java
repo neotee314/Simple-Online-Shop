@@ -3,7 +3,10 @@ package com.neotee.ecommercesystem;
 
 
 import com.neotee.ecommercesystem.exceptions.ShopException;
-import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
+import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
+import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
+import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
+import com.neotee.ecommercesystem.usecases.domainprimitivetypes.ZipCodeType;
 import org.junit.jupiter.api.Assertions;
 
 import java.io.File;
@@ -22,7 +25,7 @@ public class FactoryMethodInvoker {
         Method factoryMethod = null;
         try {
             Class<?> interfaceClass = Class.forName(
-                    "com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType" );
+                    "com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType");
             Class<?> implementingClass = findImplementation( interfaceClass );
 
             factoryMethod = implementingClass.getDeclaredMethod( "of", String.class );
@@ -51,7 +54,7 @@ public class FactoryMethodInvoker {
         Method factoryMethod = null;
         try {
             Class<?> interfaceClass = Class.forName(
-                    "com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType" );
+                    "com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType");
             Class<?> implementingClass = findImplementation( interfaceClass );
 
             factoryMethod = implementingClass.getDeclaredMethod( "of",
@@ -81,7 +84,7 @@ public class FactoryMethodInvoker {
         Method factoryMethod = null;
         try {
             Class<?> interfaceClass = Class.forName(
-                    "com.neotee.ecommercesystem.usecases.domainprimitivetypes.ZipCodeType" );
+                    "com.neotee.ecommercesystem.usecases.domainprimitivetypes.ZipCodeType");
             Class<?> implementingClass = findImplementation( interfaceClass );
 
             factoryMethod = implementingClass.getDeclaredMethod( "of", String.class );
@@ -105,11 +108,11 @@ public class FactoryMethodInvoker {
     }
 
 
-    public static MoneyType instantiateMoney( Float amount, String currency ) {
+    public static MoneyType instantiateMoney(Float amount, String currency ) {
         Method factoryMethod = null;
         try {
             Class<?> interfaceClass = Class.forName(
-                    "com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType" );
+                    "com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType");
             Class<?> implementingClass = findImplementation( interfaceClass );
 
             factoryMethod = implementingClass.getDeclaredMethod( "of", Float.class, String.class );

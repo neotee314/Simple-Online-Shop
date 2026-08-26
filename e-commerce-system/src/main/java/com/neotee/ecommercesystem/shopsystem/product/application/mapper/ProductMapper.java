@@ -15,27 +15,23 @@ public class ProductMapper {
             return null;
         }
 
-        Money purchasePrice = (Money) Money.of(dto.purchasePrice(), "EUR");
-        Money salesPrice = (Money) Money.of(dto.salePrice(), "EUR");
+        var purchasePrice = (Money) Money.of(dto.purchasePrice(), "EUR");
+        var salesPrice = (Money) Money.of(dto.salePrice(), "EUR");
 
-        if (dto.stockQuantity() != null) {
-            return Product.create(
+        var product = Product.create(
+                ProductId.newId(),
                 dto.name(),
                 dto.description(),
                 dto.size(),
                 purchasePrice,
-                salesPrice,
-                dto.stockQuantity()
-            );
+                salesPrice
+        );
+
+        if (dto.stockQuantity() != null && dto.stockQuantity() > 0) {
+            product.setStockQuantity(dto.stockQuantity());
         }
 
-        return Product.create(
-            dto.name(),
-            dto.description(),
-            dto.size(),
-            purchasePrice,
-            salesPrice
-        );
+        return product;
     }
 
     public ProductResponseDTO toResponseDTO(Product product) {
@@ -44,13 +40,13 @@ public class ProductMapper {
         }
 
         return new ProductResponseDTO(
-            product.getId(),
-            product.getName(),
-            product.getDescription(),
-            product.getSize(),
-            product.getPurchasePrice() != null ? product.getPurchasePrice().getAmount() : null,
-            product.getSalesPrice() != null ? product.getSalesPrice().getAmount() : null,
-            product.getStockQuantity()
+                product.getId().getId(),  // ← اگر getId() ProductId برمی‌گرداند
+                product.getName(),
+                product.getDescription(),
+                product.getSize(),
+                product.getPurchasePrice() != null ? product.getPurchasePrice().getAmount() : null,
+                product.getSalesPrice() != null ? product.getSalesPrice().getAmount() : null,
+                product.getStockQuantity()  // ← اگر متد getStockQuantity وجود دارد
         );
     }
 }

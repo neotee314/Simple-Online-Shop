@@ -1,6 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.order.domain;
 
-import com.neotee.ecommercesystem.core.AbstractEntity;
+import com.neotee.ecommercesystem.shopsystem.core.AbstractEntity;
 import com.neotee.ecommercesystem.domainprimitives.OrderPartId;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;

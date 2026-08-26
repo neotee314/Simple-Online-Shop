@@ -1,9 +1,11 @@
 package com.neotee.ecommercesystem.deliverypackage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.neotee.ecommercesystem.ShoppingBasketRESTHelper;
+import com.neotee.ecommercesystem.basictests.ShoppingBasketRESTHelper;
 import com.neotee.ecommercesystem.restdtos.StorageUnitIdDTO;
-import com.neotee.ecommercesystem.usecases.*;
+import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
+import com.neotee.ecommercesystem.usecases.ProductCatalogUseCases;
+import com.neotee.ecommercesystem.usecases.StorageUnitUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.ClientMasterDataInitializer;
 import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
@@ -12,9 +14,9 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -32,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @Transactional
+@AutoConfigureMockMvc
 public class DeliveryPackageRESTTest {
     @Autowired
     private ClientRegistrationUseCases clientRegistrationUseCases;

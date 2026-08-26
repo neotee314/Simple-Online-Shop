@@ -2,8 +2,10 @@ package com.neotee.ecommercesystem.usecases;
 
 
 import com.neotee.ecommercesystem.exceptions.ShopException;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -61,4 +63,5 @@ public interface ProductCatalogUseCases {
      */
     public void deleteProductCatalog();
 
+    List<Product> getall();
 }

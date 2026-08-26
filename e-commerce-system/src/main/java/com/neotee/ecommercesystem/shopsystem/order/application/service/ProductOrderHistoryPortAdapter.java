@@ -1,7 +1,5 @@
 package com.neotee.ecommercesystem.shopsystem.order.application.service;
 
-import com.neotee.ecommercesystem.domainprimitives.OrderStatus;
-import com.neotee.ecommercesystem.domainprimitives.ProductId;
 import com.neotee.ecommercesystem.shopsystem.order.domain.OrderRepository;
 import com.neotee.ecommercesystem.shopsystem.product.application.port.out.ProductOrderHistoryPort;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;

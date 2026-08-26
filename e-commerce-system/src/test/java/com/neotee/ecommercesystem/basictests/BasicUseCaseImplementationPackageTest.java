@@ -19,11 +19,11 @@ public class BasicUseCaseImplementationPackageTest {
     private ApplicationContext applicationContext;
 
     private static final Map<String, List<String>> USECASE_INTERFACES = new HashMap<String, List<String>>() {{
-        put("ClientRegistrationUseCases", Arrays.asList("client"));
-        put("StorageUnitUseCases", Arrays.asList("storageunit", "stock"));
-        put("ProductCatalogUseCases", Arrays.asList("product"));
-        put("ShoppingBasketUseCases", Arrays.asList("shoppingbasket"));
-        put("OrderUseCases", Arrays.asList("order"));
+        put("ClientRegistrationUseCases", Arrays.asList("client","anticorruption"));
+        put("StorageUnitUseCases", Arrays.asList("storageunit", "stock","anticorruption"));
+        put("ProductCatalogUseCases", Arrays.asList("product", "anticorruption"));
+        put("ShoppingBasketUseCases", Arrays.asList("shoppingbasket","anticorruption"));
+        put("OrderUseCases", Arrays.asList("order", "anticorruption"));
     }};
     private static final String USECASE_PATH = "com.neotee.ecommercesystem.usecases";
     private static final String SOLUTION_PATH = "com.neotee.ecommercesystem.shopsystem";

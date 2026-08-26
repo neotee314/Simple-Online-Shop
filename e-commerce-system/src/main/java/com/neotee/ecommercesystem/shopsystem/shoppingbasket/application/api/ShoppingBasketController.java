@@ -9,7 +9,6 @@ import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.Shop
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.mapper.ShoppingBasketMapper;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.service.ShoppingBasketApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,16 +18,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/shopping-baskets")
+@RequestMapping("/api/v1/shoppingBaskets")
 @RequiredArgsConstructor
-@Tag(name = "Shopping Basket Management", description = "Verwaltung von Warenkörben")
 public class ShoppingBasketController {
 
     private final ShoppingBasketApplicationService basketService;
     private final ShoppingBasketMapper basketMapper;
 
-    @Operation(summary = "Get basket by client ID")
     @GetMapping
+    public ResponseEntity<Void> getWithoutParams() {
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();
+    }
+
+    @GetMapping(params = "clientId")
     public ResponseEntity<ShoppingBasketResponseDTO> getBasketByClientId(@RequestParam UUID clientId) {
         var basket = basketService.getBasketByClientId(ClientId.of(clientId));
         return ResponseEntity.ok(basketMapper.toResponseDTO(basket));
@@ -68,8 +70,8 @@ public class ShoppingBasketController {
 
     @Operation(summary = "Clear basket")
     @DeleteMapping("/{basketId}/clear")
-    public ResponseEntity clearBasket(@PathVariable UUID basketId) {
-          basketService.clearBasket(ShoppingBasketId.of(basketId));
+    public ResponseEntity<Void> clearBasket(@PathVariable UUID basketId) {
+        basketService.clearBasket(ShoppingBasketId.of(basketId));
         return ResponseEntity.noContent().build();
     }
 

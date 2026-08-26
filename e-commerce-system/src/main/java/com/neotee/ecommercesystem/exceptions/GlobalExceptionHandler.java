@@ -5,8 +5,9 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.method.annotation.HandlerMethodValidationException;
+//import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
@@ -30,7 +31,8 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
-    @ExceptionHandler({RequestValidationException.class, HandlerMethodValidationException.class})
+    @ExceptionHandler({RequestValidationException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProblemDetail handleBadRequest(Exception ex) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Invalid request");
@@ -38,8 +40,18 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(InsufficientStockException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ProblemDetail handleInsufficientStock(InsufficientStockException ex) {
+        var problem = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        problem.setTitle("Insufficient Stock");
+        problem.setDetail(ex.getMessage());
+        return problem;
+    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ProblemDetail handleDtoValidation(MethodArgumentNotValidException ex) {
         var problem = ProblemDetail.forStatus(HttpStatus.UNPROCESSABLE_ENTITY);
         problem.setTitle("Request body contains invalid values");
@@ -50,8 +62,15 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
-
+    @ExceptionHandler(ItemNotInBasketException.class)
+    public ProblemDetail handleItemNotInBasket(ItemNotInBasketException ex) {
+        var problem = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        problem.setTitle("Item not in basket");
+        problem.setDetail(ex.getMessage());
+        return problem;
+    }
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         var problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problem.setTitle("Invalid path parameter");

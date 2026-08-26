@@ -2,16 +2,15 @@ package com.neotee.ecommercesystem.regression;
 
 
 import com.neotee.ecommercesystem.*;
+import com.neotee.ecommercesystem.usecases.*;
+import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
-import com.neotee.ecommercesystem.ThingAndStockTestHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import com.neotee.ecommercesystem.usecases.*;
-import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
 
-import static com.neotee.ecommercesystem.ThingAndStockTestHelper.*;
+import static com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer.*;
 import static com.neotee.ecommercesystem.ClientMasterDataInitializer.CLIENT_EMAIL;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,7 +37,6 @@ public class MultipleDeliverysTest {
     private Purgatory purgatory;
 
     private ClientTestHelper clientTestHelper;
-    private ThingAndStockTestHelper thingAndStockTestHelper;
 
     private Map<UUID, Integer>  map8_11_14_quantity_2_2_2, map8_11_14_quantity_3_3_4,
                                 map10_12_quantity_1_1, map11_quantity_1, map12_quantity_10,
@@ -51,7 +49,7 @@ public class MultipleDeliverysTest {
         clientTestHelper = new ClientTestHelper( clientRegistrationUseCases );
         clientTestHelper.registerAllClients();
 
-        thingAndStockTestHelper = new ThingAndStockTestHelper(
+        var thingAndStockTestHelper = new ThingAndStockMasterDataInitializer(
                 productCatalogUseCases, storageUnitUseCases );
         thingAndStockTestHelper.addAllThings();
         thingAndStockTestHelper.addAllStorageUnits();

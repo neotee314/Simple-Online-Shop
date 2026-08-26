@@ -1,18 +1,22 @@
-package com.neotee.ecommercesystem;
-
+package com.neotee.ecommercesystem.basictests;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.neotee.ecommercesystem.restdtos.IdDTO;
-import com.neotee.ecommercesystem.restdtos.QuantityDTO;
-import com.neotee.ecommercesystem.usecases.*;
-import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
+import com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer;
+import com.neotee.ecommercesystem.shopsystem.client.application.dto.ClientResponseDto;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.CheckoutResponseDTO;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.ShoppingBasketPartRequestDTO;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.ShoppingBasketResponseDTO;
+import com.neotee.ecommercesystem.usecases.ProductCatalogUseCases;
+import com.neotee.ecommercesystem.usecases.StorageUnitUseCases;
+import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
+
 
 import java.util.Map;
 import java.util.UUID;
@@ -31,7 +35,6 @@ public class ShoppingBasketRESTHelper {
     private static final ResultMatcher OK = status().isOk();
     private ThingAndStockMasterDataInitializer thingAndStockMasterDataInitializer;
 
-
     public ShoppingBasketRESTHelper(MockMvc mockMvc,
                                     ProductCatalogUseCases productCatalogUseCases,
                                     StorageUnitUseCases storageUnitUseCases) {
@@ -42,95 +45,72 @@ public class ShoppingBasketRESTHelper {
                 productCatalogUseCases, storageUnitUseCases);
     }
 
-    /**
-     * Executes a GET query on a shopping basket and returns its id, with the client's email as a
-     * starting point.
-     *
-     * @param email
-     * @return
-     * @throws Exception
-     */
     public UUID getQueryShoppingBasket(EmailType email) throws Exception {
         return getQueryShoppingBasket(email, null);
     }
 
-
-    /**
-     * Executes a GET query on a shopping basket and returns its id, with the client's email as a
-     * starting point.
-     *
-     * @param email
-     * @param quantityMap A map of things and their quantities in the shopping basket. (If null, then don't check.)
-     * @return The id of the client's shopping basket.
-     * @throws Exception
-     */
     public UUID getQueryShoppingBasket(EmailType email, Map<UUID, Integer> quantityMap)
             throws Exception {
-        // first query the clients API to get the proper clientId
-        UUID clientId;
-        String clientUri = "/clients?email=" + email.toString();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        // Step 1: Get client by email
+        String clientUri = "/api/v1/clients?email=" + email.toString();
         MvcResult clientGetResult = mockMvc.perform(get(clientUri))
                 .andExpect(status().isOk())
                 .andReturn();
-        ObjectMapper objectMapper = new ObjectMapper();
-        IdDTO idDTO = objectMapper.readValue(clientGetResult.getResponse().getContentAsString(), IdDTO.class);
-        clientId = idDTO.getId();
 
-        // then query the shopping basket API and extract the shopping basket id
-        String shoppingBasketUri = "/shoppingBaskets?clientId=" + clientId.toString();
-        ResultActions resultActions = mockMvc.perform(get(shoppingBasketUri))
-                .andExpect(status().isOk());
-        idDTO = objectMapper.readValue(resultActions.andReturn().getResponse().getContentAsString(), IdDTO.class);
-        UUID shoppingBasketId = idDTO.getId();
 
-        // additional checks, if desired
+        ClientResponseDto clientResponse = objectMapper.readValue(
+                clientGetResult.getResponse().getContentAsString(),
+                ClientResponseDto.class
+        );
+
+        UUID clientId = clientResponse.clientId().getId();
+
+        // Step 2: Get shopping basket by clientId
+        String shoppingBasketUri = "/api/v1/shoppingBaskets?clientId=" + clientId.toString();
+        MvcResult basketResult = mockMvc.perform(get(shoppingBasketUri))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ShoppingBasketResponseDTO basketResponse = objectMapper.readValue(
+                basketResult.getResponse().getContentAsString(),
+                ShoppingBasketResponseDTO.class
+        );
+
+        UUID shoppingBasketId = basketResponse.id().getId();
+
+        // Additional checks
         if (quantityMap != null) {
             Float totalSalesPrice = thingAndStockMasterDataInitializer
                     .getTotalSalesPrice(quantityMap);
-            String totalSalesPriceString = String.format("%.2f €", totalSalesPrice);
-            resultActions
-                    .andExpect(jsonPath("$.totalSalesPrice").value(totalSalesPriceString));
+
+            ResultActions resultActions = mockMvc.perform(get(shoppingBasketUri))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.totalPrice").value(totalSalesPrice));
+
             checkQuantityMap(quantityMap, resultActions);
         }
+
         return shoppingBasketId;
     }
 
-
     public void checkQuantityMap(Map<UUID, Integer> quantityMap, ResultActions resultActions) throws Exception {
         int numOfThings = quantityMap.size();
-        resultActions.andExpect(jsonPath("$.shoppingBasketParts.length()").value(numOfThings));
+        resultActions.andExpect(jsonPath("$.parts.length()").value(numOfThings));
         for (Map.Entry<UUID, Integer> entry : quantityMap.entrySet()) {
             UUID thingId = entry.getKey();
             Integer quantity = entry.getValue();
-            resultActions.andExpect(jsonPath("$.shoppingBasketParts.[?(@.thingId == '" + thingId + "')].quantity")
+            resultActions.andExpect(jsonPath("$.parts.[?(@.productId.id == '" + thingId + "')].quantity")
                     .value(quantity));
         }
     }
 
-
-    /**
-     * Adds a thing to a shopping basket.
-     *
-     * @param shoppingBasketId Id of the shopping basket.
-     * @param thingId          Id of the thing.
-     * @param quantity         Quantity of the thing.
-     * @throws Exception
-     */
     public void addThingToShoppingBasket(UUID shoppingBasketId, UUID thingId, Integer quantity)
             throws Exception {
         addThingToShoppingBasket(shoppingBasketId, thingId, quantity, null);
     }
 
-
-    /**
-     * Adds a thing to a shopping basket.
-     *
-     * @param shoppingBasketId Id of the shopping basket.
-     * @param thingId          Id of the thing.
-     * @param quantity         Quantity of the thing.
-     * @param expectedStatus   expected status of the operation (null = CREATED)
-     * @throws Exception
-     */
     public void addThingToShoppingBasket(UUID shoppingBasketId, UUID thingId, Integer quantity,
                                          ResultMatcher expectedStatus) throws Exception {
         ResultMatcher status = expectedStatus == null ? CREATED : expectedStatus;
@@ -138,70 +118,42 @@ public class ShoppingBasketRESTHelper {
         objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
-        QuantityDTO dto = new QuantityDTO(thingId, quantity);
+        ShoppingBasketPartRequestDTO dto = new ShoppingBasketPartRequestDTO(thingId, quantity);
         String quantityJson = objectMapper.writeValueAsString(dto);
-        mockMvc.perform(post("/shoppingBaskets/" + shoppingBasketId + "/parts")
+
+        mockMvc.perform(post("/api/v1/shoppingBaskets/" + shoppingBasketId + "/parts")
                         .contentType(APPLICATION_JSON).content(quantityJson))
                 .andExpect(status);
     }
 
-
-    /**
-     * Deletes a thing from a shopping basket.
-     *
-     * @param shoppingBasketId Id of the shopping basket.
-     * @param thingId          Id of the thing.
-     * @throws Exception
-     */
     public void deleteThingFromShoppingBasket(UUID shoppingBasketId, UUID thingId)
             throws Exception {
         deleteThingFromShoppingBasket(shoppingBasketId, thingId, null);
     }
 
-
-    /**
-     * Deletes a thing from a shopping basket.
-     *
-     * @param shoppingBasketId Id of the shopping basket.
-     * @param thingId          Id of the thing.
-     * @param expectedStatus   expected status of the operation (null = OK)
-     * @throws Exception
-     */
     public void deleteThingFromShoppingBasket(UUID shoppingBasketId, UUID thingId,
                                               ResultMatcher expectedStatus) throws Exception {
         ResultMatcher status = expectedStatus == null ? OK : expectedStatus;
-        String uri = "/shoppingBaskets/" + shoppingBasketId + "/parts/" + thingId;
+        String uri = "/api/v1/shoppingBaskets/" + shoppingBasketId + "/parts/" + thingId;
         mockMvc.perform(delete(uri)).andExpect(status);
     }
 
-
-    /**
-     * Checks out a shopping basket, and returns the id of the created order.
-     *
-     * @param shoppingBasketId
-     * @return
-     * @throws Exception
-     */
     public UUID checkout(UUID shoppingBasketId) throws Exception {
         return checkout(shoppingBasketId, null);
     }
 
-
-    /**
-     * Checks out a shopping basket, and returns the id of the created order.
-     *
-     * @param shoppingBasketId
-     * @param expectedStatus   expected status of the operation (null = CREATED)
-     * @return
-     * @throws Exception
-     */
     public UUID checkout(UUID shoppingBasketId, ResultMatcher expectedStatus) throws Exception {
         ResultMatcher status = expectedStatus == null ? CREATED : expectedStatus;
-        String uri = "/shoppingBaskets/" + shoppingBasketId + "/checkout";
+        String uri = "/api/v1/shoppingBaskets/" + shoppingBasketId + "/checkout";
         MvcResult result = mockMvc.perform(post(uri)).andExpect(status).andReturn();
+
         if (!status.equals(CREATED)) return null;
+
         ObjectMapper objectMapper = new ObjectMapper();
-        IdDTO idDTO = objectMapper.readValue(result.getResponse().getContentAsString(), IdDTO.class);
-        return idDTO.getId();
+        CheckoutResponseDTO checkoutResponse = objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                CheckoutResponseDTO.class
+        );
+        return checkoutResponse.orderId().getId();
     }
 }

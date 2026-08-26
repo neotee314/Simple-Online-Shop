@@ -3,10 +3,12 @@ package com.neotee.ecommercesystem;
 
 
 import com.neotee.ecommercesystem.exceptions.ShopException;
+import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
+import com.neotee.ecommercesystem.usecases.ClientType;
+import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
+import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
 import com.neotee.ecommercesystem.usecases.masterdata.MockClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.neotee.ecommercesystem.usecases.*;
-import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
 import org.springframework.stereotype.Component;
 
 import static org.junit.jupiter.api.Assertions.*;

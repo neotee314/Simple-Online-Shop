@@ -1,10 +1,9 @@
 package com.neotee.ecommercesystem.regression;
 
 import com.neotee.ecommercesystem.exceptions.ShopException;
+import com.neotee.ecommercesystem.usecases.domainprimitivetypes.ZipCodeType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
 
 import static com.neotee.ecommercesystem.FactoryMethodInvoker.instantiateZipCode;
 import static org.junit.jupiter.api.Assertions.assertTrue;

@@ -1,8 +1,13 @@
 package com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain;
 
-import com.neotee.ecommercesystem.core.AggregateRoot;
-import com.neotee.ecommercesystem.domainprimitives.*;
+import com.neotee.ecommercesystem.shopsystem.core.AggregateRoot;
+import com.neotee.ecommercesystem.domainprimitives.BasketState;
+import com.neotee.ecommercesystem.domainprimitives.Money;
+import com.neotee.ecommercesystem.domainprimitives.ProductId;
+import com.neotee.ecommercesystem.domainprimitives.ShoppingBasketId;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
+import com.neotee.ecommercesystem.exceptions.InsufficientStockException;
+import com.neotee.ecommercesystem.exceptions.ItemNotInBasketException;
 import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.event.CheckoutEvent;
@@ -12,7 +17,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "shopping_basket")
@@ -57,11 +61,28 @@ public class ShoppingBasket extends AggregateRoot<ShoppingBasketId> {
         return new ShoppingBasket(basketId, client);
     }
 
-    public void addItem(Product product, Integer quantity) {
-        if (product == null)
+    public void addItem(Product product, Integer quantity, Integer availableStock) {
+        if (product == null) {
             throw new DomainValidationException("ShoppingBasket", "Product darf nicht null sein.");
-        if (quantity == null || quantity <= 0)
+        }
+        if (quantity == null || quantity <= 0) {
             throw new DomainValidationException("ShoppingBasket", "Quantity muss größer als 0 sein.");
+        }
+
+        int existingQuantity = getReservedQuantityForProduct(product.getId());
+
+        if (existingQuantity > availableStock) {
+            var existingPart = findPartByProduct(product);
+            if (existingPart != null) {
+                existingPart.changeQuantity(availableStock);
+                updateBasketState();
+            }
+            existingQuantity = availableStock;
+        }
+
+        if (availableStock < existingQuantity + quantity) {
+            throw new InsufficientStockException("ShoppingBasket", "Nicht genügend Lagerbestand");
+        }
 
         var existingPart = findPartByProduct(product);
         if (existingPart != null) {
@@ -70,15 +91,14 @@ public class ShoppingBasket extends AggregateRoot<ShoppingBasketId> {
             return;
         }
 
-        var newPart = ShoppingBasketPart.create(product, quantity, product.getPurchasePrice());
+        var newPart = ShoppingBasketPart.create(product, quantity, product.getSalesPrice());
         parts.add(newPart);
         updateBasketState();
     }
 
     public CheckoutEvent checkout(Client client) {
-        if (parts.isEmpty()) {
-            throw new DomainValidationException("ShoppingBasket", "Warenkorb ist leer.");
-        }
+        if (parts.isEmpty()) throw new ItemNotInBasketException("ShoppingBasket", "Warenkorb ist leer.");
+
 
         var items = new HashMap<Product, Integer>();
         for (var part : parts) {
@@ -95,7 +115,7 @@ public class ShoppingBasket extends AggregateRoot<ShoppingBasketId> {
             throw new DomainValidationException("ShoppingBasket", "Product darf nicht null sein.");
         var part = findPartByProduct(product);
         if (part == null)
-            throw new DomainValidationException("ShoppingBasket", "Produkt nicht im Warenkorb gefunden.");
+            throw new ItemNotInBasketException("ShoppingBasket", "Produkt nicht im Warenkorb gefunden.");
         parts.remove(part);
         updateBasketState();
     }
@@ -108,7 +128,7 @@ public class ShoppingBasket extends AggregateRoot<ShoppingBasketId> {
 
         var part = findPartByProduct(product);
         if (part == null)
-            throw new DomainValidationException("ShoppingBasket", "Produkt nicht im Warenkorb gefunden.");
+            throw new ItemNotInBasketException("ShoppingBasket", "Produkt nicht im Warenkorb gefunden.");
 
         var newQuantity = part.getQuantity() - quantity;
         if (newQuantity > 0) {
@@ -133,7 +153,7 @@ public class ShoppingBasket extends AggregateRoot<ShoppingBasketId> {
     public Money getTotalPrice() {
         var total = Money.of(0f, "EUR");
         for (var part : parts) {
-            total = (Money) total.add(part.getSalesPrice());
+            total = total.add(part.getTotalPrice());
         }
         return (Money) total;
     }
@@ -162,8 +182,38 @@ public class ShoppingBasket extends AggregateRoot<ShoppingBasketId> {
                 .sum();
     }
 
-    public boolean hasItems() {
-        return !parts.isEmpty();
+    public void correctStock(ProductId productId, int availableStock) {
+        var part = parts.stream()
+                .filter(p -> p.getProduct().getId().equals(productId))
+                .findFirst()
+                .orElse(null);
+
+        if (part != null) {
+            int currentQuantity = part.getQuantity();
+            if (currentQuantity > availableStock) {
+                if (availableStock > 0) {
+                    part.changeQuantity(availableStock);
+                } else {
+                    parts.remove(part);
+                }
+                updateBasketState();
+            }
+        }
+    }
+
+    public void reduceQuantity(ProductId productId, int quantity) {
+        var part = parts.stream()
+                .filter(p -> p.getProduct().getId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new DomainValidationException("ShoppingBasket", "Produkt nicht im Warenkorb gefunden."));
+
+        int newQuantity = part.getQuantity() - quantity;
+        if (newQuantity > 0) {
+            part.changeQuantity(newQuantity);
+        } else {
+            parts.remove(part);
+        }
+        updateBasketState();
     }
 
     private ShoppingBasketPart findPartByProduct(Product product) {
@@ -189,4 +239,6 @@ public class ShoppingBasket extends AggregateRoot<ShoppingBasketId> {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+
 }

@@ -1,6 +1,6 @@
-package com.neotee.ecommercesystem.core;
+package com.neotee.ecommercesystem.shopsystem.core;
 
-import jakarta.persistence.Id;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 
@@ -8,7 +8,7 @@ import lombok.Getter;
 @MappedSuperclass
 public abstract class AbstractEntity<ID> {
 
-    @Id
+    @EmbeddedId
     protected ID id;
 
     protected AbstractEntity() {

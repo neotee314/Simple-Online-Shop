@@ -1,8 +1,9 @@
 package com.neotee.ecommercesystem.regression;
 
+import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
+import com.neotee.ecommercesystem.usecases.domainprimitivetypes.ZipCodeType;
 import org.junit.jupiter.api.Test;
 import com.neotee.ecommercesystem.exceptions.ShopException;
-import com.neotee.ecommercesystem.usecases.domainprimitivetypes.*;
 
 import static com.neotee.ecommercesystem.FactoryMethodInvoker.instantiateHomeAddress;
 import static com.neotee.ecommercesystem.FactoryMethodInvoker.instantiateZipCode;

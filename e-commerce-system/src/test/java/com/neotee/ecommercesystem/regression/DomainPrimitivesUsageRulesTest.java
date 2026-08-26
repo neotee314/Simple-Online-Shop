@@ -9,7 +9,11 @@ import com.tngtech.archunit.lang.ArchRule;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
 @ArchTag("domainPrimitivesUsageRules")
-@AnalyzeClasses(packagesOf = {Client.class})
+@AnalyzeClasses(packages = {
+        "com.neotee.ecommercesystem.shopsystem.client",
+        "com.neotee.ecommercesystem.shopsystem.product",
+        "com.neotee.ecommercesystem.shopsystem.storageunit"
+})
 @SuppressWarnings("PMD")
 public class DomainPrimitivesUsageRulesTest {
     private static final String EMAIL_CLASS = "com.neotee.ecommercesystem.domainprimitives.Email";

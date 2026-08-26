@@ -1,6 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.product.domain;
 
-import com.neotee.ecommercesystem.core.AggregateRoot;
+import com.neotee.ecommercesystem.shopsystem.core.AggregateRoot;
 import com.neotee.ecommercesystem.domainprimitives.Money;
 import com.neotee.ecommercesystem.domainprimitives.ProductId;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;

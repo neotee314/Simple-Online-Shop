@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '4.1.1'
+    id 'org.springframework.boot' version '3.3.4'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -9,7 +9,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(26)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -29,6 +29,14 @@ repositories {
     maven { url = uri('https://jitpack.io') }
 }
 
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.boot:spring-boot-dependencies:3.3.4"
+        mavenBom "org.springdoc:springdoc-openapi:2.6.0"
+    }
+}
+
 dependencies {
     // Spring Boot
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -40,17 +48,16 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
 
     // Lombok
-    compileOnly 'org.projectlombok:lombok:1.18.38'
-    annotationProcessor 'org.projectlombok:lombok:1.18.38'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
     // Tests
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    testImplementation 'org.springframework:spring-test'
 
     // Testcontainers
-    testImplementation 'org.testcontainers:testcontainers:1.19.7'
-    testImplementation 'org.testcontainers:junit-jupiter:1.19.7'
+    testImplementation 'org.testcontainers:testcontainers'
+    testImplementation 'org.testcontainers:junit-jupiter'
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
 
     // ArchUnit
@@ -61,8 +68,8 @@ dependencies {
     implementation 'guru.nidi:code-assert:0.9.15'
     implementation 'net.datafaker:datafaker:2.4.2'
 
-    // OpenAPI
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3'
+    // OpenAPI -
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
 }
 
 tasks.named('test') {
