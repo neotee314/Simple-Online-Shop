@@ -6,13 +6,13 @@ This project represents the backend system of a modular and scalable online shop
 
 ##  System Overview
 
-The platform allows clients to browse products (called "things"), add them to a shopping basket, and place orders. These orders are fulfilled by a smart delivery system using one or more storage units (warehouses). The design follows Domain-Driven Design (DDD) patterns, ensuring business logic is cleanly separated and encapsulated.
+The platform allows clients to browse products (called "products"), add them to a shopping basket, and place orders. These orders are fulfilled by a smart delivery system using one or more storage units (warehouses). The design follows Domain-Driven Design (DDD) patterns, ensuring business logic is cleanly separated and encapsulated.
 
 ---
 
 ###  Domain Structure
 
-#### `Thing` – Products
+#### `Product` – Products
 
 Each product has a name, description, size, purchase price, and sales price. A product can exist in multiple storage units, each tracking its stock level.
 
@@ -22,7 +22,7 @@ A client has a name, email, and home address (street, city, zip code). The email
 
 #### `ShoppingBasket`
 
-When a client wants to buy something, they add it to a shopping basket. This reserves the stock and prevents others from buying it. Each shopping basket contains parts (things and their quantities). There is no time limit on reservations. Clients can remove items or check out at any time.
+When a client wants to buy something, they add it to a shopping basket. This reserves the stock and prevents others from buying it. Each shopping basket contains parts (products and their quantities). There is no time limit on reservations. Clients can remove items or check out at any time.
 
 #### `Order`
 
@@ -132,8 +132,8 @@ When an order is placed, the system analyzes which storage units can fulfill the
 | ----------------------------------------------- | ------ | ------------------------------------ |
 | `/clients?email=...`                            | GET    | Fetch client by email                |
 | `/shoppingBaskets?clientId=...`                 | GET    | Get shopping basket for a client     |
-| `/shoppingBaskets/{basket-id}/parts`            | POST   | Add a thing to shopping basket       |
-| `/shoppingBaskets/{basket-id}/parts/{thing-id}` | DELETE | Remove thing from basket             |
+| `/shoppingBaskets/{basket-id}/parts`            | POST   | Add a product to shopping basket       |
+| `/shoppingBaskets/{basket-id}/parts/{product-id}` | DELETE | Remove product from basket             |
 | `/shoppingBaskets/{basket-id}/checkout`         | POST   | Checkout the basket and create order |
 | `/orders?clientId=...`                          | GET    | Get all orders of client             |
 | `/orders?clientId=...&filter=latest`            | GET    | Get latest order of client           |
@@ -143,11 +143,11 @@ When an order is placed, the system analyzes which storage units can fulfill the
 
 | Endpoint                                         | Method | Description                                          |
 | ------------------------------------------------ | ------ | ---------------------------------------------------- |
-| `/things?name=...`                               | GET    | Search things by name                                |
-| `/things/{thing-id}`                             | GET    | Get thing by ID                                      |
-| `/things/{thing-id}`                             | PATCH  | Change sales price                                   |
-| `/storageUnits/{unit-id}/stockLevels/{thing-id}` | PATCH  | Change stock level for a thing                       |
-| `/stockLevels?thingId=...`                       | GET    | Get stock levels of a thing across all storage units |
+| `/products?name=...`                               | GET    | Search products by name                                |
+| `/products/{product-id}`                             | GET    | Get product by ID                                      |
+| `/products/{product-id}`                             | PATCH  | Change sales price                                   |
+| `/storageUnits/{unit-id}/stockLevels/{product-id}` | PATCH  | Change stock level for a product                       |
+| `/stockLevels?productId=...`                       | GET    | Get stock levels of a product across all storage units |
 | `/storageUnits/{unit-id}`                        | PATCH  | Change storage unit name                             |
 
 ###  Client Management
@@ -178,10 +178,12 @@ When an order is placed, the system analyzes which storage units can fulfill the
 - `Order` → fulfilled by → `DeliveryPackages`
 - `DeliveryPackage` → sent from → `StorageUnit`
 - `StorageUnit` → contains → `StockLevels`
-- `StockLevel` → tracks → `Thing`
-- `OrderPart`, `DeliveryPackagePart` → reference → `Thing`
+- `StockLevel` → tracks → `Product`
+- `OrderPart`, `DeliveryPackagePart` → reference → `Product`
 
 ---
+
+
 
 ##  Scalability & Extensibility
 
@@ -195,6 +197,43 @@ This project is highly modular and can be extended with:
 It is also ready for containerization using Docker and Kubernetes.
 
 ---
+
+## 🐳 Docker Usage
+
+This project includes a `Dockerfile` in the root directory. You can easily build and run the application inside a Docker container by following these steps:
+
+### Build the project
+
+First, build the Java project using Gradle (make sure you have Gradle installed or use the Gradle wrapper):
+
+
+./gradlew build
+
+
+### Build the Docker image
+
+Use Docker to build an image named `ecommerce-app`:
+
+
+docker build -t ecommerce-app .
+
+
+### Run the Docker container
+
+Run the Docker container, mapping the container port 8080 to your local machine’s port 8080:
+
+
+docker run -p 8080:8080 ecommerce-app
+
+
+### Access the application
+
+Open your browser and go to:
+
+
+http://localhost:8080/my-e-commerce
+
+
 
 ##  Contact
 
