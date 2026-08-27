@@ -7,7 +7,7 @@ import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
-import com.neotee.ecommercesystem.shopsystem.storageunit.domain.event.StockChangedEvent;
+import com.neotee.ecommercesystem.shopsystem.event.StockChangedEvent;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

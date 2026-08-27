@@ -4,7 +4,7 @@ import com.neotee.ecommercesystem.domainprimitives.ProductId;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.port.out.StockPort;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasket;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketRepository;
-import com.neotee.ecommercesystem.shopsystem.storageunit.domain.event.StockChangedEvent;
+import com.neotee.ecommercesystem.shopsystem.event.StockChangedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

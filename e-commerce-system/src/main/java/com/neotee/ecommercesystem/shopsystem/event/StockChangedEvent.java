@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.shopsystem.storageunit.domain.event;
+package com.neotee.ecommercesystem.shopsystem.event;
 
 import com.neotee.ecommercesystem.domainprimitives.ProductId;
 import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;

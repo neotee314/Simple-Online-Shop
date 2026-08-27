@@ -80,46 +80,6 @@ public class DeliveryPackage extends AggregateRoot<DeliveryPackageId> {
         parts.add(newPart);
     }
 
-    public void addParts(Map<Product, Integer> items) {
-        if (items == null || items.isEmpty())
-            throw new DomainValidationException("DeliveryPackage", "Items dürfen nicht leer sein.");
-
-        items.forEach(this::addPart);
-    }
-
-    public void removePart(Product product) {
-        if (product == null)
-            throw new DomainValidationException("DeliveryPackage", "Product darf nicht null sein.");
-
-        var part = findPartByProduct(product);
-        if (part != null) {
-            parts.remove(part);
-        }
-    }
-
-    public void removePart(Product product, int quantity) {
-        if (product == null)
-            throw new DomainValidationException("DeliveryPackage", "Product darf nicht null sein.");
-        if (quantity <= 0)
-            throw new DomainValidationException("DeliveryPackage", "Quantity muss größer als 0 sein.");
-
-        var part = findPartByProduct(product);
-        if (part == null)
-            throw new DomainValidationException("DeliveryPackage", "Product nicht im Lieferpaket gefunden.");
-
-        var newQuantity = part.getQuantity() - quantity;
-        if (newQuantity > 0) {
-            part.decreaseQuantity(quantity);
-        } else if (newQuantity == 0) {
-            parts.remove(part);
-        } else {
-            throw new DomainValidationException("DeliveryPackage", "Kann nicht mehr entfernen als vorhanden ist.");
-        }
-    }
-
-    public void clear() {
-        parts.clear();
-    }
 
     public boolean isEmpty() {
         return parts.isEmpty();
@@ -141,11 +101,6 @@ public class DeliveryPackage extends AggregateRoot<DeliveryPackageId> {
         return findPartByProduct(product) != null;
     }
 
-    public boolean hasStorageUnit(StorageUnitId storageUnitId) {
-        if (storageUnitId == null)
-            throw new DomainValidationException("DeliveryPackage", "Storage Unit ID darf nicht null sein.");
-        return this.storageUnit.getId().equals(storageUnitId);
-    }
 
     public StorageUnitId getStorageUnitId() {
         return storageUnit.getId();

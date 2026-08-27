@@ -10,7 +10,7 @@ import com.neotee.ecommercesystem.exceptions.InsufficientStockException;
 import com.neotee.ecommercesystem.exceptions.ItemNotInBasketException;
 import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
-import com.neotee.ecommercesystem.event.CheckoutEvent;
+import com.neotee.ecommercesystem.shopsystem.event.CheckoutEvent;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

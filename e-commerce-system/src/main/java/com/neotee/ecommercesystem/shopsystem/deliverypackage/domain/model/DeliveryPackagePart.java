@@ -48,13 +48,6 @@ public class DeliveryPackagePart extends AbstractEntity<DeliveryPackagePartId> {
         this.quantity += quantity;
     }
 
-    public void decreaseQuantity(int quantity) {
-        if (quantity <= 0)
-            throw new DomainValidationException("DeliveryPackagePart", "Quantity muss größer als 0 sein.");
-        if (this.quantity - quantity < 0)
-            throw new DomainValidationException("DeliveryPackagePart", "Kann nicht mehr entfernen als vorhanden ist.");
-        this.quantity -= quantity;
-    }
 
     public ProductId getProductId() {
         return product.getId();
