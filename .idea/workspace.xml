@@ -5,9 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="de17652a-30d8-4370-8f63-5af961701f2a" name="Changes" comment="update project">
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/neotee/ecommercesystem/basictests/BasicUseCaseImplementationPackageTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/neotee/ecommercesystem/basictests/BasicUseCaseImplementationPackageTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -123,60 +122,61 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.BasicNoOutsideSolutionRulesTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Build e-commerce-system.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ClientRESTTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ClientRegistrationTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.DeliveryPackageRESTTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.DeliveryPackageRESTTest.testOnlyOneSolution.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.DeliveryPackageRESTTest.testStorageUnitWithEnoughCapacityWins.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.DeliveryPackageRESTTest.testTwoDeliveryPackages.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.DeliveryPackagesLifecycleTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.DeliveryPackagesLifecycleTest.testInvalidParameters.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.DomainPrimitivesUsageRulesTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ECommerceSystemApplicationTests.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.MultipleDeliverysTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.OneDeliveryTest.testClosestDeliveryPackage.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ProductCatalogTest.testRemoveThingThatIsInShoppingBasketOrOrder.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ShoppingBasketRESTTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ShoppingBasketRESTTest.testAddRemoveThingsFromAndToShoppingBasket.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ShoppingBasketRESTTest.testDeleteThingFromShoppingBasket.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.StockTest.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Tests in 'com.neotee.ecommercesystem'.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Tests in 'com.neotee.ecommercesystem.deliverypackage'.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Tests in 'com.neotee.ecommercesystem.regression'.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.ZipCodeTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.ClientRESTTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.com.neotee.ecommercesystem in e-commerce-system.test.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.com.neotee.ecommercesystem.regression in e-commerce-system.test.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
-    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
-    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
-    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;Spring Boot.ECommerceSystemApplication.executor&quot;: &quot;Run&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Project/Simple-Online-Shop&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.jshint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.jshint&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.BasicNoOutsideSolutionRulesTest.executor": "Run",
+    "Gradle.BasicUseCaseImplementationPackageTest.executor": "Run",
+    "Gradle.Build e-commerce-system.executor": "Run",
+    "Gradle.ClientRESTTest.executor": "Run",
+    "Gradle.ClientRegistrationTest.executor": "Run",
+    "Gradle.DeliveryPackageRESTTest.executor": "Run",
+    "Gradle.DeliveryPackageRESTTest.testOnlyOneSolution.executor": "Run",
+    "Gradle.DeliveryPackageRESTTest.testStorageUnitWithEnoughCapacityWins.executor": "Run",
+    "Gradle.DeliveryPackageRESTTest.testTwoDeliveryPackages.executor": "Run",
+    "Gradle.DeliveryPackagesLifecycleTest.executor": "Run",
+    "Gradle.DeliveryPackagesLifecycleTest.testInvalidParameters.executor": "Run",
+    "Gradle.DomainPrimitivesUsageRulesTest.executor": "Run",
+    "Gradle.ECommerceSystemApplicationTests.executor": "Run",
+    "Gradle.MultipleDeliverysTest.executor": "Run",
+    "Gradle.OneDeliveryTest.testClosestDeliveryPackage.executor": "Run",
+    "Gradle.ProductCatalogTest.testRemoveThingThatIsInShoppingBasketOrOrder.executor": "Run",
+    "Gradle.ShoppingBasketRESTTest.executor": "Run",
+    "Gradle.ShoppingBasketRESTTest.testAddRemoveThingsFromAndToShoppingBasket.executor": "Run",
+    "Gradle.ShoppingBasketRESTTest.testDeleteThingFromShoppingBasket.executor": "Run",
+    "Gradle.StockTest.executor": "Run",
+    "Gradle.Tests in 'com.neotee.ecommercesystem'.executor": "Run",
+    "Gradle.Tests in 'com.neotee.ecommercesystem.deliverypackage'.executor": "Run",
+    "Gradle.Tests in 'com.neotee.ecommercesystem.regression'.executor": "Run",
+    "Gradle.ZipCodeTest.executor": "Run",
+    "JUnit.ClientRESTTest.executor": "Run",
+    "JUnit.com.neotee.ecommercesystem in e-commerce-system.test.executor": "Run",
+    "JUnit.com.neotee.ecommercesystem.regression in e-commerce-system.test.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "Spring Boot.ECommerceSystemApplication.executor": "Run",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Project/Simple-Online-Shop",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.jshint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.jshint": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "SDKs",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.service" />
@@ -193,7 +193,7 @@
       <recent name="com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.service" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.ECommerceSystemApplicationTests">
+  <component name="RunManager" selected="Gradle.BasicUseCaseImplementationPackageTest">
     <configuration name="BasicNoOutsideSolutionRulesTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -208,6 +208,33 @@
             <option value=":test" />
             <option value="--tests" />
             <option value="&quot;com.neotee.ecommercesystem.basictests.BasicNoOutsideSolutionRulesTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="BasicUseCaseImplementationPackageTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;com.neotee.ecommercesystem.basictests.BasicUseCaseImplementationPackageTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -241,33 +268,6 @@
             <option value=":test" />
             <option value="--tests" />
             <option value="&quot;com.neotee.ecommercesystem.ECommerceSystemApplicationTests&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <GradleProfilingDisabled>false</GradleProfilingDisabled>
-      <GradleCoverageDisabled>false</GradleCoverageDisabled>
-      <method v="2" />
-    </configuration>
-    <configuration name="MultipleDeliverysTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;com.neotee.ecommercesystem.regression.MultipleDeliverysTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -350,20 +350,20 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Gradle.BasicUseCaseImplementationPackageTest" />
       <item itemvalue="Gradle.BasicNoOutsideSolutionRulesTest" />
       <item itemvalue="Gradle.ECommerceSystemApplicationTests" />
-      <item itemvalue="Gradle.MultipleDeliverysTest" />
       <item itemvalue="Gradle.ShoppingBasketRESTTest" />
       <item itemvalue="Gradle.Tests in 'com.neotee.ecommercesystem'" />
       <item itemvalue="Spring Boot.ECommerceSystemApplication" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.BasicUseCaseImplementationPackageTest" />
         <item itemvalue="Gradle.ECommerceSystemApplicationTests" />
         <item itemvalue="Gradle.Tests in 'com.neotee.ecommercesystem'" />
         <item itemvalue="Gradle.BasicNoOutsideSolutionRulesTest" />
         <item itemvalue="Gradle.ShoppingBasketRESTTest" />
-        <item itemvalue="Gradle.MultipleDeliverysTest" />
       </list>
     </recent_temporary>
   </component>
@@ -387,6 +387,17 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <ignored-roots>
