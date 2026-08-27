@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.dto;
+package com.neotee.ecommercesystem.restdtos;
 
 import java.util.List;
 import java.util.UUID;

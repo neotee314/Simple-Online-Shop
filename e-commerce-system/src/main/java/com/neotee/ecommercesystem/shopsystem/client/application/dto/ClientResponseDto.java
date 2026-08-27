@@ -1,9 +1,10 @@
 package com.neotee.ecommercesystem.shopsystem.client.application.dto;
 
-import com.neotee.ecommercesystem.domainprimitives.ClientId;
+
+import java.util.UUID;
 
 public record ClientResponseDto(
-    ClientId clientId,
+    UUID clientId,
     String name,
     String email,
     String street,

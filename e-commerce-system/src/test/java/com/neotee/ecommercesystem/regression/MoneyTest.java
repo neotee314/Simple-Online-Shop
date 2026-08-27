@@ -4,7 +4,7 @@ import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 import org.junit.jupiter.api.Test;
 import com.neotee.ecommercesystem.exceptions.ShopException;
 
-import static com.neotee.ecommercesystem.FactoryMethodInvoker.instantiateMoney;
+import static com.neotee.ecommercesystem.helper.FactoryMethodInvoker.instantiateMoney;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MoneyTest {

@@ -1,7 +1,6 @@
-package com.neotee.ecommercesystem.anticorruption;
+package com.neotee.ecommercesystem.shopsystem.delivery.application.service;
 
 
-import com.neotee.ecommercesystem.shopsystem.delivery.application.service.DeliveryService;
 import com.neotee.ecommercesystem.usecases.ClientType;
 import com.neotee.ecommercesystem.usecases.DeliveryUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;

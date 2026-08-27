@@ -5,7 +5,6 @@ import com.neotee.ecommercesystem.shopsystem.order.domain.event.OrderCreatedEven
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor

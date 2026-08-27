@@ -1,14 +1,10 @@
-package com.neotee.ecommercesystem.basictests;
+package com.neotee.ecommercesystem.helper;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer;
-import com.neotee.ecommercesystem.shopsystem.client.application.dto.ClientResponseDto;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.CheckoutResponseDTO;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.ShoppingBasketPartRequestDTO;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.ShoppingBasketResponseDTO;
+import com.neotee.ecommercesystem.restdtos.*;
 import com.neotee.ecommercesystem.usecases.ProductCatalogUseCases;
 import com.neotee.ecommercesystem.usecases.StorageUnitUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
@@ -16,7 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
-
 
 import java.util.Map;
 import java.util.UUID;
@@ -26,10 +21,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
+
+
+
 public class ShoppingBasketRESTHelper {
     private MockMvc mockMvc;
-    private ProductCatalogUseCases productCatalogUseCases;
-    private StorageUnitUseCases storageUnitUseCases;
 
     private static final ResultMatcher CREATED = status().isCreated();
     private static final ResultMatcher OK = status().isOk();
@@ -39,8 +36,6 @@ public class ShoppingBasketRESTHelper {
                                     ProductCatalogUseCases productCatalogUseCases,
                                     StorageUnitUseCases storageUnitUseCases) {
         this.mockMvc = mockMvc;
-        this.productCatalogUseCases = productCatalogUseCases;
-        this.storageUnitUseCases = storageUnitUseCases;
         thingAndStockMasterDataInitializer = new ThingAndStockMasterDataInitializer(
                 productCatalogUseCases, storageUnitUseCases);
     }
@@ -53,21 +48,18 @@ public class ShoppingBasketRESTHelper {
             throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        // Step 1: Get client by email
         String clientUri = "/api/v1/clients?email=" + email.toString();
         MvcResult clientGetResult = mockMvc.perform(get(clientUri))
                 .andExpect(status().isOk())
                 .andReturn();
-
 
         ClientResponseDto clientResponse = objectMapper.readValue(
                 clientGetResult.getResponse().getContentAsString(),
                 ClientResponseDto.class
         );
 
-        UUID clientId = clientResponse.clientId().getId();
+        UUID clientId = clientResponse.clientId();
 
-        // Step 2: Get shopping basket by clientId
         String shoppingBasketUri = "/api/v1/shoppingBaskets?clientId=" + clientId.toString();
         MvcResult basketResult = mockMvc.perform(get(shoppingBasketUri))
                 .andExpect(status().isOk())
@@ -78,9 +70,8 @@ public class ShoppingBasketRESTHelper {
                 ShoppingBasketResponseDTO.class
         );
 
-        UUID shoppingBasketId = basketResponse.id().getId();
+        UUID shoppingBasketId = basketResponse.id();
 
-        // Additional checks
         if (quantityMap != null) {
             Float totalSalesPrice = thingAndStockMasterDataInitializer
                     .getTotalSalesPrice(quantityMap);
@@ -101,7 +92,7 @@ public class ShoppingBasketRESTHelper {
         for (Map.Entry<UUID, Integer> entry : quantityMap.entrySet()) {
             UUID thingId = entry.getKey();
             Integer quantity = entry.getValue();
-            resultActions.andExpect(jsonPath("$.parts.[?(@.productId.id == '" + thingId + "')].quantity")
+            resultActions.andExpect(jsonPath("$.parts.[?(@.productId == '" + thingId + "')].quantity")
                     .value(quantity));
         }
     }
@@ -118,7 +109,7 @@ public class ShoppingBasketRESTHelper {
         objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
-        ShoppingBasketPartRequestDTO dto = new ShoppingBasketPartRequestDTO(thingId, quantity);
+        var dto = new ShoppingBasketPartRequestDTO(thingId, quantity);
         String quantityJson = objectMapper.writeValueAsString(dto);
 
         mockMvc.perform(post("/api/v1/shoppingBaskets/" + shoppingBasketId + "/parts")
@@ -154,6 +145,6 @@ public class ShoppingBasketRESTHelper {
                 result.getResponse().getContentAsString(),
                 CheckoutResponseDTO.class
         );
-        return checkoutResponse.orderId().getId();
+        return checkoutResponse.orderId();
     }
 }

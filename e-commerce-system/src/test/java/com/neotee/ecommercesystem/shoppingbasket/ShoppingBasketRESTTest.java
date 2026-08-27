@@ -1,16 +1,16 @@
 package com.neotee.ecommercesystem.shoppingbasket;
 
 
-import com.neotee.ecommercesystem.basictests.ShoppingBasketRESTHelper;
+import com.neotee.ecommercesystem.helper.ShoppingBasketRESTHelper;
 import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
 import com.neotee.ecommercesystem.usecases.ProductCatalogUseCases;
 import com.neotee.ecommercesystem.usecases.ShoppingBasketUseCases;
 import com.neotee.ecommercesystem.usecases.StorageUnitUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import jakarta.transaction.Transactional;
-import com.neotee.ecommercesystem.ClientMasterDataInitializer;
+import com.neotee.ecommercesystem.helper.ClientMasterDataInitializer;
 import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
-import com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer;
+import com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,12 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer.*;
+import static com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static com.neotee.ecommercesystem.ClientMasterDataInitializer.CLIENT_EMAIL;
-import static com.neotee.ecommercesystem.FactoryMethodInvoker.instantiateEmail;
+import static com.neotee.ecommercesystem.helper.ClientMasterDataInitializer.CLIENT_EMAIL;
+import static com.neotee.ecommercesystem.helper.FactoryMethodInvoker.instantiateEmail;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -1,5 +1,4 @@
-package com.neotee.ecommercesystem;
-
+package com.neotee.ecommercesystem.helper;
 
 
 import com.neotee.ecommercesystem.exceptions.ShopException;
@@ -8,20 +7,23 @@ import com.neotee.ecommercesystem.usecases.ClientType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
 import com.neotee.ecommercesystem.usecases.masterdata.MockClient;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Random;
 
-import java.util.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * This is a test helper class that initializes and registers clients in the system,
  * using the given interface(s).
  */
-@Component
+
+@Slf4j
 @SuppressWarnings("PMD")
-public class ClientTestHelper {
+@Component
+public class ClientMasterDataInitializer {
 
     private ClientRegistrationUseCases clientRegistrationUseCases;
     private Random random = new Random();
@@ -29,7 +31,7 @@ public class ClientTestHelper {
     public static final String EUR = "EUR";
 
     @Autowired
-    public ClientTestHelper( ClientRegistrationUseCases clientRegistrationUseCases ) {
+    public ClientMasterDataInitializer( ClientRegistrationUseCases clientRegistrationUseCases ) {
         this.clientRegistrationUseCases = clientRegistrationUseCases;
     }
 
@@ -120,16 +122,20 @@ public class ClientTestHelper {
             new MockClient( "No one",
                     FactoryMethodInvoker.instantiateEmail( "test@" ),
                     CLIENT_ADDRESS[0] ); }, "Check your email validation!"  );
+
+
     }
 
 
     public void registerAllClients() {
+        System.out.println( "Registering clients.");
         for ( int i = 0; i < CLIENT_NAME.length; i++ ) {
             registerClient( CLIENT_NAME[i], CLIENT_EMAIL[i], CLIENT_ADDRESS[i] );
         }
     }
 
     public void registerClient( String name, EmailType email, HomeAddressType homeAddress ) {
+        System.out.println("Registering client with email " + email );
         clientRegistrationUseCases.register( name, email, homeAddress );
     }
 }

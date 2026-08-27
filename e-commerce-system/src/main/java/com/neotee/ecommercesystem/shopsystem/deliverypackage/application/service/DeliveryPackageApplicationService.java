@@ -1,9 +1,7 @@
 package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.service;
 
-import com.neotee.ecommercesystem.domainprimitives.DeliveryPackageId;
 import com.neotee.ecommercesystem.domainprimitives.OrderId;
 import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;
-import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.exceptions.EntityNotFoundException;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.port.out.FindOrderPort;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.port.out.FindStorageUnitsPort;
@@ -12,7 +10,6 @@ import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPack
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackageRepository;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.service.DeliveryPackageDomainService;
 import com.neotee.ecommercesystem.shopsystem.order.domain.Order;
-import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

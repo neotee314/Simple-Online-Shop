@@ -30,7 +30,7 @@ public class ClientMapper {
         }
 
         return new ClientResponseDto(
-                client.getId() != null ? client.getId() : null,
+                client.getId() != null ? client.getId().getId() : null,
                 client.getName(),
                 client.getEmail() != null ? client.getEmail().getEmailAddress() : null,
                 client.getHomeAddress() != null ? client.getHomeAddress().getStreet() : null,

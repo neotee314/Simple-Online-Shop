@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.anticorruption;
+package com.neotee.ecommercesystem.shopsystem.product.application.api;
 
 import com.neotee.ecommercesystem.domainprimitives.Money;
 import com.neotee.ecommercesystem.domainprimitives.ProductId;
@@ -67,10 +67,5 @@ public class MyFantasticProductCatalogService implements ProductCatalogUseCases 
     @Override
     public void deleteProductCatalog() {
         productApplicationService.deleteAllProducts();
-    }
-
-    @Override
-    public List<Product> getall() {
-        return productApplicationService.getAllProducts();
     }
 }

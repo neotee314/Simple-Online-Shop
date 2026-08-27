@@ -2,7 +2,7 @@ package com.neotee.ecommercesystem.regression;
 
 
 import com.neotee.ecommercesystem.exceptions.ShopException;
-import com.neotee.ecommercesystem.ClientMasterDataInitializer;
+import com.neotee.ecommercesystem.helper.ClientMasterDataInitializer;
 import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
 import com.neotee.ecommercesystem.usecases.ProductCatalogUseCases;
 import com.neotee.ecommercesystem.usecases.ShoppingBasketUseCases;
@@ -10,17 +10,17 @@ import com.neotee.ecommercesystem.usecases.StorageUnitUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
-import com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer;
+import com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer.InvalidReason.EMPTY;
-import static com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer.InvalidReason.NULL;
-import static com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer.THING_DATA;
-import static com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer.STORAGE_UNIT_ID;
-import static com.neotee.ecommercesystem.ClientMasterDataInitializer.CLIENT_EMAIL;
+import static com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer.InvalidReason.EMPTY;
+import static com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer.InvalidReason.NULL;
+import static com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer.THING_DATA;
+import static com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer.STORAGE_UNIT_ID;
+import static com.neotee.ecommercesystem.helper.ClientMasterDataInitializer.CLIENT_EMAIL;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;

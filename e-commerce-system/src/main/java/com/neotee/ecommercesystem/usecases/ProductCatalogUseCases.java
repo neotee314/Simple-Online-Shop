@@ -2,7 +2,6 @@ package com.neotee.ecommercesystem.usecases;
 
 
 import com.neotee.ecommercesystem.exceptions.ShopException;
-import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;
 
 import java.util.List;
@@ -62,6 +61,4 @@ public interface ProductCatalogUseCases {
      * stocks, all the reservations in shopping baskets and all the orders. Intended for testing purposes.
      */
     public void deleteProductCatalog();
-
-    List<Product> getall();
 }

@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.anticorruption;
+package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.api;
 
 import com.neotee.ecommercesystem.domainprimitives.OrderId;
 import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;

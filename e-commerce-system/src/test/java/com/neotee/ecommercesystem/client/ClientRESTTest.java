@@ -1,11 +1,11 @@
 package com.neotee.ecommercesystem.client;
 
-import com.neotee.ecommercesystem.FactoryMethodInvoker;
+import com.neotee.ecommercesystem.helper.FactoryMethodInvoker;
 import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
 import com.neotee.ecommercesystem.usecases.ClientType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
-import com.neotee.ecommercesystem.ClientMasterDataInitializer;
+import com.neotee.ecommercesystem.helper.ClientMasterDataInitializer;
 import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,9 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-import static com.neotee.ecommercesystem.ClientTestHelper.CLIENT_NAME;
-import static com.neotee.ecommercesystem.ClientMasterDataInitializer.CLIENT_ADDRESS;
-import static com.neotee.ecommercesystem.ClientMasterDataInitializer.CLIENT_EMAIL;
+import static com.neotee.ecommercesystem.helper.ClientTestHelper.CLIENT_NAME;
+import static com.neotee.ecommercesystem.helper.ClientMasterDataInitializer.CLIENT_ADDRESS;
+import static com.neotee.ecommercesystem.helper.ClientMasterDataInitializer.CLIENT_EMAIL;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

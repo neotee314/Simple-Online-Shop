@@ -18,7 +18,7 @@ public final class StorageUnitComparator {
         return Comparator
                 .comparingDouble(
                         (StorageUnit unit) ->
-                                -unit.getTotalWeightOfServableItems(items)  // ✅ بر اساس وزن کل
+                                -unit.getTotalWeightOfServableItems(items)
                 )
                 .thenComparingInt(
                         unit ->

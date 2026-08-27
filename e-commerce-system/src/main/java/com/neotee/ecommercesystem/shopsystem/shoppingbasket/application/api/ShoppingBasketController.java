@@ -79,7 +79,7 @@ public class ShoppingBasketController {
     @PostMapping("/{basketId}/checkout")
     public ResponseEntity<CheckoutResponseDTO> checkout(@PathVariable UUID basketId) {
         var orderId = basketService.checkout(ShoppingBasketId.of(basketId));
-        return new ResponseEntity<>(new CheckoutResponseDTO(orderId), HttpStatus.CREATED);
+        return new ResponseEntity<>(new CheckoutResponseDTO(orderId.getId()), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Delete all baskets")

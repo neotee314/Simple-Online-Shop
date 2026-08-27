@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.anticorruption;
+package com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.api;
 
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.ProductId;

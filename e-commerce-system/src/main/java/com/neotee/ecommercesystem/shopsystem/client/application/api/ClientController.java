@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.shopsystem.client.application.controller;
+package com.neotee.ecommercesystem.shopsystem.client.application.api;
 
 import com.neotee.ecommercesystem.domainprimitives.ClientId;
 import com.neotee.ecommercesystem.domainprimitives.Email;

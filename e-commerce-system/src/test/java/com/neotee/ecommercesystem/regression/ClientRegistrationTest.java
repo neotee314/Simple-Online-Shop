@@ -3,15 +3,15 @@ package com.neotee.ecommercesystem.regression;
 import com.neotee.ecommercesystem.exceptions.ShopException;
 import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
-import com.neotee.ecommercesystem.ClientMasterDataInitializer;
+import com.neotee.ecommercesystem.helper.ClientMasterDataInitializer;
 import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static com.neotee.ecommercesystem.ClientMasterDataInitializer.*;
-import static com.neotee.ecommercesystem.FactoryMethodInvoker.instantiateEmail;
+import static com.neotee.ecommercesystem.helper.ClientMasterDataInitializer.*;
+import static com.neotee.ecommercesystem.helper.FactoryMethodInvoker.instantiateEmail;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

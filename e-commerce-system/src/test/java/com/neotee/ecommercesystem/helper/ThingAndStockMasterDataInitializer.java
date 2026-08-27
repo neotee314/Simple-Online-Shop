@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem;
+package com.neotee.ecommercesystem.helper;
 
 import com.neotee.ecommercesystem.usecases.StorageUnitUseCases;
 import com.neotee.ecommercesystem.usecases.ProductCatalogUseCases;

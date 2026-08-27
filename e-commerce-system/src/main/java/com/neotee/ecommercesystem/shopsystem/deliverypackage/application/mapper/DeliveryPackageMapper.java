@@ -6,7 +6,6 @@ import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPack
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackagePart;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -22,9 +21,9 @@ public class DeliveryPackageMapper {
                 .collect(Collectors.toList());
 
         return new DeliveryPackageResponseDTO(
-                deliveryPackage.getId(),
-                deliveryPackage.getOrder().getId(),
-                deliveryPackage.getStorageUnitId(),
+                deliveryPackage.getId().getId(),
+                deliveryPackage.getOrder().getId().getId(),
+                deliveryPackage.getStorageUnitId().getId(),
                 partDTOs,
                 deliveryPackage.getTotalQuantity(),
                 deliveryPackage.getPartCount()
@@ -37,7 +36,7 @@ public class DeliveryPackageMapper {
         }
 
         return new DeliveryPackagePartResponseDTO(
-                part.getProduct().getId(),
+                part.getProduct().getId().getId(),
                 part.getProduct().getName(),
                 part.getQuantity()
         );

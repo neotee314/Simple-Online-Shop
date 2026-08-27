@@ -1,7 +1,7 @@
 package com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto;
 
-import com.neotee.ecommercesystem.domainprimitives.OrderId;
+import java.util.UUID;
 
 public record CheckoutResponseDTO(
-    OrderId orderId
+    UUID orderId
 ) {}

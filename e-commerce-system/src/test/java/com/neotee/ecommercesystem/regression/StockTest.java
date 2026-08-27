@@ -11,13 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer;
-import com.neotee.ecommercesystem.ClientMasterDataInitializer;
+import com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer;
+import com.neotee.ecommercesystem.helper.ClientMasterDataInitializer;
 
 import java.util.*;
 
 
-import static com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer.*;
+import static com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.*;
 

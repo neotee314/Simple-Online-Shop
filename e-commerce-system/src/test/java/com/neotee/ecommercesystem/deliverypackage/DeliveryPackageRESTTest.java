@@ -1,23 +1,15 @@
 package com.neotee.ecommercesystem.deliverypackage;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.neotee.ecommercesystem.basictests.ShoppingBasketRESTHelper;
-import com.neotee.ecommercesystem.domainprimitives.OrderId;
-import com.neotee.ecommercesystem.domainprimitives.ShoppingBasketId;
-import com.neotee.ecommercesystem.restdtos.StorageUnitIdDTO;
-import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.dto.DeliveryPackageResponseDTO;
-import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.dto.DeliveryPackagePartResponseDTO;
-import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.service.DeliveryPackageApplicationService;
-import com.neotee.ecommercesystem.shopsystem.order.application.service.OrderApplicationService;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.service.ShoppingBasketApplicationService;
-import com.neotee.ecommercesystem.shopsystem.storageunit.application.service.StorageUnitApplicationService;
+import com.neotee.ecommercesystem.helper.ShoppingBasketRESTHelper;
+import com.neotee.ecommercesystem.restdtos.*;
 import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
 import com.neotee.ecommercesystem.usecases.ProductCatalogUseCases;
 import com.neotee.ecommercesystem.usecases.StorageUnitUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
-import com.neotee.ecommercesystem.ClientMasterDataInitializer;
+import com.neotee.ecommercesystem.helper.ClientMasterDataInitializer;
 import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
-import com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer;
+import com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,13 +21,13 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.*;
 
-import static com.neotee.ecommercesystem.ClientMasterDataInitializer.CLIENT_EMAIL;
-import static com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer.STORAGE_UNIT_ID;
-import static com.neotee.ecommercesystem.ThingAndStockMasterDataInitializer.THING_DATA;
+import static com.neotee.ecommercesystem.helper.ClientMasterDataInitializer.CLIENT_EMAIL;
+import static com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer.STORAGE_UNIT_ID;
+import static com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer.THING_DATA;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @SpringBootTest
 @Transactional
@@ -74,7 +66,6 @@ public class DeliveryPackageRESTTest {
         thingAndStockMasterDataInitializer.addAllThings();
         thingAndStockMasterDataInitializer.addAllStorageUnits();
         thingAndStockMasterDataInitializer.addAllStock();
-
 
         map8_11_14_quantity_2_2_2 = new HashMap<>() {{
             put((UUID) THING_DATA[8][0], 2);
@@ -159,15 +150,6 @@ public class DeliveryPackageRESTTest {
         checkDeliveryPackage(orderId, storageUnitMap);
     }
 
-    @Autowired
-    private OrderApplicationService orderApplicationService;
-    @Autowired
-    private ShoppingBasketApplicationService shoppingBasketApplicationService;
-    @Autowired
-    private StorageUnitApplicationService storageUnitApplicationService;
-    @Autowired
-    private DeliveryPackageApplicationService deliveryPackageApplicationService;
-
     @Test
     public void testStorageUnitWithEnoughCapacityWins() throws Exception {
         EmailType clientEmail3 = CLIENT_EMAIL[3];
@@ -180,16 +162,7 @@ public class DeliveryPackageRESTTest {
         shoppingBasketRESTHelper.addThingToShoppingBasket(
                 shoppingBasketId3, (UUID) THING_DATA[14][0], 4);
 
-        var shb = shoppingBasketApplicationService.getBasketById(ShoppingBasketId.of(shoppingBasketId3));
-        var storageb = storageUnitApplicationService.findAll();
         UUID orderId = shoppingBasketRESTHelper.checkout(shoppingBasketId3);
-
-        var sha = shoppingBasketApplicationService.getBasketById(ShoppingBasketId.of(shoppingBasketId3));
-        var order = orderApplicationService.findById(OrderId.of(orderId));
-
-        var storage = storageUnitApplicationService.findAll();
-        var del = deliveryPackageApplicationService.findByOrderId(OrderId.of(orderId));
-
 
         Map<UUID, Map<UUID, Integer>> storageUnitMap = Map.of(
                 STORAGE_UNIT_ID[7], map8_11_14_quantity_3_3_4
@@ -212,58 +185,6 @@ public class DeliveryPackageRESTTest {
         UUID orderId = shoppingBasketRESTHelper.checkout(shoppingBasketId6);
 
         Map<UUID, Map<UUID, Integer>> storageUnitMap = Map.of(STORAGE_UNIT_ID[5], map10_12_quantity_1_1, STORAGE_UNIT_ID[4], map11_quantity_1);
-
-        System.out.println("\n================ STORAGE UNIT DEBUG ================");
-
-        System.out.println("Storage Units:");
-
-        for (int i = 0; i < ThingAndStockMasterDataInitializer.STORAGE_UNIT_NUMOF; i++) {
-            UUID storageUnitId = ThingAndStockMasterDataInitializer.STORAGE_UNIT_ID[i];
-
-            System.out.println(
-                    "StorageUnit[" + i + "]"
-                            + " ID=" + storageUnitId
-                            + " address=" + ThingAndStockMasterDataInitializer.STORAGE_UNIT_ADDRESS[i]
-            );
-        }
-
-        System.out.println("\nRelevant products:");
-
-        for (int thingIndex : new int[]{10, 11, 12}) {
-            UUID productId = (UUID) ThingAndStockMasterDataInitializer.THING_DATA[thingIndex][0];
-            String productName = (String) ThingAndStockMasterDataInitializer.THING_DATA[thingIndex][1];
-            String distribution = (String) ThingAndStockMasterDataInitializer.THING_DATA[thingIndex][6];
-
-            Integer[] stock =
-                    ThingAndStockMasterDataInitializer.THING_STOCK.get(productId);
-
-            System.out.println(
-                    "Product[" + thingIndex + "]"
-                            + " ID=" + productId
-                            + " name=" + productName
-                            + " distribution=" + distribution
-                            + " stock=" + Arrays.toString(stock)
-            );
-        }
-
-        System.out.println("\nExpected mapping:");
-
-        storageUnitMap.forEach((storageUnitId, products) -> {
-            System.out.println("StorageUnit ID=" + storageUnitId);
-            System.out.println(
-                    "  index="
-                            + thingAndStockMasterDataInitializer.findStorageUnitIndex(storageUnitId)
-            );
-
-            products.forEach((productId, quantity) ->
-                    System.out.println(
-                            "  product=" + productId
-                                    + " quantity=" + quantity
-                    )
-            );
-        });
-
-        System.out.println("====================================================\n");
 
         checkDeliveryPackage(orderId, storageUnitMap);
     }
@@ -309,118 +230,8 @@ public class DeliveryPackageRESTTest {
         checkDeliveryPackage(orderId, storageUnitMap);
     }
 
-    public void checkDeliveryPackage(
-            UUID orderId,
-            Map<UUID, Map<UUID, Integer>> storageUnitMap
-    ) throws Exception {
-
-        String deliveryPackageUri =
-                "/api/v1/deliveryPackages?orderId=" + orderId;
-
-        ResultActions resultActions = mockMvc.perform(get(deliveryPackageUri))
-                .andExpect(status().isOk());
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = resultActions.andReturn()
-                .getResponse()
-                .getContentAsString();
-
-        DeliveryPackageResponseDTO[] response =
-                objectMapper.readValue(json, DeliveryPackageResponseDTO[].class);
-
-        System.out.println("\n================ DELIVERY PACKAGE DEBUG ================");
-        System.out.println("Order ID: " + orderId);
-
-        System.out.println("\nEXPECTED storageUnitMap:");
-        storageUnitMap.forEach((storageUnitId, products) -> {
-            System.out.println("  StorageUnit ID: " + storageUnitId);
-            products.forEach((productId, quantity) ->
-                    System.out.println(
-                            "      Product ID: " + productId +
-                                    " | quantity: " + quantity
-                    )
-            );
-        });
-
-        System.out.println("\nACTUAL response:");
-        for (DeliveryPackageResponseDTO dto : response) {
-
-            UUID actualStorageUnitId = dto.storageUnitId().getId();
-
-            System.out.println("  DeliveryPackage ID: " + dto.id().getId());
-            System.out.println("  Order ID: " + dto.orderId().getId());
-            System.out.println("  StorageUnit ID: " + actualStorageUnitId);
-            System.out.println("  Total quantity: " + dto.totalQuantity());
-            System.out.println("  Part count: " + dto.partCount());
-
-            for (DeliveryPackagePartResponseDTO part : dto.parts()) {
-                System.out.println(
-                        "      Product ID: " + part.productId().getId() +
-                                " | quantity: " + part.quantity() +
-                                " | name: " + part.productName()
-                );
-            }
-        }
-
-        System.out.println("\nEXPECTED StorageUnit IDs:");
-        storageUnitMap.keySet()
-                .forEach(id -> System.out.println("  " + id));
-
-        System.out.println("\nACTUAL StorageUnit IDs:");
-        Arrays.stream(response)
-                .map(dto -> dto.storageUnitId().getId())
-                .forEach(id -> System.out.println("  " + id));
-
-        System.out.println("\n========================================================\n");
-
-        assertEquals(storageUnitMap.size(), response.length);
-
-        for (DeliveryPackageResponseDTO dto : response) {
-
-            UUID storageUnitId = dto.storageUnitId().getId();
-
-            System.out.println(
-                    "Checking actual StorageUnit ID: " + storageUnitId
-            );
-
-            Map<UUID, Integer> expectedMap =
-                    storageUnitMap.get(storageUnitId);
-
-            System.out.println(
-                    "Expected map for this StorageUnit: " + expectedMap
-            );
-
-            assertNotNull(expectedMap);
-
-            List<DeliveryPackagePartResponseDTO> parts = dto.parts();
-
-            assertEquals(expectedMap.size(), parts.size());
-
-            for (Map.Entry<UUID, Integer> entry : expectedMap.entrySet()) {
-
-                UUID thingId = entry.getKey();
-                Integer expectedQuantity = entry.getValue();
-
-                boolean found = false;
-
-                for (DeliveryPackagePartResponseDTO part : parts) {
-
-                    UUID actualThingId = part.productId().getId();
-
-                    if (actualThingId.equals(thingId)) {
-                        assertEquals(expectedQuantity, part.quantity());
-                        found = true;
-                        break;
-                    }
-                }
-
-                assertTrue(found);
-            }
-        }
-    }
-    public void checkDeliveryPackaged(UUID orderId,
-                                     Map<UUID, Map<UUID, Integer>> storageUnitMap) throws Exception {
-        String deliveryPackageUri = "/api/v1/deliveryPackages?orderId=" + orderId.toString();
+    public void checkDeliveryPackage(UUID orderId, Map<UUID, Map<UUID, Integer>> storageUnitMap) throws Exception {
+        String deliveryPackageUri = "/api/v1/deliveryPackages?orderId=" + orderId;
         ResultActions resultActions = mockMvc.perform(get(deliveryPackageUri))
                 .andExpect(status().isOk());
 
@@ -431,7 +242,7 @@ public class DeliveryPackageRESTTest {
         assertEquals(storageUnitMap.size(), response.length);
 
         for (DeliveryPackageResponseDTO dto : response) {
-            UUID storageUnitId = dto.storageUnitId().getId();
+            UUID storageUnitId = dto.storageUnitId();
             Map<UUID, Integer> expectedMap = storageUnitMap.get(storageUnitId);
             assertNotNull(expectedMap);
 
@@ -444,7 +255,7 @@ public class DeliveryPackageRESTTest {
 
                 boolean found = false;
                 for (DeliveryPackagePartResponseDTO part : parts) {
-                    UUID actualThingId = part.productId().getId();
+                    UUID actualThingId = part.productId();
                     if (actualThingId.equals(thingId)) {
                         assertEquals(expectedQuantity, part.quantity());
                         found = true;

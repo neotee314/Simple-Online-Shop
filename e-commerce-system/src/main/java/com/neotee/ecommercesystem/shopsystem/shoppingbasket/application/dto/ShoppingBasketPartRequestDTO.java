@@ -11,5 +11,5 @@ public record ShoppingBasketPartRequestDTO(
     UUID productId,
     
     @Positive(message = "Quantity muss größer als 0 sein")
-    int quantity
+    Integer quantity
 ) {}
