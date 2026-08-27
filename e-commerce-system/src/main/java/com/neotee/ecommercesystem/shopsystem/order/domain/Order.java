@@ -7,7 +7,7 @@ import com.neotee.ecommercesystem.domainprimitives.ZipCode;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
 import com.neotee.ecommercesystem.shopsystem.core.AggregateRoot;
-import com.neotee.ecommercesystem.shopsystem.order.domain.event.OrderCreatedEvent;
+import com.neotee.ecommercesystem.event.OrderCreatedEvent;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

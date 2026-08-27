@@ -25,13 +25,10 @@ public class ShoppingBasketController {
     private final ShoppingBasketApplicationService basketService;
     private final ShoppingBasketMapper basketMapper;
 
-    @GetMapping
-    public ResponseEntity<Void> getWithoutParams() {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();
-    }
 
-    @GetMapping(params = "clientId")
-    public ResponseEntity<ShoppingBasketResponseDTO> getBasketByClientId(@RequestParam UUID clientId) {
+    @GetMapping
+    public ResponseEntity<ShoppingBasketResponseDTO> getBasketByClientId(@RequestParam(required = false) UUID clientId) {
+        if (clientId == null) return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();
         var basket = basketService.getBasketByClientId(ClientId.of(clientId));
         return ResponseEntity.ok(basketMapper.toResponseDTO(basket));
     }

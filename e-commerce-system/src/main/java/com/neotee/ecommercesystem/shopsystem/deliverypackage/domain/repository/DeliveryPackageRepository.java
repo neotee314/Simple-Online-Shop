@@ -1,8 +1,9 @@
-package com.neotee.ecommercesystem.shopsystem.deliverypackage.domain;
+package com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.repository;
 
 import com.neotee.ecommercesystem.domainprimitives.DeliveryPackageId;
 import com.neotee.ecommercesystem.domainprimitives.OrderId;
 import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;
+import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.model.DeliveryPackage;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

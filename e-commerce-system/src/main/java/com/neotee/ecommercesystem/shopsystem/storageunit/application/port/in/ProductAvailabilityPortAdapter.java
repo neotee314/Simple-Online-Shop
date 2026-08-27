@@ -1,8 +1,8 @@
-package com.neotee.ecommercesystem.shopsystem.storageunit.application.service;
+package com.neotee.ecommercesystem.shopsystem.storageunit.application.port.in;
 
 import com.neotee.ecommercesystem.shopsystem.product.application.port.out.ProductAvailabilityPort;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
-import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnitRepository;
+import com.neotee.ecommercesystem.shopsystem.storageunit.domain.repository.StorageUnitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

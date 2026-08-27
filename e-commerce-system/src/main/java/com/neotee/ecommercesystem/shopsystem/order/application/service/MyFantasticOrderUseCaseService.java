@@ -1,8 +1,7 @@
-package com.neotee.ecommercesystem.shopsystem.order.application.api;
+package com.neotee.ecommercesystem.shopsystem.order.application.service;
 
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
-import com.neotee.ecommercesystem.shopsystem.order.application.service.OrderApplicationService;
 import com.neotee.ecommercesystem.usecases.OrderUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import jakarta.transaction.Transactional;

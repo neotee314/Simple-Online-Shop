@@ -4,9 +4,9 @@ import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
 import com.neotee.ecommercesystem.domainprimitives.ProductId;
 import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
-import com.neotee.ecommercesystem.shopsystem.storageunit.application.port.out.FindProductForStorageUnitPort;
-import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnit;
-import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnitRepository;
+import com.neotee.ecommercesystem.shopsystem.product.application.service.ProductApplicationService;
+import com.neotee.ecommercesystem.shopsystem.storageunit.domain.model.StorageUnit;
+import com.neotee.ecommercesystem.shopsystem.storageunit.domain.repository.StorageUnitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.util.List;
 public class StorageUnitApplicationService {
 
     private final StorageUnitRepository storageUnitRepository;
-    private final FindProductForStorageUnitPort findProductPort;
+    private final ProductApplicationService productApplicationService;
     private final ApplicationEventPublisher eventPublisher;
 
     public StorageUnit findById(StorageUnitId storageUnitId) {
@@ -42,7 +42,7 @@ public class StorageUnitApplicationService {
 
     public void addToStock(StorageUnitId storageUnitId, ProductId productId, Integer quantity) {
         var storageUnit = findById(storageUnitId);
-        var product = findProductPort.findById(productId);
+        var product = productApplicationService.findById(productId);
         storageUnit.addToStock(product, quantity);
         storageUnitRepository.save(storageUnit);
     }
@@ -62,7 +62,7 @@ public class StorageUnitApplicationService {
 
     public void changeStockTo(StorageUnitId storageUnitId, ProductId productId, Integer newQuantity) {
         var storageUnit = findById(storageUnitId);
-        var product = findProductPort.findById(productId);
+        var product = productApplicationService.findById(productId);
         storageUnit.changeStockTo(product, newQuantity);
         storageUnitRepository.save(storageUnit);
         publishEvents(storageUnit);

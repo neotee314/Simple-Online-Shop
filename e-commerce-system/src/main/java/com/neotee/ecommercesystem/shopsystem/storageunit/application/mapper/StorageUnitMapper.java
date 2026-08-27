@@ -2,8 +2,8 @@ package com.neotee.ecommercesystem.shopsystem.storageunit.application.mapper;
 
 import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.StockLevelResponseDTO;
 import com.neotee.ecommercesystem.shopsystem.storageunit.application.dto.StorageUnitResponseDTO;
-import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StockLevel;
-import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnit;
+import com.neotee.ecommercesystem.shopsystem.storageunit.domain.model.StockLevel;
+import com.neotee.ecommercesystem.shopsystem.storageunit.domain.model.StorageUnit;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;

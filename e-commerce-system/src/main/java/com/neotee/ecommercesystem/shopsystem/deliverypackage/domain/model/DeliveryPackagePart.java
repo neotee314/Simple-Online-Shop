@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.shopsystem.deliverypackage.domain;
+package com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.model;
 
 import com.neotee.ecommercesystem.shopsystem.core.AbstractEntity;
 import com.neotee.ecommercesystem.domainprimitives.DeliveryPackagePartId;

@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.event;
+package com.neotee.ecommercesystem.event;
 
 import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;

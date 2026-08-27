@@ -6,16 +6,15 @@ import com.neotee.ecommercesystem.domainprimitives.ProductId;
 import com.neotee.ecommercesystem.domainprimitives.ShoppingBasketId;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.exceptions.EntityNotFoundException;
+import com.neotee.ecommercesystem.shopsystem.client.application.service.ClientApplicationService;
 import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
+import com.neotee.ecommercesystem.shopsystem.product.application.service.ProductApplicationService;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.port.out.CreateOrderPort;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.port.out.FindClientPort;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasket;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketPart;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketRepository;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.port.out.FindProductForShoppingBasketPort;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.port.out.StockPort;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.event.CheckoutEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,9 +27,9 @@ public class ShoppingBasketApplicationService {
 
     private final ShoppingBasketRepository basketRepository;
     private final CreateOrderPort createOrderPort;
-    private final FindProductForShoppingBasketPort findProductPort;
+    private final ProductApplicationService productApplicationService;
     private final StockPort stockPort;
-    private final FindClientPort findClientPort;
+    private final ClientApplicationService clientApplicationService;
 
     public ShoppingBasket getBasketByClient(Client client) {
         return findOrCreateBasket(client);
@@ -39,7 +38,7 @@ public class ShoppingBasketApplicationService {
     public ShoppingBasket getBasketByClientId(ClientId clientId) {
         return basketRepository.findByClientId(clientId)
                 .orElseGet(() -> {
-                    var client = findClientPort.findById(clientId);
+                    var client = clientApplicationService.findById(clientId);
                     var newBasket = ShoppingBasket.create(client);
                     return basketRepository.save(newBasket);
                 });
@@ -47,7 +46,7 @@ public class ShoppingBasketApplicationService {
 
     public ShoppingBasket addItem(Client client, Product product, Integer quantity) {
         var basket = findOrCreateBasket(client);
-        var existingProduct = findProductPort.findById(product.getId());
+        var existingProduct = productApplicationService.findById(product.getId());
         var availableStock = stockPort.getAvailableStock(product.getId());
         basket.addItem(existingProduct, quantity, availableStock);
         return basketRepository.save(basket);
@@ -55,7 +54,7 @@ public class ShoppingBasketApplicationService {
 
     public ShoppingBasket addItem(ShoppingBasketId basketId, ProductId productId, Integer quantity) {
         var basket = findBasketById(basketId);
-        var product = findProductPort.findById(productId);
+        var product = productApplicationService.findById(productId);
         var availableStock = stockPort.getAvailableStock(productId);
         basket.addItem(product, quantity, availableStock);
         return basketRepository.save(basket);
@@ -70,14 +69,14 @@ public class ShoppingBasketApplicationService {
 
     public ShoppingBasket removeItem(ShoppingBasketId basketId, ProductId productId) {
         var basket = findBasketById(basketId);
-        var product = findProductPort.findById(productId);
+        var product = productApplicationService.findById(productId);
         basket.removeItem(product);
         return basketRepository.save(basket);
     }
 
     public ShoppingBasket removeItemWithQuantity(ShoppingBasketId basketId, ProductId productId, int quantity) {
         var basket = findBasketById(basketId);
-        var product = findProductPort.findById(productId);
+        var product = productApplicationService.findById(productId);
         basket.removeItem(product, quantity);
         return basketRepository.save(basket);
     }

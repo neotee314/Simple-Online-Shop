@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.shopsystem.deliverypackage.domain;
+package com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.model;
 
 import com.neotee.ecommercesystem.shopsystem.core.AggregateRoot;
 import com.neotee.ecommercesystem.domainprimitives.DeliveryPackageId;
@@ -6,7 +6,7 @@ import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.order.domain.Order;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
-import com.neotee.ecommercesystem.shopsystem.storageunit.domain.StorageUnit;
+import com.neotee.ecommercesystem.shopsystem.storageunit.domain.model.StorageUnit;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -2,8 +2,8 @@ package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.mapper
 
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.dto.DeliveryPackagePartResponseDTO;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.dto.DeliveryPackageResponseDTO;
-import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackage;
-import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.DeliveryPackagePart;
+import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.model.DeliveryPackage;
+import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.model.DeliveryPackagePart;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;

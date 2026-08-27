@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.shopsystem.storageunit.domain;
+package com.neotee.ecommercesystem.shopsystem.storageunit.domain.model;
 
 import com.neotee.ecommercesystem.shopsystem.core.AbstractEntity;
 import com.neotee.ecommercesystem.domainprimitives.ProductId;

@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.shopsystem.order.domain.event;
+package com.neotee.ecommercesystem.event;
 
 import com.neotee.ecommercesystem.domainprimitives.OrderId;
 
