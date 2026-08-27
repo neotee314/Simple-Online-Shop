@@ -1,9 +1,9 @@
-package com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.service;
+package com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.port.in;
 
 import com.neotee.ecommercesystem.shopsystem.product.application.port.out.ProductReservationPort;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasket;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketRepository;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.model.ShoppingBasket;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.repository.ShoppingBasketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -1,5 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.model;
 
+import com.neotee.ecommercesystem.domainprimitives.ProductId;
 import com.neotee.ecommercesystem.shopsystem.core.AggregateRoot;
 import com.neotee.ecommercesystem.domainprimitives.DeliveryPackageId;
 import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;
@@ -107,12 +108,9 @@ public class DeliveryPackage extends AggregateRoot<DeliveryPackageId> {
     }
 
 
-    public Map<UUID, Integer> getItemsAsUuidMap() {
+    public Map<ProductId, Integer> getItems() {
         return parts.stream()
-                .collect(Collectors.toMap(
-                        part -> part.getProduct().getId().getId(),
-                        DeliveryPackagePart::getQuantity
-                ));
+                .collect(Collectors.toMap(part -> part.getProduct().getId(), DeliveryPackagePart::getQuantity));
     }
 
     private DeliveryPackagePart findPartByProduct(Product product) {

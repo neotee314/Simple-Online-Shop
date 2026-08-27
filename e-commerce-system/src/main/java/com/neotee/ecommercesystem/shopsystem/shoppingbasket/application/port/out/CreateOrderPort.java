@@ -7,11 +7,5 @@ import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import java.util.Map;
 
 public interface CreateOrderPort {
-    OrderId createOrder(Client client, Product product, Integer quantity);
-
-    void addOrderPart(OrderId orderId, Client client, Product product, Integer quantity);
-
-    void submitOrder(OrderId orderId);
-
-    OrderId createOrderWithItems(Client client, Map<Product, Integer> items);
+    OrderId createOrder(Client client, Map<Product, Integer> items);
 }

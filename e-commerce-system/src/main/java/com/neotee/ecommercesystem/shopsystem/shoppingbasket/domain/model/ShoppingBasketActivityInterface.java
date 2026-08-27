@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain;
+package com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.model;
 
 
 import java.util.UUID;

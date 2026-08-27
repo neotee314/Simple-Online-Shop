@@ -1,6 +1,7 @@
 package com.neotee.ecommercesystem.shoppingbasket;
 
 
+import com.neotee.ecommercesystem.config.TestContainersConfiguration;
 import com.neotee.ecommercesystem.helper.ShoppingBasketRESTHelper;
 import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
 import com.neotee.ecommercesystem.usecases.ProductCatalogUseCases;
@@ -12,6 +13,7 @@ import com.neotee.ecommercesystem.helper.ClientMasterDataInitializer;
 import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
 import com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
+@Import(TestContainersConfiguration.class)
 public class ShoppingBasketRESTTest {
     @Autowired
     private ClientRegistrationUseCases clientRegistrationUseCases;

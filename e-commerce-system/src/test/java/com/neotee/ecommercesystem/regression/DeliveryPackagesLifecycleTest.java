@@ -1,5 +1,6 @@
 package com.neotee.ecommercesystem.regression;
 
+import com.neotee.ecommercesystem.config.TestContainersConfiguration;
 import com.neotee.ecommercesystem.exceptions.ShopException;
 import com.neotee.ecommercesystem.usecases.*;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.neotee.ecommercesystem.helper.ClientMasterDataInitializer;
 import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
 import com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer;
+import org.springframework.context.annotation.Import;
 
 
 import java.util.List;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * an order is not delivered twice.
  */
 @SpringBootTest
+@Import(TestContainersConfiguration.class)
 public class DeliveryPackagesLifecycleTest {
     @Autowired
     private ClientRegistrationUseCases clientRegistrationUseCases;

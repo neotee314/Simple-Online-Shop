@@ -2,8 +2,8 @@ package com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.mapper;
 
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.ShoppingBasketPartResponseDTO;
 import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.dto.ShoppingBasketResponseDTO;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasket;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketPart;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.model.ShoppingBasket;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.model.ShoppingBasketPart;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

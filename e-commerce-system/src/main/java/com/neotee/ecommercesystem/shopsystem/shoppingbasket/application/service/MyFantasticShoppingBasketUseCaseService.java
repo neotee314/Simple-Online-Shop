@@ -1,11 +1,10 @@
-package com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.api;
+package com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.service;
 
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.ProductId;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.client.application.service.ClientApplicationService;
 import com.neotee.ecommercesystem.shopsystem.product.application.service.ProductApplicationService;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.service.ShoppingBasketApplicationService;
 import com.neotee.ecommercesystem.usecases.ShoppingBasketUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.MoneyType;

@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain;
+package com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.model;
 
 import com.neotee.ecommercesystem.shopsystem.core.AggregateRoot;
 import com.neotee.ecommercesystem.domainprimitives.BasketState;
@@ -10,7 +10,6 @@ import com.neotee.ecommercesystem.exceptions.InsufficientStockException;
 import com.neotee.ecommercesystem.exceptions.ItemNotInBasketException;
 import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
-import com.neotee.ecommercesystem.shopsystem.event.CheckoutEvent;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -96,18 +95,14 @@ public class ShoppingBasket extends AggregateRoot<ShoppingBasketId> {
         updateBasketState();
     }
 
-    public CheckoutEvent checkout(Client client) {
-        if (parts.isEmpty()) throw new ItemNotInBasketException("ShoppingBasket", "Warenkorb ist leer.");
+    public List<ShoppingBasketPart> checkout() {
+        if (parts.isEmpty())
+            throw new ItemNotInBasketException("ShoppingBasket", "Shopping basket is empty.");
 
-
-        var items = new HashMap<Product, Integer>();
-        for (var part : parts) {
-            var product = part.getProduct();
-            items.put(product, part.getQuantity());
-        }
-
+        var checkedOutParts = new ArrayList<>(parts);
         clear();
-        return new CheckoutEvent(client, items);
+
+        return checkedOutParts;
     }
 
     public void removeItem(Product product) {

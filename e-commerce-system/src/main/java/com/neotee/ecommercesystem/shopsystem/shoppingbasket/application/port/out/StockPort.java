@@ -1,9 +1,7 @@
 package com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.port.out;
 
-import com.neotee.ecommercesystem.domainprimitives.ProductId;
+import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 
 public interface StockPort {
-    void decreaseStock(ProductId productId, int quantity);
-    boolean hasEnoughStock(ProductId productId, int quantity);
-    int getAvailableStock(ProductId productId);
+    int getAvailableStock(Product productId);
 }

@@ -1,11 +1,11 @@
 package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.service;
 
 import com.neotee.ecommercesystem.domainprimitives.OrderId;
+import com.neotee.ecommercesystem.domainprimitives.ProductId;
 import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;
 import com.neotee.ecommercesystem.exceptions.EntityNotFoundException;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.model.DeliveryPackage;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.repository.DeliveryPackageRepository;
-import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.service.DeliveryPackageDomainService;
 import com.neotee.ecommercesystem.shopsystem.order.application.service.OrderApplicationService;
 import com.neotee.ecommercesystem.shopsystem.storageunit.application.service.StorageUnitApplicationService;
 import com.neotee.ecommercesystem.shopsystem.storageunit.domain.model.StorageUnit;
@@ -21,24 +21,23 @@ public class DeliveryPackageApplicationService {
     private final DeliveryPackageRepository deliveryPackageRepository;
     private final OrderApplicationService orderApplicationService;
     private final StorageUnitApplicationService storageUnitApplicationService;
-    private final DeliveryPackageDomainService domainService;
+    private final DeliveryPackageAllocationService domainService;
 
-    public List<DeliveryPackage> createDeliveryPackages(OrderId orderId) {
+    public void createDeliveryPackages(OrderId orderId) {
         var order = orderApplicationService.findById(orderId);
         var storageUnits = storageUnitApplicationService.findAll();
-        var packages = domainService.allocate(order, storageUnits);
+        var packages = domainService.allocateDeliveryPackageToOrder(order, storageUnits);
 
         deliveryPackageRepository.saveAll(packages);
 
-        return packages;
     }
 
-    public Map<UUID, Integer> getItemsForOrderAndStorageUnitAsUuidMap(OrderId orderId, StorageUnitId storageUnitId) {
+    public Map<ProductId, Integer> getItemsForOrderAndStorageUnit(OrderId orderId, StorageUnitId storageUnitId) {
         return deliveryPackageRepository.findByOrderId(orderId)
                 .stream()
                 .filter(p -> p.getStorageUnit().getId().equals(storageUnitId))
                 .findFirst()
-                .map(DeliveryPackage::getItemsAsUuidMap)
+                .map(DeliveryPackage::getItems)
                 .orElseThrow(() -> new EntityNotFoundException("DeliveryPackageApplicationService", "Lieferpaket nicht gefunden."));
     }
 
@@ -59,27 +58,14 @@ public class DeliveryPackageApplicationService {
                 .toList();
     }
 
-    public List<DeliveryPackage> findByOrderId(
-            OrderId orderId
-    ) {
+    public List<DeliveryPackage> findByOrderId(OrderId orderId) {
         return deliveryPackageRepository.findByOrderId(orderId);
     }
 
-    public DeliveryPackage findByOrderIdAndStorageUnitId(
-            OrderId orderId,
-            StorageUnitId storageUnitId
-    ) {
+    public DeliveryPackage findByOrderIdAndStorageUnitId(OrderId orderId, StorageUnitId storageUnitId) {
         return deliveryPackageRepository
-                .findByOrderIdAndStorageUnitId(
-                        orderId,
-                        storageUnitId
-                )
-                .orElseThrow(() ->
-                        new EntityNotFoundException(
-                                "DeliveryPackageApplicationService",
-                                "Lieferpaket nicht gefunden."
-                        )
-                );
+                .findByOrderIdAndStorageUnitId(orderId, storageUnitId)
+                .orElseThrow(() -> new EntityNotFoundException("DeliveryPackageApplicationService", "Lieferpaket nicht gefunden."));
     }
 
     public void deleteAllDeliveryPackages() {

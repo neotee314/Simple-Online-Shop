@@ -1,6 +1,7 @@
 package com.neotee.ecommercesystem.regression;
 
 
+import com.neotee.ecommercesystem.config.TestContainersConfiguration;
 import com.neotee.ecommercesystem.exceptions.ShopException;
 import com.neotee.ecommercesystem.helper.ClientMasterDataInitializer;
 import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
 import static com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer.InvalidReason.EMPTY;
 import static com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer.InvalidReason.NULL;
@@ -28,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @SpringBootTest
+@Import(TestContainersConfiguration.class)
 public class ProductCatalogTest {
     @Autowired
     private ClientRegistrationUseCases clientRegistrationUseCases;

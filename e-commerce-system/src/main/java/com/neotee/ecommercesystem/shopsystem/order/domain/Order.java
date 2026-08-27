@@ -7,7 +7,7 @@ import com.neotee.ecommercesystem.domainprimitives.ZipCode;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
 import com.neotee.ecommercesystem.shopsystem.core.AggregateRoot;
-import com.neotee.ecommercesystem.shopsystem.event.OrderCreatedEvent;
+import com.neotee.ecommercesystem.events.OrderCreatedEvent;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -92,29 +92,6 @@ public class Order extends AggregateRoot<OrderId> {
         return client != null ? client.getEmail() : null;
     }
 
-    public void addOrderParts(Map<Product, Integer> partsWithQuantity) {
-        if (partsWithQuantity == null || partsWithQuantity.isEmpty()) {
-            throw new DomainValidationException("partsWithQuantity", "Parts mit Quantity darf nicht leer sein.");
-        }
-        if (status != OrderStatus.PENDING) {
-            throw new DomainValidationException("status", "Kann nur zu ausstehenden Bestellungen Artikel hinzufügen.");
-        }
-
-        for (Map.Entry<Product, Integer> entry : partsWithQuantity.entrySet()) {
-            Product product = entry.getKey();
-            Integer quantity = entry.getValue();
-
-            if (product == null) {
-                throw new DomainValidationException("product", "Product darf nicht null sein.");
-            }
-            if (quantity == null || quantity <= 0) {
-                throw new DomainValidationException("quantity", "Quantity muss größer als 0 sein.");
-            }
-
-            OrderPart part = OrderPart.create(product, quantity);
-            addOrderPart(part);
-        }
-    }
 
     public void addOrderPart(OrderPart newPart) {
         if (newPart == null) {
@@ -137,35 +114,6 @@ public class Order extends AggregateRoot<OrderId> {
         this.orderParts.add(newPart);
     }
 
-    public void removeOrderPart(OrderPart part) {
-        if (part == null) {
-            throw new DomainValidationException("orderPart", "OrderPart darf nicht null sein.");
-        }
-        if (status != OrderStatus.PENDING) {
-            throw new DomainValidationException("status", "Kann nur von ausstehenden Bestellungen Artikel entfernen.");
-        }
-        orderParts.remove(part);
-    }
-
-    public void updateOrderPartQuantity(Product product, int newQuantity) {
-        if (product == null) {
-            throw new DomainValidationException("product", "Product darf nicht null sein.");
-        }
-        if (newQuantity <= 0) {
-            throw new DomainValidationException("quantity", "Quantity muss größer als 0 sein.");
-        }
-        if (status != OrderStatus.PENDING) {
-            throw new DomainValidationException("status", "Kann nur bei ausstehenden Bestellungen die Menge ändern.");
-        }
-
-        for (OrderPart part : orderParts) {
-            if (part.getProduct().getId().equals(product.getId())) {
-                part.setOrderQuantity(newQuantity);
-                return;
-            }
-        }
-        throw new DomainValidationException("product", "Product nicht in der Bestellung gefunden.");
-    }
 
     public void submit() {
         if (orderParts.isEmpty()) {
@@ -192,17 +140,12 @@ public class Order extends AggregateRoot<OrderId> {
         this.status = OrderStatus.DELIVERED;
     }
 
-    public int getTotalQuantity() {
-        return orderParts.stream()
-                .mapToInt(OrderPart::getOrderQuantity)
-                .sum();
-    }
 
     public boolean isEmpty() {
         return orderParts.isEmpty();
     }
 
-    public Map<Product, Integer> getOrderLineItemsMap() {
+    public Map<Product, Integer> getOrderLine() {
         Map<Product, Integer> partsWithQuantity = new HashMap<>();
         for (OrderPart orderPart : orderParts) {
             partsWithQuantity.put(orderPart.getProduct(), orderPart.getOrderQuantity());

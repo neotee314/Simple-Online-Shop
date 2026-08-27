@@ -1,8 +1,9 @@
-package com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain;
+package com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.repository;
 
 import com.neotee.ecommercesystem.domainprimitives.ClientId;
 import com.neotee.ecommercesystem.domainprimitives.ShoppingBasketId;
 import com.neotee.ecommercesystem.shopsystem.client.domain.Client;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.model.ShoppingBasket;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

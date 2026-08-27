@@ -1,5 +1,6 @@
 package com.neotee.ecommercesystem.regression;
 
+import com.neotee.ecommercesystem.config.TestContainersConfiguration;
 import com.neotee.ecommercesystem.exceptions.ShopException;
 import com.neotee.ecommercesystem.usecases.*;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
@@ -12,6 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static com.neotee.ecommercesystem.helper.ClientMasterDataInitializer.CLIENT_EMAIL;
 import com.neotee.ecommercesystem.helper.ClientMasterDataInitializer;
 import com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer;
+import org.springframework.context.annotation.Import;
+
 import static com.neotee.ecommercesystem.helper.FactoryMethodInvoker.instantiateEmail;
 import static com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer.THING_DATA;
 import static com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer.THING_STOCK;
@@ -21,6 +24,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
+@Import(TestContainersConfiguration.class)
 public class ShoppingBasketTest {
     @Autowired
     private ClientRegistrationUseCases clientRegistrationUseCases;
@@ -32,8 +36,6 @@ public class ShoppingBasketTest {
     private StorageUnitUseCases storageUnitUseCases;
     @Autowired
     private OrderUseCases orderUseCases;
-    @Autowired
-    private DeliveryPackageUseCases deliveryPackageUseCases;
     @Autowired
     private Purgatory purgatory;
 

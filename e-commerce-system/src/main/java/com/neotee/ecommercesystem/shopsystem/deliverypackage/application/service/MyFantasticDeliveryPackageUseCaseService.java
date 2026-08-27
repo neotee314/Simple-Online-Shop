@@ -1,9 +1,8 @@
-package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.api;
+package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.service;
 
 import com.neotee.ecommercesystem.domainprimitives.OrderId;
 import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
-import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.service.DeliveryPackageApplicationService;
 import com.neotee.ecommercesystem.usecases.DeliveryPackageUseCases;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -33,17 +33,13 @@ public class MyFantasticDeliveryPackageUseCaseService
     }
 
     @Override
-    public Map<UUID, Integer> getDeliveryPackageForOrderAndStorageUnit(
-            UUID orderId,
-            UUID storageUnitId
-    ) {
+    public Map<UUID, Integer> getDeliveryPackageForOrderAndStorageUnit(UUID orderId, UUID storageUnitId) {
         validate(orderId);
         validate(storageUnitId);
 
-        return service.getItemsForOrderAndStorageUnitAsUuidMap(
-                OrderId.of(orderId),
-                StorageUnitId.of(storageUnitId)
-        );
+        return service.getItemsForOrderAndStorageUnit(
+                        OrderId.of(orderId), StorageUnitId.of(storageUnitId)).entrySet().stream()
+                .collect(Collectors.toMap(entry -> entry.getKey().getId(), Map.Entry::getValue));
     }
 
     @Override
@@ -52,11 +48,8 @@ public class MyFantasticDeliveryPackageUseCaseService
     }
 
     private void validate(UUID id) {
-        if (id == null) {
-            throw new DomainValidationException(
-                    "MyFantasticDeliveryPackageUseCaseService",
-                    "ID darf nicht null sein."
-            );
-        }
+        if (id == null)
+            throw new DomainValidationException("MyFantasticDeliveryPackageUseCaseService", "ID cannot be null.");
+
     }
 }

@@ -50,7 +50,8 @@ public class StorageUnitApplicationService {
 
     public void removeFromStock(StorageUnitId storageUnitId, ProductId productId, Integer quantity) {
         var storageUnit = findById(storageUnitId);
-        storageUnit.removeFromStock(productId, quantity);
+        var product = productApplicationService.findById(productId);
+        storageUnit.removeFromStock(product, quantity);
         storageUnitRepository.save(storageUnit);
 
         for (Object event : storageUnit.getDomainEvents()) {
@@ -75,18 +76,20 @@ public class StorageUnitApplicationService {
     }
 
     public Integer getAvailableStock(ProductId productId) {
+        var product = productApplicationService.findById(productId);
         var storageUnits = storageUnitRepository.findAll();
         if (storageUnits.isEmpty())
             throw new DomainValidationException("StorageUnitApplicationService", "No storage units available");
 
         return storageUnits.stream()
-                .mapToInt(storageUnit -> storageUnit.getAvailableStock(productId))
+                .mapToInt(storageUnit -> storageUnit.getAvailableStock(product))
                 .sum();
     }
 
     public Integer getAvailableStockInStorageUnit(StorageUnitId storageUnitId, ProductId productId) {
         var storageUnit = findById(storageUnitId);
-        return storageUnit.getAvailableStock(productId);
+        var product = productApplicationService.findById(productId);
+        return storageUnit.getAvailableStock(product);
     }
 
 

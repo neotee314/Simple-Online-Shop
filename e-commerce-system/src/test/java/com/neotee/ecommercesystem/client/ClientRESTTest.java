@@ -1,5 +1,6 @@
 package com.neotee.ecommercesystem.client;
 
+import com.neotee.ecommercesystem.config.TestContainersConfiguration;
 import com.neotee.ecommercesystem.helper.FactoryMethodInvoker;
 import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
 import com.neotee.ecommercesystem.usecases.ClientType;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
+@Import(TestContainersConfiguration.class)
 public class ClientRESTTest {
     @Autowired
     private ClientRegistrationUseCases clientRegistrationUseCases;

@@ -1,6 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.service;
 
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketActivityInterface;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.model.ShoppingBasketActivityInterface;
 
 import java.util.UUID;
 

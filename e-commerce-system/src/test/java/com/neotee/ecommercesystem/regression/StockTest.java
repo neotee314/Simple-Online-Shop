@@ -1,6 +1,7 @@
 package com.neotee.ecommercesystem.regression;
 
 
+import com.neotee.ecommercesystem.config.TestContainersConfiguration;
 import com.neotee.ecommercesystem.exceptions.ShopException;
 import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
 import com.neotee.ecommercesystem.usecases.ProductCatalogUseCases;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer;
 import com.neotee.ecommercesystem.helper.ClientMasterDataInitializer;
+import org.springframework.context.annotation.Import;
 
 import java.util.*;
 
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * This test checks the management of stock across storage units.
  */
 @SpringBootTest
+@Import(TestContainersConfiguration.class)
 public class StockTest {
     @Autowired
     private ClientRegistrationUseCases clientRegistrationUseCases;

@@ -1,4 +1,4 @@
-package com.neotee.ecommercesystem.shopsystem.storageunit.domain.service;
+package com.neotee.ecommercesystem.shopsystem.storageunit.application.service;
 
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
@@ -12,14 +12,11 @@ public final class StorageUnitComparator {
     private StorageUnitComparator() {
     }
 
-    public static Comparator<StorageUnit> forOrder(
-            Map<Product, Integer> items,
-            ZipCode clientZipCode
-    ) {
+    public static Comparator<StorageUnit> forOrder(Map<Product, Integer> items, ZipCode clientZipCode) {
         return Comparator
                 .comparingDouble(
                         (StorageUnit unit) ->
-                                -unit.getTotalWeightOfServableItems(items)
+                                -unit.getContributingItemCount(items)
                 )
                 .thenComparingInt(
                         unit ->

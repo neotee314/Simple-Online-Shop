@@ -1,21 +1,23 @@
 package com.neotee.ecommercesystem.shopsystem.storageunit.domain.model;
 
-import com.neotee.ecommercesystem.shopsystem.core.AggregateRoot;
 import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
 import com.neotee.ecommercesystem.domainprimitives.ProductId;
 import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;
 import com.neotee.ecommercesystem.domainprimitives.ZipCode;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
+import com.neotee.ecommercesystem.exceptions.EntityNotFoundException;
+import com.neotee.ecommercesystem.shopsystem.core.AggregateRoot;
+import com.neotee.ecommercesystem.events.StockChangedEvent;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
-import com.neotee.ecommercesystem.shopsystem.event.StockChangedEvent;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.*;
-
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,11 +29,7 @@ public class StorageUnit extends AggregateRoot<StorageUnitId> {
     @Embedded
     private HomeAddress address;
 
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.EAGER
-    )
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "storage_unit_id")
     private List<StockLevel> stockLevels;
 
@@ -43,414 +41,120 @@ public class StorageUnit extends AggregateRoot<StorageUnitId> {
         this.stockLevels = new ArrayList<>();
     }
 
-    protected StorageUnit(
-            StorageUnitId storageId,
-            HomeAddress address,
-            String name
-    ) {
+    protected StorageUnit(StorageUnitId storageId, HomeAddress address, String name) {
         this.id = storageId;
         this.address = address;
         this.name = name;
         this.stockLevels = new ArrayList<>();
     }
 
-    public static StorageUnit create(
-            HomeAddress address,
-            String name
-    ) {
-        if (address == null) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Address darf nicht null sein."
-            );
-        }
-
-        if (name == null || name.isBlank()) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Name darf nicht leer sein."
-            );
-        }
-
-        return new StorageUnit(
-                StorageUnitId.newId(),
-                address,
-                name
-        );
+    public static StorageUnit create(HomeAddress address, String name) {
+        validateAddress(address);
+        validateName(name);
+        return new StorageUnit(StorageUnitId.newId(), address, name);
     }
 
-    public static StorageUnit create(
-            StorageUnitId storageId,
-            HomeAddress address,
-            String name
-    ) {
-        if (storageId == null) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Storage ID darf nicht null sein."
-            );
-        }
-
-        if (address == null) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Address darf nicht null sein."
-            );
-        }
-
-        if (name == null || name.isBlank()) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Name darf nicht leer sein."
-            );
-        }
-
+    public static StorageUnit create(StorageUnitId storageId, HomeAddress address, String name) {
+        if (storageId == null) throw new DomainValidationException("StorageUnit", "Storage ID must not be null.");
+        validateAddress(address);
+        validateName(name);
         return new StorageUnit(storageId, address, name);
     }
 
-    public boolean canFulfill(Map<Product, Integer> requiredItems) {
-        if (requiredItems == null || requiredItems.isEmpty()) {
-            return false;
-        }
-
-        return requiredItems.entrySet()
-                .stream()
-                .allMatch(entry ->
-                        hasSufficienQuantity(
-                                entry.getKey(),
-                                entry.getValue()
-                        )
-                );
-    }
-
-    public Map<Product, Integer> getServableItems(
-            Map<Product, Integer> requiredItems
-    ) {
-        if (requiredItems == null || requiredItems.isEmpty()) {
-            return new LinkedHashMap<>();
-        }
-
-        var result = new LinkedHashMap<Product, Integer>();
-
-        for (var entry : requiredItems.entrySet()) {
-            var quantity = Math.min(
-                    getQuantityOf(entry.getKey()),
-                    entry.getValue()
-            );
-
-            if (quantity > 0) {
-                result.put(entry.getKey(), quantity);
-            }
-        }
-
-        return result;
-    }
-
-    public void removeFromStock(
-            Map<Product, Integer> items
-    ) {
-        if (items == null || items.isEmpty()) {
-            return;
-        }
-
-        items.forEach((product, quantity) ->
-                removeFromStock(product.getId(), quantity)
-        );
-    }
-
-    public int getContributingItemCount(
-            Map<Product, Integer> requiredItems
-    ) {
-        if (requiredItems == null || requiredItems.isEmpty()) {
-            return 0;
-        }
-
-        return (int) requiredItems.entrySet()
-                .stream()
-                .filter(entry ->
-                        hasSufficienQuantity(
-                                entry.getKey(),
-                                entry.getValue()
-                        )
-                )
+    public Integer getContributingItemCount(Map<Product, Integer> requiredItems) {
+        if (requiredItems == null || requiredItems.isEmpty()) return 0;
+        return (int) requiredItems.entrySet().stream()
+                .filter(entry -> hasSufficientQuantity(entry.getKey(), entry.getValue()))
                 .count();
     }
 
-    public int getDistanceToClient(ZipCode clientZipCode) {
+    public Integer getDistanceToClient(ZipCode clientZipCode) {
+        if (clientZipCode == null)
+            throw new DomainValidationException("StorageUnit", "Client ZIP code must not be null.");
         return clientZipCode.difference(address.getZipCode());
     }
 
-    public Integer getAvailableStock(ProductId productId) {
-        if (productId == null) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Product ID darf nicht null sein."
-            );
-        }
-
-        var stockLevel = findStockLevelByProductId(productId);
-
-        return stockLevel == null
-                ? 0
-                : stockLevel.getQuantityInStock();
-    }
-
-    public boolean contains(ProductId productId) {
-        if (productId == null) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Product ID darf nicht null sein."
-            );
-        }
-
-        return findStockLevelByProductId(productId) != null;
-    }
-
-    public boolean hasSufficienQuantity(
-            Product product,
-            int requiredQuantity
-    ) {
-        if (product == null) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Product darf nicht null sein."
-            );
-        }
-
-        if (requiredQuantity < 0) {
-            return false;
-        }
-
+    public Integer getAvailableStock(Product product) {
         var stockLevel = findStockLevelByProduct(product);
-
-        return stockLevel != null
-                && stockLevel.getQuantityInStock() >= requiredQuantity;
+        return stockLevel == null ? 0 : stockLevel.getQuantityInStock();
     }
 
-    public int getQuantityOf(Product product) {
-        if (product == null) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Product darf nicht null sein."
-            );
-        }
-
+    public boolean hasSufficientQuantity(Product product, Integer requiredQuantity) {
+        if (product == null) throw new DomainValidationException("StorageUnit", "Product must not be null.");
+        if (requiredQuantity < 0) return false;
         var stockLevel = findStockLevelByProduct(product);
-
-        return stockLevel == null
-                ? 0
-                : stockLevel.getQuantityInStock();
+        return stockLevel != null && stockLevel.getQuantityInStock() >= requiredQuantity;
     }
 
-    public int getQuantityOf(ProductId productId) {
-        if (productId == null) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Product ID darf nicht null sein."
-            );
-        }
-
-        var stockLevel = findStockLevelByProductId(productId);
-
-        return stockLevel == null
-                ? 0
-                : stockLevel.getQuantityInStock();
+    public Integer getStockOf(Product product) {
+        if (product == null) throw new DomainValidationException("StorageUnit", "Product must not be null.");
+        var stockLevel = findStockLevelByProduct(product);
+        return stockLevel == null ? 0 : stockLevel.getQuantityInStock();
     }
 
-    public List<Product> getAvailableProducts() {
-        return stockLevels.stream()
-                .filter(stock ->
-                        stock.getQuantityInStock() > 0
-                )
-                .map(StockLevel::getProduct)
-                .toList();
-    }
 
     public boolean isEmpty() {
-        return stockLevels.isEmpty()
-                || stockLevels.stream()
-                .allMatch(s ->
-                        s.getQuantityInStock() <= 0
-                );
+        return stockLevels.isEmpty() || stockLevels.stream().allMatch(stock -> stock.getQuantityInStock() <= 0);
     }
 
-    public void addToStock(
-            Product product,
-            Integer quantity
-    ) {
-        if (product == null) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Product darf nicht null sein."
-            );
-        }
-
-        if (quantity == null || quantity < 0) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Quantity muss größer als 0 sein."
-            );
-        }
+    public void addToStock(Product product, Integer quantity) {
+        if (product == null) throw new DomainValidationException("StorageUnit", "Product must not be null.");
+        validateQuantity(quantity);
 
         var existingStock = findStockLevelByProduct(product);
 
         if (existingStock != null) {
-            var oldQuantity =
-                    existingStock.getQuantityInStock();
-
+            var oldQuantity = existingStock.getQuantityInStock();
             existingStock.addToQuantity(quantity);
-
-            registerEvent(
-                    new StockChangedEvent(
-                            id,
-                            product.getId(),
-                            existingStock.getQuantityInStock(),
-                            oldQuantity
-                    )
-            );
-
+            registerEvent(new StockChangedEvent(id, product.getId(), existingStock.getQuantityInStock(), oldQuantity));
             return;
         }
 
-        var newStock = StockLevel.create(product, quantity);
-        stockLevels.add(newStock);
-
-        registerEvent(
-                new StockChangedEvent(
-                        id,
-                        product.getId(),
-                        quantity,
-                        0
-                )
-        );
+        stockLevels.add(StockLevel.create(product, quantity));
+        registerEvent(new StockChangedEvent(id, product.getId(), quantity, 0));
     }
 
-    public void removeFromStock(
-            ProductId productId,
-            Integer quantity
-    ) {
-        if (productId == null) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Product ID darf nicht null sein."
-            );
-        }
+    public void removeFromStock(Product product, Integer quantity) {
+        if (product == null) throw new DomainValidationException("StorageUnit", "Product must not be null.");
+        if (quantity == 0) return;
 
-        if (quantity == null || quantity < 0) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Quantity muss größer als 0 sein."
-            );
-        }
+        var stockLevel = findStockLevelByProductId(product.getId());
+        if (stockLevel == null)
+            throw new EntityNotFoundException("StorageUnit", "Product not found in storage unit.");
 
-        if (quantity == 0) {
-            return;
-        }
-
-        var stockLevel =
-                findStockLevelByProductId(productId);
-
-        if (stockLevel == null) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Product nicht im Lager gefunden."
-            );
-        }
-
-        var oldQuantity =
-                stockLevel.getQuantityInStock();
-
+        var oldQuantity = stockLevel.getQuantityInStock();
         stockLevel.removeFromQuantity(quantity);
+        var newQuantity = stockLevel.getQuantityInStock();
 
-        var newQuantity =
-                stockLevel.getQuantityInStock();
+        if (newQuantity <= 0) stockLevels.remove(stockLevel);
 
-        if (newQuantity <= 0) {
-            stockLevels.remove(stockLevel);
-        }
-
-        registerEvent(
-                new StockChangedEvent(
-                        id,
-                        productId,
-                        newQuantity,
-                        oldQuantity
-                )
-        );
+        registerEvent(new StockChangedEvent(id, product.getId(), newQuantity, oldQuantity));
     }
 
-    public void changeStockTo(
-            Product product,
-            Integer newTotalQuantity
-    ) {
-        if (product == null) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Product darf nicht null sein."
-            );
-        }
 
-        if (newTotalQuantity == null || newTotalQuantity < 0) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Quantity muss größer oder gleich 0 sein."
-            );
-        }
+    public void changeStockTo(Product product, Integer newTotalQuantity) {
+        if (product == null) throw new DomainValidationException("StorageUnit", "Product must not be null.");
+        validateQuantity(newTotalQuantity);
 
-        var stockLevel =
-                findStockLevelByProduct(product);
+        var stockLevel = findStockLevelByProduct(product);
+        if (stockLevel == null)
+            throw new DomainValidationException("StorageUnit", "Product not found in storage unit.");
 
-        if (stockLevel == null) {
-            throw new DomainValidationException(
-                    "StorageUnit",
-                    "Product nicht im Lager gefunden."
-            );
-        }
-
-        var oldQuantity =
-                stockLevel.getQuantityInStock();
-
+        var oldQuantity = stockLevel.getQuantityInStock();
         stockLevel.changeStockTo(newTotalQuantity);
+        var newQuantity = stockLevel.getQuantityInStock();
 
-        var newQuantity =
-                stockLevel.getQuantityInStock();
+        if (newQuantity <= 0) stockLevels.remove(stockLevel);
 
-        if (newQuantity <= 0) {
-            stockLevels.remove(stockLevel);
-        }
-
-        registerEvent(
-                new StockChangedEvent(
-                        id,
-                        product.getId(),
-                        newQuantity,
-                        oldQuantity
-                )
-        );
+        registerEvent(new StockChangedEvent(id, product.getId(), newQuantity, oldQuantity));
     }
 
-    private StockLevel findStockLevelByProduct(Product product) {
+    public StockLevel findStockLevelByProduct(Product product) {
+        if (product == null) throw new DomainValidationException("StorageUnit", "Product must not be null.");
         return stockLevels.stream()
                 .filter(stock -> stock.contains(product))
                 .findFirst()
                 .orElse(null);
-    }
-
-    private StockLevel findStockLevelByProductId(
-            ProductId productId
-    ) {
-        return stockLevels.stream()
-                .filter(stock -> stock.contains(productId))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private void registerEvent(Object event) {
-        if (domainEvents == null) {
-            domainEvents = new ArrayList<>();
-        }
-
-        domainEvents.add(event);
     }
 
     public List<Object> getDomainEvents() {
@@ -461,43 +165,47 @@ public class StorageUnit extends AggregateRoot<StorageUnitId> {
         domainEvents.clear();
     }
 
-    public boolean canDelete() {
-        return stockLevels.isEmpty()
-                || stockLevels.stream()
-                .allMatch(s ->
-                        s.getQuantityInStock() == 0
-                );
+
+    private StockLevel findStockLevelByProductId(ProductId productId) {
+        return stockLevels.stream()
+                .filter(stock -> stock.contains(productId))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void registerEvent(Object event) {
+        if (domainEvents == null) domainEvents = new ArrayList<>();
+        domainEvents.add(event);
+    }
+
+    private static void validateAddress(HomeAddress address) {
+        if (address == null) throw new DomainValidationException("StorageUnit", "Address must not be null.");
+    }
+
+    private static void validateName(String name) {
+        if (name == null || name.isBlank())
+            throw new DomainValidationException("StorageUnit", "Name must not be empty.");
+    }
+
+    private static void validateProductId(ProductId productId) {
+        if (productId == null) throw new DomainValidationException("StorageUnit", "Product ID must not be null.");
+    }
+
+    private static void validateQuantity(Integer quantity) {
+        if (quantity == null || quantity < 0)
+            throw new DomainValidationException("StorageUnit", "Quantity must be greater than or equal to 0.");
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         var that = (StorageUnit) o;
-
         return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public double getTotalWeightOfServableItems(Map<Product, Integer> requiredItems) {
-        double totalWeight = 0.0;
-        for (var entry : requiredItems.entrySet()) {
-            var product = entry.getKey();
-            var required = entry.getValue();
-            var available = getQuantityOf(product);
-            if (available > 0) {
-                var taken = Math.min(available, required);
-                Float size = product.getSize();
-                if (size != null) {
-                    totalWeight += size * taken;
-                }
-            }
-        }
-        return totalWeight;
     }
 }

@@ -1,10 +1,9 @@
 package com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.listener;
 
 import com.neotee.ecommercesystem.domainprimitives.ProductId;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.port.out.StockPort;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasket;
-import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.ShoppingBasketRepository;
-import com.neotee.ecommercesystem.shopsystem.event.StockChangedEvent;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.model.ShoppingBasket;
+import com.neotee.ecommercesystem.shopsystem.shoppingbasket.domain.repository.ShoppingBasketRepository;
+import com.neotee.ecommercesystem.events.StockChangedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -17,7 +16,6 @@ import java.util.List;
 public class StockEventListener {
 
     private final ShoppingBasketRepository basketRepository;
-    private final StockPort stockPort;
 
     @EventListener
     @Transactional
