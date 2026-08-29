@@ -30,12 +30,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 26 (Early Access)
-        uses: actions/setup-java@v5
-        with:
-          java-version: '26-ea'
-          distribution: 'oracle'
-          cache: gradle
+      - name: Install JDK 26
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget
+          wget https://download.java.net/java/early_access/jdk26/GA/openjdk-26-ea+35_linux-x64_bin.tar.gz
+          sudo tar -xzf openjdk-26-ea+35_linux-x64_bin.tar.gz -C /opt/
+          echo "JAVA_HOME=/opt/jdk-26" >> $GITHUB_ENV
+          echo "/opt/jdk-26/bin" >> $GITHUB_PATH
+          java -version
 
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew
