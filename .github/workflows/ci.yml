@@ -15,9 +15,10 @@ jobs:
 
       - uses: actions/setup-java@v5
         with:
-          java-version: '26-ea'
+          java-version: '26'
           distribution: 'oracle'
           cache: gradle
 
       - run: chmod +x gradlew
+
       - run: ./gradlew test --no-daemon
