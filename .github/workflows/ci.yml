@@ -11,44 +11,23 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_DB: ecommerce
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install JDK 26
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget
-          wget https://download.java.net/java/early_access/jdk26/GA/openjdk-26-ea+35_linux-x64_bin.tar.gz
-          sudo tar -xzf openjdk-26-ea+35_linux-x64_bin.tar.gz -C /opt/
-          echo "JAVA_HOME=/opt/jdk-26" >> $GITHUB_ENV
-          echo "/opt/jdk-26/bin" >> $GITHUB_PATH
-          java -version
+      - name: Set up JDK 26 (Early Access)
+        uses: actions/setup-java@v5
+        with:
+          java-version: '26-ea'
+          distribution: 'oracle'
+          cache: gradle
 
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew
 
-      - name: Run tests
+      - name: Run tests with Testcontainers
         run: ./gradlew test --no-daemon
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/ecommerce
-          SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: postgres
           TESTCONTAINERS_RYUK_DISABLED: true
 
       - name: Publish test results

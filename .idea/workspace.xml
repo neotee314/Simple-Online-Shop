@@ -73,22 +73,22 @@
     &quot;assignee&quot;: &quot;neotee314&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/neotee314/Simple-Online-Shop.git",
-    "accountId": "69e82973-d4e9-46b1-bb1a-51050e897412"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/neotee314/Simple-Online-Shop.git&quot;,
+    &quot;accountId&quot;: &quot;69e82973-d4e9-46b1-bb1a-51050e897412&quot;
   },
-  "recentNewPullRequestHead": {
-    "server": {
-      "useHttp": false,
-      "host": "github.com",
-      "port": null,
-      "suffix": null
+  &quot;recentNewPullRequestHead&quot;: {
+    &quot;server&quot;: {
+      &quot;useHttp&quot;: false,
+      &quot;host&quot;: &quot;github.com&quot;,
+      &quot;port&quot;: null,
+      &quot;suffix&quot;: null
     },
-    "owner": "neotee314",
-    "repository": "Simple-Online-Shop"
+    &quot;owner&quot;: &quot;neotee314&quot;,
+    &quot;repository&quot;: &quot;Simple-Online-Shop&quot;
   }
-}]]></component>
+}</component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
       <entry key="MS100" value="1.0003406135296031" />
@@ -160,66 +160,66 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.BasicNoOutsideSolutionRulesTest.executor": "Run",
-    "Gradle.BasicUseCaseImplementationPackageTest.executor": "Run",
-    "Gradle.Build e-commerce-system.executor": "Run",
-    "Gradle.ClientRESTTest.executor": "Run",
-    "Gradle.ClientRegistrationTest.executor": "Run",
-    "Gradle.DeliveryPackageRESTTest.executor": "Run",
-    "Gradle.DeliveryPackageRESTTest.testOnlyOneSolution.executor": "Run",
-    "Gradle.DeliveryPackageRESTTest.testStorageUnitWithEnoughCapacityWins.executor": "Run",
-    "Gradle.DeliveryPackageRESTTest.testTwoDeliveryPackages.executor": "Run",
-    "Gradle.DeliveryPackagesLifecycleTest.executor": "Run",
-    "Gradle.DeliveryPackagesLifecycleTest.testInvalidParameters.executor": "Run",
-    "Gradle.DeliveryRESTTest.executor": "Run",
-    "Gradle.DeliveryTest (1).executor": "Run",
-    "Gradle.DeliveryTest.executor": "Run",
-    "Gradle.DeliveryTest.testDeleteAllDeliveries.executor": "Run",
-    "Gradle.DomainPrimitivesUsageRulesTest.executor": "Run",
-    "Gradle.ECommerceSystemApplicationTests.executor": "Run",
-    "Gradle.MultipleDeliverysTest.executor": "Run",
-    "Gradle.OneDeliveryTest.testClosestDeliveryPackage.executor": "Run",
-    "Gradle.ProductCatalogTest.testRemoveThingThatIsInShoppingBasketOrOrder.executor": "Run",
-    "Gradle.ShoppingBasketRESTTest.executor": "Run",
-    "Gradle.ShoppingBasketRESTTest.testAddRemoveThingsFromAndToShoppingBasket.executor": "Run",
-    "Gradle.ShoppingBasketRESTTest.testDeleteThingFromShoppingBasket.executor": "Run",
-    "Gradle.StockTest.executor": "Run",
-    "Gradle.Tests in 'com.neotee.ecommercesystem'.executor": "Run",
-    "Gradle.Tests in 'com.neotee.ecommercesystem.deliverypackage'.executor": "Run",
-    "Gradle.Tests in 'com.neotee.ecommercesystem.regression'.executor": "Run",
-    "Gradle.ZipCodeTest.executor": "Run",
-    "Gradle.e-commerce-system [clean].executor": "Run",
-    "JUnit.ClientRESTTest.executor": "Run",
-    "JUnit.com.neotee.ecommercesystem in e-commerce-system.test.executor": "Run",
-    "JUnit.com.neotee.ecommercesystem.regression in e-commerce-system.test.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "Spring Boot.ECommerceSystemApplication.executor": "Run",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "#3 on feature/DELLIEVERY-USE-CASE",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Project/e-commerce-system/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/domain",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.jshint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.jshint": "",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "SDKs",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.BasicNoOutsideSolutionRulesTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.BasicUseCaseImplementationPackageTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Build e-commerce-system.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ClientRESTTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ClientRegistrationTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.DeliveryPackageRESTTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.DeliveryPackageRESTTest.testOnlyOneSolution.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.DeliveryPackageRESTTest.testStorageUnitWithEnoughCapacityWins.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.DeliveryPackageRESTTest.testTwoDeliveryPackages.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.DeliveryPackagesLifecycleTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.DeliveryPackagesLifecycleTest.testInvalidParameters.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.DeliveryRESTTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.DeliveryTest (1).executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.DeliveryTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.DeliveryTest.testDeleteAllDeliveries.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.DomainPrimitivesUsageRulesTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ECommerceSystemApplicationTests.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.MultipleDeliverysTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.OneDeliveryTest.testClosestDeliveryPackage.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ProductCatalogTest.testRemoveThingThatIsInShoppingBasketOrOrder.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ShoppingBasketRESTTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ShoppingBasketRESTTest.testAddRemoveThingsFromAndToShoppingBasket.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ShoppingBasketRESTTest.testDeleteThingFromShoppingBasket.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.StockTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Tests in 'com.neotee.ecommercesystem'.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Tests in 'com.neotee.ecommercesystem.deliverypackage'.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Tests in 'com.neotee.ecommercesystem.regression'.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ZipCodeTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.e-commerce-system [clean].executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ClientRESTTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.com.neotee.ecommercesystem in e-commerce-system.test.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.com.neotee.ecommercesystem.regression in e-commerce-system.test.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;Spring Boot.ECommerceSystemApplication.executor&quot;: &quot;Run&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;#3 on feature/DELLIEVERY-USE-CASE&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Project/e-commerce-system/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/domain&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.jshint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.jshint&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="com.neotee.ecommercesystem.shopsystem.delivery.application.service" />
