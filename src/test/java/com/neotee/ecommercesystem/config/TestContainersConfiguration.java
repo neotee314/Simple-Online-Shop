@@ -14,8 +14,7 @@ public class TestContainersConfiguration {
     public PostgreSQLContainer<?> postgresContainer() {
         return new PostgreSQLContainer<>(DockerImageName.parse("postgres:16-alpine"))
                 .withDatabaseName("exploration_drone_test_db")
-                .withUsername("hiccup_test")
-                .withPassword("hiccup_test123")
-                .withReuse(true);
+                .withUsername("ecommerce_test")
+                .withPassword("ecommerce_test123");
     }
 }

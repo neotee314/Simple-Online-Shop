@@ -16,6 +16,20 @@ import java.util.UUID;
  */
 public interface DeliveryPackageUseCases {
 
+
+    /**
+     * Returns the IDs of all delivery packages belonging to the given order.
+     *
+     * @param orderId
+     * @return IDs of all delivery packages belonging to the order.
+     *         The list contains at least one package.
+     * @throws ShopException if ...
+     *     - orderId is null
+     *     - the order with that id does not exist
+     */
+    List<UUID> getDeliveryPackageIds(UUID orderId);
+
+
     /**
      * Query which storage units are involved in the delivery of a given order.
      * @param orderId

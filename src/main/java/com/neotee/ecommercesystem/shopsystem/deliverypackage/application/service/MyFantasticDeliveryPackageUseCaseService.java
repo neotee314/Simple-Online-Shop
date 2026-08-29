@@ -16,10 +16,20 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class MyFantasticDeliveryPackageUseCaseService
-        implements DeliveryPackageUseCases {
+public class MyFantasticDeliveryPackageUseCaseService implements DeliveryPackageUseCases {
 
     private final DeliveryPackageApplicationService service;
+
+    @Override
+    public List<UUID> getDeliveryPackageIds(UUID orderId) {
+        validate(orderId);
+
+        return service
+                .findByOrderId(OrderId.of(orderId))
+                .stream()
+                .map(deliveryPackage -> deliveryPackage.getId().getId())
+                .toList();
+    }
 
     @Override
     public List<UUID> getContributingStorageUnitsForOrder(UUID orderId) {

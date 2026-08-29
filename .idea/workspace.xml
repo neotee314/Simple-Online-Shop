@@ -5,8 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="de17652a-30d8-4370-8f63-5af961701f2a" name="Changes" comment="update project">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/domainprimitives/DeliveryContentId.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/domainprimitives/DeliveryId.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/domain/model/Delivery.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/neotee/ecommercesystem/basictests/BasicUseCaseImplementationPackageTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/neotee/ecommercesystem/basictests/BasicUseCaseImplementationPackageTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/application/service/DeliveryService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/application/service/DeliveryUseCaseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/application/service/DeliveryUseCaseService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/domain/Delivery.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/domain/DeliveryContent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/domain/model/DeliveryContent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/domain/DeliveryContentId.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/domain/DeliveryContentRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/domain/DeliveryId.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/domain/DeliveryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/domain/repository/DeliveryRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/deliverypackage/application/service/DeliveryPackageApplicationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/deliverypackage/application/service/DeliveryPackageApplicationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/deliverypackage/application/service/MyFantasticDeliveryPackageUseCaseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/deliverypackage/application/service/MyFantasticDeliveryPackageUseCaseService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/deliverypackage/domain/model/DeliveryPackage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/deliverypackage/domain/model/DeliveryPackage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/usecases/DeliveryPackageUseCases.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/usecases/DeliveryPackageUseCases.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/usecases/DeliveryUseCases.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/usecases/DeliveryUseCases.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/neotee/ecommercesystem/config/TestContainersConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/neotee/ecommercesystem/config/TestContainersConfiguration.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,19 +42,50 @@
         <task path="$PROJECT_DIR$">
           <activation />
         </task>
-        <projects_view />
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="e-commerce-system" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="e-commerce-system" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="e-commerce-system" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="application" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="e-commerce-system" type="f1a62948:ProjectNode" />
+                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
       </state>
     </system>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -53,61 +102,61 @@
 }</component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="2.7899196488150437" />
-      <entry key="MS500" value="4.2313825465370325" />
-      <entry key="S2" value="4.7799734010064245" />
-      <entry key="S5" value="4.909452069577027" />
-      <entry key="S10" value="4.9641920811927145" />
-      <entry key="S30" value="6.12347018046241" />
-      <entry key="S60" value="8.939511951468816" />
-      <entry key="M2" value="12.651641376999452" />
-      <entry key="M5" value="25.39207166165399" />
-      <entry key="M10" value="52.39058555134883" />
-      <entry key="M15" value="73.34058273337125" />
-      <entry key="M30" value="110.41435302659046" />
-      <entry key="H1" value="144.62904913035547" />
-      <entry key="H2" value="178.81547096950135" />
-      <entry key="H4" value="230.15426426750076" />
-      <entry key="D1" value="501.4019085281583" />
-      <entry key="W1" value="652.5363010645979" />
+      <entry key="MS100" value="2.32226324111401" />
+      <entry key="MS500" value="3.9461253284402114" />
+      <entry key="S2" value="4.681530678569037" />
+      <entry key="S5" value="4.8673582743776045" />
+      <entry key="S10" value="4.957683749130543" />
+      <entry key="S30" value="6.38446864678966" />
+      <entry key="S60" value="11.20737329093355" />
+      <entry key="M2" value="24.31332548164403" />
+      <entry key="M5" value="58.84044495450268" />
+      <entry key="M10" value="89.54714558027314" />
+      <entry key="M15" value="106.06084331255501" />
+      <entry key="M30" value="137.21499033487623" />
+      <entry key="H1" value="188.47584541053655" />
+      <entry key="H2" value="259.12189044633476" />
+      <entry key="H4" value="343.868513642788" />
+      <entry key="D1" value="665.4201911475127" />
+      <entry key="W1" value="840.9489372753269" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="7.154567716760383E-260" />
-      <entry key="S5" value="2.5456806152919437E-104" />
-      <entry key="S10" value="2.077472568506301E-52" />
-      <entry key="S30" value="9.199884291484542E-18" />
-      <entry key="S60" value="4.2773984263233434E-9" />
-      <entry key="M2" value="9.243295095789835E-5" />
-      <entry key="M5" value="0.03976512697274047" />
-      <entry key="M10" value="0.5831525087218251" />
-      <entry key="M15" value="2.1755822699186522" />
-      <entry key="M30" value="10.94530977427747" />
-      <entry key="H1" value="30.109175081799442" />
-      <entry key="H2" value="62.38839507980978" />
-      <entry key="H4" value="120.54110208261905" />
-      <entry key="D1" value="405.1727593977958" />
-      <entry key="W1" value="555.1796394736165" />
+      <entry key="MS500" value="1.1304875823614786E-265" />
+      <entry key="S2" value="5.798510515297675E-67" />
+      <entry key="S5" value="3.2013015111293737E-27" />
+      <entry key="S10" value="5.658004516726169E-14" />
+      <entry key="S30" value="3.839026385276357E-5" />
+      <entry key="S60" value="0.006196198802153398" />
+      <entry key="M2" value="0.07946210815273713" />
+      <entry key="M5" value="0.5821230265969192" />
+      <entry key="M10" value="2.8019256279985507" />
+      <entry key="M15" value="5.878816058714554" />
+      <entry key="M30" value="14.441724631602924" />
+      <entry key="H1" value="29.695347604131886" />
+      <entry key="H2" value="59.78434772522701" />
+      <entry key="H4" value="117.82142065704626" />
+      <entry key="D1" value="418.3545913717987" />
+      <entry key="W1" value="586.6483883509944" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="2.6321337680213133" />
-      <entry key="MS500" value="4.177874276994884" />
-      <entry key="S2" value="4.76451677847347" />
-      <entry key="S5" value="4.903073458165603" />
-      <entry key="S10" value="4.9609613875892675" />
-      <entry key="S30" value="6.122018206830962" />
-      <entry key="S60" value="8.938285750181858" />
-      <entry key="M2" value="12.650751105863787" />
-      <entry key="M5" value="25.429786341196085" />
-      <entry key="M10" value="52.968020789897494" />
-      <entry key="M15" value="75.50745317157725" />
-      <entry key="M30" value="121.34577103206217" />
-      <entry key="H1" value="174.72178585299324" />
-      <entry key="H2" value="241.18777368708857" />
-      <entry key="H4" value="350.68012061360577" />
-      <entry key="D1" value="906.5662849951067" />
-      <entry key="W1" value="1207.7143098846864" />
+      <entry key="MS100" value="2.208056429553395" />
+      <entry key="MS500" value="3.900784279377107" />
+      <entry key="S2" value="4.667259909562111" />
+      <entry key="S5" value="4.861342167088778" />
+      <entry key="S10" value="4.954610569535238" />
+      <entry key="S30" value="6.383254945248992" />
+      <entry key="S60" value="11.212464119035424" />
+      <entry key="M2" value="24.391173487132974" />
+      <entry key="M5" value="59.41905390301181" />
+      <entry key="M10" value="92.34083357269438" />
+      <entry key="M15" value="111.92822117286737" />
+      <entry key="M30" value="151.64236761409404" />
+      <entry key="H1" value="218.15606364544178" />
+      <entry key="H2" value="318.89101558129244" />
+      <entry key="H4" value="461.6750409801141" />
+      <entry key="D1" value="1083.7661104194835" />
+      <entry key="W1" value="1427.5955993747966" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -135,6 +184,7 @@
     "Gradle.DeliveryPackageRESTTest.testTwoDeliveryPackages.executor": "Run",
     "Gradle.DeliveryPackagesLifecycleTest.executor": "Run",
     "Gradle.DeliveryPackagesLifecycleTest.testInvalidParameters.executor": "Run",
+    "Gradle.DeliveryTest.executor": "Run",
     "Gradle.DomainPrimitivesUsageRulesTest.executor": "Run",
     "Gradle.ECommerceSystemApplicationTests.executor": "Run",
     "Gradle.MultipleDeliverysTest.executor": "Run",
@@ -148,6 +198,7 @@
     "Gradle.Tests in 'com.neotee.ecommercesystem.deliverypackage'.executor": "Run",
     "Gradle.Tests in 'com.neotee.ecommercesystem.regression'.executor": "Run",
     "Gradle.ZipCodeTest.executor": "Run",
+    "Gradle.e-commerce-system [clean].executor": "Run",
     "JUnit.ClientRESTTest.executor": "Run",
     "JUnit.com.neotee.ecommercesystem in e-commerce-system.test.executor": "Run",
     "JUnit.com.neotee.ecommercesystem.regression in e-commerce-system.test.executor": "Run",
@@ -161,9 +212,9 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "Spring Boot.ECommerceSystemApplication.executor": "Run",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "feature/DELLIEVERY-USE-CASE",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Project/Simple-Online-Shop",
+    "last_opened_file_path": "C:/Project/e-commerce-system/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/domain",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.jshint": "true",
     "node.js.detected.package.tslint": "true",
@@ -179,9 +230,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.neotee.ecommercesystem.shopsystem.delivery.application.service" />
       <recent name="com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.service" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Project\e-commerce-system\src\main\java\com\neotee\ecommercesystem\shopsystem\delivery\domain" />
       <recent name="C:\Project\Simple-Online-Shop\e-commerce-system\src\test\java\com\neotee\ecommercesystem\config" />
       <recent name="C:\Project\Simple-Online-Shop\e-commerce-system" />
       <recent name="C:\Project\Simple-Online-Shop\e-commerce-system\src\main\java\com\neotee\ecommercesystem\shopsystem\core" />
@@ -193,34 +246,7 @@
       <recent name="com.neotee.ecommercesystem.shopsystem.shoppingbasket.application.service" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.BasicUseCaseImplementationPackageTest">
-    <configuration name="BasicNoOutsideSolutionRulesTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;com.neotee.ecommercesystem.basictests.BasicNoOutsideSolutionRulesTest&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <GradleProfilingDisabled>false</GradleProfilingDisabled>
-      <GradleCoverageDisabled>false</GradleCoverageDisabled>
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Gradle.e-commerce-system [clean]">
     <configuration name="BasicUseCaseImplementationPackageTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -235,6 +261,33 @@
             <option value=":test" />
             <option value="--tests" />
             <option value="&quot;com.neotee.ecommercesystem.basictests.BasicUseCaseImplementationPackageTest&quot;" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>true</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="DeliveryTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+            <option value="--tests" />
+            <option value="&quot;com.neotee.ecommercesystem.delivery.DeliveryTest&quot;" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -281,33 +334,6 @@
       <GradleCoverageDisabled>false</GradleCoverageDisabled>
       <method v="2" />
     </configuration>
-    <configuration name="ShoppingBasketRESTTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;com.neotee.ecommercesystem.shoppingbasket.ShoppingBasketRESTTest&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <GradleProfilingDisabled>false</GradleProfilingDisabled>
-      <GradleCoverageDisabled>false</GradleCoverageDisabled>
-      <method v="2" />
-    </configuration>
     <configuration name="Tests in 'com.neotee.ecommercesystem'" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -335,6 +361,31 @@
       <GradleCoverageDisabled>false</GradleCoverageDisabled>
       <method v="2" />
     </configuration>
+    <configuration name="e-commerce-system [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="clean" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+      <method v="2" />
+    </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
       <shortenClasspath name="ARGS_FILE" />
       <option name="TEST_OBJECT" value="class" />
@@ -350,20 +401,20 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="Gradle.DeliveryTest" />
+      <item itemvalue="Gradle.e-commerce-system [clean]" />
       <item itemvalue="Gradle.BasicUseCaseImplementationPackageTest" />
-      <item itemvalue="Gradle.BasicNoOutsideSolutionRulesTest" />
       <item itemvalue="Gradle.ECommerceSystemApplicationTests" />
-      <item itemvalue="Gradle.ShoppingBasketRESTTest" />
       <item itemvalue="Gradle.Tests in 'com.neotee.ecommercesystem'" />
       <item itemvalue="Spring Boot.ECommerceSystemApplication" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.e-commerce-system [clean]" />
+        <item itemvalue="Gradle.DeliveryTest" />
         <item itemvalue="Gradle.BasicUseCaseImplementationPackageTest" />
         <item itemvalue="Gradle.ECommerceSystemApplicationTests" />
         <item itemvalue="Gradle.Tests in 'com.neotee.ecommercesystem'" />
-        <item itemvalue="Gradle.BasicNoOutsideSolutionRulesTest" />
-        <item itemvalue="Gradle.ShoppingBasketRESTTest" />
       </list>
     </recent_temporary>
   </component>
