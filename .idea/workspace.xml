@@ -4,23 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="de17652a-30d8-4370-8f63-5af961701f2a" name="Changes" comment="implement delivery use cases">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/domainprimitives/DeliveryPackageStatus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/client/application/api/MyFantasticClientRegistrationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/client/application/service/MyFantasticClientRegistrationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/client/application/service/ClientApplicationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/client/application/service/ClientApplicationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/application/service/DeliveryApplicationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/application/service/DeliveryApplicationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/application/service/DeliveryUseCaseService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/application/service/DeliveryUseCaseService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/domain/model/Delivery.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/domain/model/Delivery.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/deliverypackage/application/api/DeliveryPackageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/deliverypackage/application/api/DeliveryPackageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/deliverypackage/domain/model/DeliveryPackage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/shopsystem/deliverypackage/domain/model/DeliveryPackage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/usecases/DeliveryUseCases.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/neotee/ecommercesystem/usecases/DeliveryUseCases.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/neotee/ecommercesystem/client/ClientRESTTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/neotee/ecommercesystem/client/ClientRESTTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/neotee/ecommercesystem/delivery/DeliveryTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/neotee/ecommercesystem/delivery/DeliveryTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/neotee/ecommercesystem/deliverypackage/DeliveryPackageRESTTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/neotee/ecommercesystem/deliverypackage/DeliveryPackageRESTTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/neotee/ecommercesystem/shoppingbasket/ShoppingBasketRESTTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/neotee/ecommercesystem/shoppingbasket/ShoppingBasketRESTTest.java" afterDir="false" />
-    </list>
+    <list default="true" id="de17652a-30d8-4370-8f63-5af961701f2a" name="Changes" comment="add controller and some more tests" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -89,69 +73,79 @@
     &quot;assignee&quot;: &quot;neotee314&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/neotee314/Simple-Online-Shop.git&quot;,
-    &quot;accountId&quot;: &quot;69e82973-d4e9-46b1-bb1a-51050e897412&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/neotee314/Simple-Online-Shop.git",
+    "accountId": "69e82973-d4e9-46b1-bb1a-51050e897412"
+  },
+  "recentNewPullRequestHead": {
+    "server": {
+      "useHttp": false,
+      "host": "github.com",
+      "port": null,
+      "suffix": null
+    },
+    "owner": "neotee314",
+    "repository": "Simple-Online-Shop"
   }
-}</component>
+}]]></component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="0.003239529475837662" />
-      <entry key="MS500" value="0.31775792257082275" />
-      <entry key="S2" value="0.7547742183482248" />
-      <entry key="S5" value="1.01437765582274" />
-      <entry key="S10" value="1.3905018440126335" />
-      <entry key="S30" value="2.1596785663919698" />
-      <entry key="S60" value="2.5299762018244807" />
-      <entry key="M2" value="2.9334232022694713" />
-      <entry key="M5" value="4.387980548108207" />
-      <entry key="M10" value="7.4691296465132515" />
-      <entry key="M15" value="10.877016694319959" />
-      <entry key="M30" value="23.153918106548872" />
-      <entry key="H1" value="60.91941513490469" />
-      <entry key="H2" value="145.69489481147394" />
-      <entry key="H4" value="269.635174068442" />
-      <entry key="D1" value="683.6311348422033" />
-      <entry key="W1" value="903.8173853921403" />
+      <entry key="MS100" value="1.0003406135296031" />
+      <entry key="MS500" value="1.2578610060169215" />
+      <entry key="S2" value="2.8671096479069105" />
+      <entry key="S5" value="4.76022924941689" />
+      <entry key="S10" value="6.038896508878969" />
+      <entry key="S30" value="7.2583555590623" />
+      <entry key="S60" value="7.788551089292255" />
+      <entry key="M2" value="8.581233404400866" />
+      <entry key="M5" value="10.502861737725967" />
+      <entry key="M10" value="13.690570630280567" />
+      <entry key="M15" value="17.089255282499806" />
+      <entry key="M30" value="29.18362132125003" />
+      <entry key="H1" value="66.28161281357129" />
+      <entry key="H2" value="150.5105827091229" />
+      <entry key="H4" value="274.6737890311805" />
+      <entry key="D1" value="690.3744290711044" />
+      <entry key="W1" value="911.5798583826513" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0000000000000009" />
-      <entry key="S2" value="1.0002385722941636" />
-      <entry key="S5" value="1.071355155942009" />
-      <entry key="S10" value="1.5634497578078923" />
-      <entry key="S30" value="3.3835202985599424" />
-      <entry key="S60" value="4.453302001103186" />
-      <entry key="M2" value="5.368262485675155" />
-      <entry key="M5" value="8.050773126643305" />
-      <entry key="M10" value="12.908449535243324" />
-      <entry key="M15" value="17.179497703563896" />
-      <entry key="M30" value="25.884466824112543" />
-      <entry key="H1" value="37.11912166702629" />
-      <entry key="H2" value="60.34566473754218" />
-      <entry key="H4" value="113.00314657236277" />
-      <entry key="D1" value="429.02698570996057" />
-      <entry key="W1" value="623.7720641347947" />
+      <entry key="MS100" value="4.900310751180551E-266" />
+      <entry key="MS500" value="8.670511613982671E-54" />
+      <entry key="S2" value="5.42639221600733E-14" />
+      <entry key="S5" value="4.9408819075708436E-6" />
+      <entry key="S10" value="0.0022230051163279986" />
+      <entry key="S30" value="0.1474312066440215" />
+      <entry key="S60" value="0.6762143488704211" />
+      <entry key="M2" value="2.028685126030991" />
+      <entry key="M5" value="5.55546709648409" />
+      <entry key="M10" value="10.807658806373514" />
+      <entry key="M15" value="15.332801641618962" />
+      <entry key="M30" value="24.663529486000826" />
+      <entry key="H1" value="36.49915652580016" />
+      <entry key="H2" value="60.01969793848416" />
+      <entry key="H4" value="112.75851497590438" />
+      <entry key="D1" value="429.2377836264214" />
+      <entry key="W1" value="624.6080609642896" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.006573137269735913" />
-      <entry key="MS500" value="0.44769425235473265" />
-      <entry key="S2" value="1.3127695551491032" />
-      <entry key="S5" value="1.7855736709798975" />
-      <entry key="S10" value="2.632567974053981" />
-      <entry key="S30" value="5.2926868126190145" />
-      <entry key="S60" value="6.821596757868712" />
-      <entry key="M2" value="8.204208482265749" />
-      <entry key="M5" value="12.381484096939058" />
-      <entry key="M10" value="20.334496874969208" />
-      <entry key="M15" value="28.019455124502784" />
-      <entry key="M30" value="49.01118631369372" />
-      <entry key="H1" value="98.01915632989972" />
-      <entry key="H2" value="206.0248832011046" />
-      <entry key="H4" value="382.6238088670125" />
-      <entry key="D1" value="1112.6491669193356" />
-      <entry key="W1" value="1527.5876043462818" />
+      <entry key="MS100" value="0.9269170735441911" />
+      <entry key="MS500" value="1.241019235503026" />
+      <entry key="S2" value="2.8587145268616423" />
+      <entry key="S5" value="4.753168688514641" />
+      <entry key="S10" value="6.035718045404528" />
+      <entry key="S30" value="7.394553838524757" />
+      <entry key="S60" value="8.441197553001906" />
+      <entry key="M2" value="10.574197741297716" />
+      <entry key="M5" value="16.019351543485502" />
+      <entry key="M10" value="24.462268538316447" />
+      <entry key="M15" value="32.388995433127306" />
+      <entry key="M30" value="53.821216352063495" />
+      <entry key="H1" value="102.7617000059362" />
+      <entry key="H2" value="210.51468142572512" />
+      <entry key="H4" value="387.41781840633473" />
+      <entry key="D1" value="1119.6032532571198" />
+      <entry key="W1" value="1536.1860714687864" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -179,6 +173,7 @@
     "Gradle.DeliveryPackageRESTTest.testTwoDeliveryPackages.executor": "Run",
     "Gradle.DeliveryPackagesLifecycleTest.executor": "Run",
     "Gradle.DeliveryPackagesLifecycleTest.testInvalidParameters.executor": "Run",
+    "Gradle.DeliveryRESTTest.executor": "Run",
     "Gradle.DeliveryTest (1).executor": "Run",
     "Gradle.DeliveryTest.executor": "Run",
     "Gradle.DeliveryTest.testDeleteAllDeliveries.executor": "Run",
@@ -209,7 +204,7 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "Spring Boot.ECommerceSystemApplication.executor": "Run",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "feature/DELLIEVERY-USE-CASE",
+    "git-widget-placeholder": "#3 on feature/DELLIEVERY-USE-CASE",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Project/e-commerce-system/src/main/java/com/neotee/ecommercesystem/shopsystem/delivery/domain",
     "node.js.detected.package.eslint": "true",
@@ -450,7 +445,8 @@
     </ignored-roots>
     <MESSAGE value="update project" />
     <MESSAGE value="implement delivery use cases" />
-    <option name="LAST_COMMIT_MESSAGE" value="implement delivery use cases" />
+    <MESSAGE value="add controller and some more tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="add controller and some more tests" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
