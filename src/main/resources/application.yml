@@ -1,38 +1,15 @@
 spring:
   application:
-    name: e-commerce-system
+    name: simple-online-shop
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ecommerce}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/ecommerce
+    username: postgres
+    password: postgres
 
   jpa:
-    show-sql: false
     hibernate:
-      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: update
 
-  data:
-    rest:
-      detection-strategy: annotated
-
-springdoc:
-  api-docs:
-    enabled: true
-
-  swagger-ui:
-    enabled: true
-    url: /v3/api-docs
-    disable-swagger-default-url: true
-    path: /my-e-commerce
-
-  packages-to-scan: com.neotee.ecommercesystem
-  paths-to-match: /**
-  paths-to-exclude: /actuator/**, /error
-  show-actuator: false
-  cache:
-    disabled: true
+server:
+  port: 8080

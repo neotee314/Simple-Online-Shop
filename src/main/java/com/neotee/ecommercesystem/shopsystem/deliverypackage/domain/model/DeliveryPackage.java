@@ -1,9 +1,7 @@
 package com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.model;
 
-import com.neotee.ecommercesystem.domainprimitives.ProductId;
+import com.neotee.ecommercesystem.domainprimitives.*;
 import com.neotee.ecommercesystem.shopsystem.core.AggregateRoot;
-import com.neotee.ecommercesystem.domainprimitives.DeliveryPackageId;
-import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.order.domain.Order;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
@@ -33,6 +31,10 @@ public class DeliveryPackage extends AggregateRoot<DeliveryPackageId> {
     @JoinColumn(name = "delivery_package_id")
     private List<DeliveryPackagePart> parts;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private DeliveryPackageStatus status;
+
     protected DeliveryPackage(DeliveryPackageId packageId) {
         this.id = packageId;
         this.parts = new ArrayList<>();
@@ -43,6 +45,7 @@ public class DeliveryPackage extends AggregateRoot<DeliveryPackageId> {
         this.storageUnit = storageUnit;
         this.order = order;
         this.parts = new ArrayList<>();
+        this.status = DeliveryPackageStatus.NOT_SHIPPED;
     }
 
     public static DeliveryPackage create(StorageUnit storageUnit, Order order) {
@@ -94,6 +97,19 @@ public class DeliveryPackage extends AggregateRoot<DeliveryPackageId> {
 
     public int getPartCount() {
         return parts.size();
+    }
+
+    public void updateStatus(DeliveryPackageStatus status) {
+        if (status == null)
+            throw new DomainValidationException("DeliveryPackage", "Status darf nicht null sein.");
+
+        if (this.status == DeliveryPackageStatus.NOT_SHIPPED && status == DeliveryPackageStatus.DELIVERED)
+            throw new DomainValidationException("DeliveryPackage", "Package muss zuerst in den Versand gehen.");
+
+        if (this.status == DeliveryPackageStatus.DELIVERED)
+            throw new DomainValidationException("DeliveryPackage", "Ein zugestelltes Package kann nicht erneut versendet werden.");
+
+        this.status = (DeliveryPackageStatus) status;
     }
 
     public boolean contains(Product product) {

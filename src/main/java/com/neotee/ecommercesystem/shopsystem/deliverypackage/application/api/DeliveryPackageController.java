@@ -2,6 +2,7 @@ package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.api;
 
 import com.neotee.ecommercesystem.domainprimitives.OrderId;
 import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;
+import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.dto.DeliveryPackageResponseDTO;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.mapper.DeliveryPackageMapper;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.application.service.DeliveryPackageApplicationService;
@@ -22,15 +23,10 @@ public class DeliveryPackageController {
     private final DeliveryPackageApplicationService deliveryPackageService;
     private final DeliveryPackageMapper deliveryPackageMapper;
 
-    // ✅ GET بدون پارامتر → 405
-    @GetMapping
-    public ResponseEntity<Void> getWithoutParams() {
-        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();
-    }
 
-    // ✅ GET با orderId
-    @GetMapping(params = "orderId")
-    public ResponseEntity<List<DeliveryPackageResponseDTO>> getDeliveryPackagesByOrderId(@RequestParam UUID orderId) {
+    @GetMapping
+    public ResponseEntity<List<DeliveryPackageResponseDTO>> getDeliveryPackagesByOrderId(@RequestParam(required = false) UUID orderId) {
+        if (orderId == null) return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).build();
         var packages = deliveryPackageService.findByOrderId(OrderId.of(orderId));
 
         if (packages.isEmpty()) {

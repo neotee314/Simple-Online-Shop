@@ -1,9 +1,11 @@
 package com.neotee.ecommercesystem.basictests;
 
+import com.neotee.ecommercesystem.config.TestContainersConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
@@ -14,7 +16,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ActiveProfiles("test")
+@Import(TestContainersConfiguration.class)
 public class BasicUseCaseImplementationPackageTest {
 
     @Autowired

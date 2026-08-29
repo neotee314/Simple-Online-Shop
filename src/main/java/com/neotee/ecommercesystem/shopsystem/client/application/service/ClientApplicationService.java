@@ -76,20 +76,6 @@ public class ClientApplicationService {
     }
 
     
-    public Client updateClientName(ClientId clientId, String newName) {
-        if (clientId == null) {
-            throw new DomainValidationException("clientId", "Client ID darf nicht null sein.");
-        }
-        if (newName == null || newName.isBlank()) {
-            throw new DomainValidationException("name", "Name darf nicht leer sein.");
-        }
-
-        Client client = findById(clientId);
-        client.updateName(newName);
-        return clientRepository.save(client);
-    }
-
-    
     public Client changeClientAddress(ClientId clientId, HomeAddress newAddress) {
         if (clientId == null) {
             throw new DomainValidationException("clientId", "Client ID darf nicht null sein.");
@@ -103,27 +89,7 @@ public class ClientApplicationService {
         return clientRepository.save(client);
     }
 
-    
-    public Client changeClientEmail(ClientId clientId, Email newEmail) {
-        if (clientId == null) {
-            throw new DomainValidationException("clientId", "Client ID darf nicht null sein.");
-        }
-        if (newEmail == null) {
-            throw new DomainValidationException("email", "E-Mail darf nicht null sein.");
-        }
 
-        // Check if new email already exists (except for the same client)
-        clientRepository.findByEmail(newEmail)
-                .ifPresent(existing -> {
-                    if (!existing.getId().equals(clientId)) {
-                        throw new DomainValidationException("email", "Diese E-Mail wird bereits von einem anderen Client verwendet.");
-                    }
-                });
-
-        Client client = findById(clientId);
-        client.setEmail(newEmail);
-        return clientRepository.save(client);
-    }
 
     
     public void deleteClient(ClientId clientId) {

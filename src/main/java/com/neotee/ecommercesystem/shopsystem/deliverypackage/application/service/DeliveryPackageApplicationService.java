@@ -1,8 +1,6 @@
 package com.neotee.ecommercesystem.shopsystem.deliverypackage.application.service;
 
-import com.neotee.ecommercesystem.domainprimitives.OrderId;
-import com.neotee.ecommercesystem.domainprimitives.ProductId;
-import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;
+import com.neotee.ecommercesystem.domainprimitives.*;
 import com.neotee.ecommercesystem.exceptions.EntityNotFoundException;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.model.DeliveryPackage;
 import com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.repository.DeliveryPackageRepository;
@@ -42,7 +40,6 @@ public class DeliveryPackageApplicationService {
     }
 
 
-
     public List<StorageUnit> getContributingStorageUnitsForOrder(OrderId orderId) {
         var packages = deliveryPackageRepository.findByOrderId(orderId);
 
@@ -66,6 +63,26 @@ public class DeliveryPackageApplicationService {
         return deliveryPackageRepository
                 .findByOrderIdAndStorageUnitId(orderId, storageUnitId)
                 .orElseThrow(() -> new EntityNotFoundException("DeliveryPackageApplicationService", "Lieferpaket nicht gefunden."));
+    }
+
+    public List<DeliveryPackageId> getDeliveryPackagesForOrder(OrderId orderId) {
+        return deliveryPackageRepository.findByOrderId(orderId).stream()
+                .map(DeliveryPackage::getId)
+                .toList();
+    }
+
+    public DeliveryPackage findById(DeliveryPackageId id) {
+        return deliveryPackageRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("DeliveryPackageApplicationService", "Lieferpaket nicht gefunden."));
+    }
+
+    public DeliveryPackageStatus getStatus(DeliveryPackageId id) {
+        return findById(id).getStatus();
+    }
+
+    public void updateStatus(DeliveryPackageId id, DeliveryPackageStatus status) {
+        var deliveryPackage = findById(id);
+        deliveryPackage.updateStatus(status);
+        deliveryPackageRepository.save(deliveryPackage);
     }
 
     public void deleteAllDeliveryPackages() {
