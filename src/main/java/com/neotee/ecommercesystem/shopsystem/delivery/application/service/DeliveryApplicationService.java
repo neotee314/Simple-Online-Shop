@@ -1,10 +1,8 @@
 package com.neotee.ecommercesystem.shopsystem.delivery.application.service;
 
-import com.neotee.ecommercesystem.domainprimitives.DeliveryId;
-import com.neotee.ecommercesystem.domainprimitives.DeliveryPackageId;
-import com.neotee.ecommercesystem.domainprimitives.DeliveryPackageStatus;
-import com.neotee.ecommercesystem.domainprimitives.OrderId;
+import com.neotee.ecommercesystem.domainprimitives.*;
 import com.neotee.ecommercesystem.exceptions.EntityNotFoundException;
+import com.neotee.ecommercesystem.shopsystem.client.application.service.ClientApplicationService;
 import com.neotee.ecommercesystem.usecases.ClientType;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 import com.neotee.ecommercesystem.shopsystem.delivery.domain.model.Delivery;
@@ -25,12 +23,15 @@ public class DeliveryApplicationService {
     private final DeliveryRepository deliveryRepository;
     private final DeliveryPackageApplicationService deliveryPackageApplicationService;
     private final OrderApplicationService orderApplicationService;
+    private final ClientApplicationService clientApplicationService;
 
     public Delivery createDelivery(OrderId orderId, ClientType deliveryRecipient) {
         var order = orderApplicationService.findById(orderId);
         var deliveryPackageIds = deliveryPackageApplicationService.getDeliveryPackagesForOrder(orderId);
 
-        var delivery = Delivery.create(order, deliveryRecipient);
+        var client = clientApplicationService.findByEmail((Email) deliveryRecipient.getEmail());
+
+        var delivery = Delivery.create(order, client);
 
         deliveryPackageIds.stream()
                 .map(deliveryPackageApplicationService::findById)
@@ -49,11 +50,13 @@ public class DeliveryApplicationService {
     }
 
     public DeliveryPackageStatus getDeliveryPackageStatus(DeliveryPackageId deliveryPackageId) {
-        return deliveryPackageApplicationService.getStatus(deliveryPackageId);
+        var deliveryPackage = deliveryPackageApplicationService.findById(deliveryPackageId);
+        return deliveryPackage.getStatus();
     }
 
     public void updateDeliveryPackageStatus(DeliveryPackageId deliveryPackageId, DeliveryPackageStatus status) {
-        deliveryPackageApplicationService.updateStatus(deliveryPackageId, status);
+        var deliveryPackage = deliveryPackageApplicationService.findById(deliveryPackageId);
+        deliveryPackage.updateStatus(status);
     }
 
     public List<UUID> getDeliveryHistory(EmailType clientEmail) {
@@ -73,5 +76,10 @@ public class DeliveryApplicationService {
                         "DeliveryApplicationService",
                         "Delivery nicht gefunden."
                 ));
+    }
+
+    public List<DeliveryPackage> getDeliveryPackagesDetails(UUID deliveryId) {
+        var delivery = findById(DeliveryId.of(deliveryId));
+        return delivery.getDeliveryPackages();
     }
 }

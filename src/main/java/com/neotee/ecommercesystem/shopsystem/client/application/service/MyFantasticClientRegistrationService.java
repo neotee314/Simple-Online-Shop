@@ -1,9 +1,8 @@
-package com.neotee.ecommercesystem.shopsystem.client.application.api;
+package com.neotee.ecommercesystem.shopsystem.client.application.service;
 
 import com.neotee.ecommercesystem.domainprimitives.Email;
 import com.neotee.ecommercesystem.domainprimitives.HomeAddress;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
-import com.neotee.ecommercesystem.shopsystem.client.application.service.ClientApplicationService;
 import com.neotee.ecommercesystem.usecases.ClientRegistrationUseCases;
 import com.neotee.ecommercesystem.usecases.ClientType;
 import com.neotee.ecommercesystem.domainprimitives.ClientTypeImp;

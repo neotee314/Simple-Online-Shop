@@ -1,10 +1,7 @@
 package com.neotee.ecommercesystem.shopsystem.deliverypackage.domain.model;
 
-import com.neotee.ecommercesystem.domainprimitives.DeliveryPackageStatus;
-import com.neotee.ecommercesystem.domainprimitives.ProductId;
+import com.neotee.ecommercesystem.domainprimitives.*;
 import com.neotee.ecommercesystem.shopsystem.core.AggregateRoot;
-import com.neotee.ecommercesystem.domainprimitives.DeliveryPackageId;
-import com.neotee.ecommercesystem.domainprimitives.StorageUnitId;
 import com.neotee.ecommercesystem.exceptions.DomainValidationException;
 import com.neotee.ecommercesystem.shopsystem.order.domain.Order;
 import com.neotee.ecommercesystem.shopsystem.product.domain.Product;
@@ -35,6 +32,7 @@ public class DeliveryPackage extends AggregateRoot<DeliveryPackageId> {
     private List<DeliveryPackagePart> parts;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private DeliveryPackageStatus status;
 
     protected DeliveryPackage(DeliveryPackageId packageId) {
@@ -111,7 +109,7 @@ public class DeliveryPackage extends AggregateRoot<DeliveryPackageId> {
         if (this.status == DeliveryPackageStatus.DELIVERED)
             throw new DomainValidationException("DeliveryPackage", "Ein zugestelltes Package kann nicht erneut versendet werden.");
 
-        this.status = status;
+        this.status = (DeliveryPackageStatus) status;
     }
 
     public boolean contains(Product product) {

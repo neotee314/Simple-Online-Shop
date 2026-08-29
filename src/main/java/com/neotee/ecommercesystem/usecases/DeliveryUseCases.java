@@ -1,6 +1,5 @@
 package com.neotee.ecommercesystem.usecases;
 
-import com.neotee.ecommercesystem.domainprimitives.DeliveryPackageStatus;
 import com.neotee.ecommercesystem.exceptions.ShopException;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
 
@@ -67,7 +66,7 @@ public interface DeliveryUseCases {
      *                       - deliveryPackageId is null
      *                       - the delivery package with the given id does not exist
      */
-    DeliveryPackageStatus getDeliveryPackageStatus(UUID deliveryPackageId);
+    String getDeliveryPackageStatus(UUID deliveryPackageId);
 
 
     /**
@@ -84,7 +83,7 @@ public interface DeliveryUseCases {
      *                       - status is null
      *                       - the requested status transition is invalid
      */
-    void updateDeliveryPackageStatus(UUID deliveryPackageId, DeliveryPackageStatus status);
+    void updateDeliveryPackageStatus(UUID deliveryPackageId, String status);
 
 
     /**

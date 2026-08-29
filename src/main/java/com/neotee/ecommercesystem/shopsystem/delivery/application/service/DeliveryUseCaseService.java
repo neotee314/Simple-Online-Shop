@@ -1,7 +1,10 @@
 package com.neotee.ecommercesystem.shopsystem.delivery.application.service;
 
+import com.neotee.ecommercesystem.domainprimitives.DeliveryPackageId;
 import com.neotee.ecommercesystem.domainprimitives.DeliveryPackageStatus;
 import com.neotee.ecommercesystem.domainprimitives.OrderId;
+import com.neotee.ecommercesystem.exceptions.DomainValidationException;
+import com.neotee.ecommercesystem.exceptions.EntityNotFoundException;
 import com.neotee.ecommercesystem.usecases.ClientType;
 import com.neotee.ecommercesystem.usecases.DeliveryUseCases;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
@@ -23,6 +26,8 @@ public class DeliveryUseCaseService implements DeliveryUseCases {
 
     @Override
     public UUID triggerDelivery(UUID orderId, ClientType deliveryRecipient) {
+        if (orderId == null || deliveryRecipient == null)
+            throw new EntityNotFoundException("DeliveryUseCaseService", "Order or Delivery not found");
         return deliveryApplicationService.createDelivery(OrderId.of(orderId), deliveryRecipient).getId().getId();
     }
 
@@ -32,17 +37,27 @@ public class DeliveryUseCaseService implements DeliveryUseCases {
     }
 
     @Override
-    public DeliveryPackageStatus getDeliveryPackageStatus(UUID deliveryPackageId) {
+    public String getDeliveryPackageStatus(UUID deliveryPackageId) {
         return deliveryApplicationService.getDeliveryPackageStatus(
-                com.neotee.ecommercesystem.domainprimitives.DeliveryPackageId.of(deliveryPackageId)
-        );
+                DeliveryPackageId.of(deliveryPackageId)
+        ).name();
     }
 
     @Override
-    public void updateDeliveryPackageStatus(UUID deliveryPackageId, DeliveryPackageStatus status) {
+    public void updateDeliveryPackageStatus(UUID deliveryPackageId, String status) {
+        if (status == null || status.isBlank()) {
+            throw new DomainValidationException("DeliveryUseCaseService", "Status cannot be null or empty");
+        }
+
+        DeliveryPackageStatus enumStatus;
+        try {
+            enumStatus = DeliveryPackageStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new DomainValidationException("DeliveryUseCaseService", "Invalid status value: " + status + ". Allowed values: NOT_SHIPPED, IN_TRANSIT, DELIVERED");
+        }
         deliveryApplicationService.updateDeliveryPackageStatus(
-                com.neotee.ecommercesystem.domainprimitives.DeliveryPackageId.of(deliveryPackageId),
-                status
+                DeliveryPackageId.of(deliveryPackageId),
+                DeliveryPackageStatus.valueOf(status)
         );
     }
 

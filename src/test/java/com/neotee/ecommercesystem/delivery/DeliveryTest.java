@@ -1,22 +1,19 @@
 package com.neotee.ecommercesystem.delivery;
 
 import com.neotee.ecommercesystem.config.TestContainersConfiguration;
-import com.neotee.ecommercesystem.domainprimitives.DeliveryPackageStatus;
 import com.neotee.ecommercesystem.exceptions.ShopException;
 import com.neotee.ecommercesystem.helper.ClientMasterDataInitializer;
 import com.neotee.ecommercesystem.helper.ThingAndStockMasterDataInitializer;
 import com.neotee.ecommercesystem.usecases.*;
 import com.neotee.ecommercesystem.usecases.domainprimitivetypes.EmailType;
-import com.neotee.ecommercesystem.usecases.domainprimitivetypes.HomeAddressType;
 import com.neotee.ecommercesystem.usecases.masterdata.Purgatory;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-
 
 import java.util.List;
 import java.util.UUID;
@@ -84,9 +81,11 @@ public class DeliveryTest {
 
         UUID orderId = shoppingBasketUseCases.checkout(clientEmail);
 
+        ClientType client = clientRegistrationUseCases.getClientData(clientEmail);
+
         UUID deliveryId = deliveryUseCases.triggerDelivery(
                 orderId,
-                createClient(clientEmail)
+                client
         );
 
         assertNotNull(deliveryId);
@@ -105,9 +104,11 @@ public class DeliveryTest {
 
         UUID orderId = shoppingBasketUseCases.checkout(clientEmail);
 
+        ClientType client = clientRegistrationUseCases.getClientData(clientEmail);
+
         UUID deliveryId = deliveryUseCases.triggerDelivery(
                 orderId,
-                createClient(clientEmail)
+                client
         );
 
         List<UUID> packageIds =
@@ -129,9 +130,11 @@ public class DeliveryTest {
 
         UUID orderId = shoppingBasketUseCases.checkout(clientEmail);
 
+        ClientType client = clientRegistrationUseCases.getClientData(clientEmail);
+
         UUID deliveryId = deliveryUseCases.triggerDelivery(
                 orderId,
-                createClient(clientEmail)
+                client
         );
 
         List<UUID> packageIds =
@@ -141,7 +144,7 @@ public class DeliveryTest {
 
         packageIds.forEach(packageId ->
                 assertEquals(
-                        DeliveryPackageStatus.NOT_SHIPPED,
+                        "NOT_SHIPPED",
                         deliveryUseCases.getDeliveryPackageStatus(packageId)
                 )
         );
@@ -160,9 +163,11 @@ public class DeliveryTest {
 
         UUID orderId = shoppingBasketUseCases.checkout(clientEmail);
 
+        ClientType client = clientRegistrationUseCases.getClientData(clientEmail);
+
         UUID deliveryId = deliveryUseCases.triggerDelivery(
                 orderId,
-                createClient(clientEmail)
+                client
         );
 
         UUID packageId =
@@ -170,21 +175,21 @@ public class DeliveryTest {
 
         deliveryUseCases.updateDeliveryPackageStatus(
                 packageId,
-                DeliveryPackageStatus.IN_TRANSIT
+                "IN_TRANSIT"
         );
 
         assertEquals(
-                DeliveryPackageStatus.IN_TRANSIT,
+                "IN_TRANSIT",
                 deliveryUseCases.getDeliveryPackageStatus(packageId)
         );
 
         deliveryUseCases.updateDeliveryPackageStatus(
                 packageId,
-                DeliveryPackageStatus.DELIVERED
+                "DELIVERED"
         );
 
         assertEquals(
-                DeliveryPackageStatus.DELIVERED,
+                "DELIVERED",
                 deliveryUseCases.getDeliveryPackageStatus(packageId)
         );
     }
@@ -202,9 +207,11 @@ public class DeliveryTest {
 
         UUID orderId = shoppingBasketUseCases.checkout(clientEmail);
 
+        ClientType client = clientRegistrationUseCases.getClientData(clientEmail);
+
         UUID deliveryId = deliveryUseCases.triggerDelivery(
                 orderId,
-                createClient(clientEmail)
+                client
         );
 
         List<UUID> history =
@@ -227,9 +234,11 @@ public class DeliveryTest {
 
         UUID orderId = shoppingBasketUseCases.checkout(clientEmail1);
 
+        ClientType client = clientRegistrationUseCases.getClientData(clientEmail1);
+
         UUID deliveryId = deliveryUseCases.triggerDelivery(
                 orderId,
-                createClient(clientEmail1)
+                client
         );
 
         List<UUID> history1 =
@@ -270,7 +279,7 @@ public class DeliveryTest {
                 ShopException.class,
                 () -> deliveryUseCases.updateDeliveryPackageStatus(
                         packageId,
-                        DeliveryPackageStatus.IN_TRANSIT
+                        "IN_TRANSIT"
                 )
         );
     }
@@ -328,22 +337,28 @@ public class DeliveryTest {
 
     @Test
     public void testNonExistingOrder() {
+        EmailType clientEmail = CLIENT_EMAIL[3];
+        ClientType client = clientRegistrationUseCases.getClientData(clientEmail);
+
         assertThrows(
                 ShopException.class,
                 () -> deliveryUseCases.triggerDelivery(
                         UUID.randomUUID(),
-                        createClient(CLIENT_EMAIL[3])
+                        client
                 )
         );
     }
 
     @Test
     public void testNullOrderId() {
+        EmailType clientEmail = CLIENT_EMAIL[3];
+        ClientType client = clientRegistrationUseCases.getClientData(clientEmail);
+
         assertThrows(
                 ShopException.class,
                 () -> deliveryUseCases.triggerDelivery(
                         null,
-                        createClient(CLIENT_EMAIL[3])
+                        client
                 )
         );
     }
@@ -361,10 +376,14 @@ public class DeliveryTest {
 
         UUID orderId = shoppingBasketUseCases.checkout(clientEmail);
 
-        deliveryUseCases.triggerDelivery(
+        ClientType client = clientRegistrationUseCases.getClientData(clientEmail);
+
+        UUID deliveryId = deliveryUseCases.triggerDelivery(
                 orderId,
-                createClient(clientEmail)
+                client
         );
+
+        assertNotNull(deliveryId);
 
         assertFalse(
                 deliveryUseCases.getDeliveryHistory(clientEmail).isEmpty()
@@ -376,29 +395,4 @@ public class DeliveryTest {
                 deliveryUseCases.getDeliveryHistory(clientEmail).isEmpty()
         );
     }
-
-    private ClientType createClient(EmailType email) {
-        return new ClientType() {
-            @Override
-            public String getName() {
-                return "Test Client";
-            }
-
-            @Override
-            public EmailType getEmail() {
-                return email;
-            }
-
-            @Override
-            public HomeAddressType getHomeAddress() {
-                return createAddress();
-            }
-        };
-    }
-
-    private HomeAddressType createAddress() {
-        // Replace this with the factory/constructor used by your project.
-        return null;
-    }
 }
-
