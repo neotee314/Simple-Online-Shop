@@ -1,38 +1,67 @@
-spring:
-  application:
-    name: e-commerce-system
+name: CI
 
-  datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ecommerce}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
-    driver-class-name: org.postgresql.Driver
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
 
-  jpa:
-    show-sql: false
-    hibernate:
-      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
 
-  data:
-    rest:
-      detection-strategy: annotated
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: ecommerce
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
-springdoc:
-  api-docs:
-    enabled: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  swagger-ui:
-    enabled: true
-    url: /v3/api-docs
-    disable-swagger-default-url: true
-    path: /my-e-commerce
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
 
-  packages-to-scan: com.neotee.ecommercesystem
-  paths-to-match: /**
-  paths-to-exclude: /actuator/**, /error
-  show-actuator: false
-  cache:
-    disabled: true
+      - name: Grant execute permission to gradlew
+        run: chmod +x gradlew
+
+      - name: Run tests
+        run: ./gradlew test --no-daemon
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/ecommerce
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: postgres
+          SPRING_PROFILES_ACTIVE: test
+          TESTCONTAINERS_RYUK_DISABLED: true
+
+      - name: Publish test results
+        if: always()
+        uses: dorny/test-reporter@v2
+        with:
+          name: JUnit Tests
+          path: '**/build/test-results/test/TEST-*.xml'
+          reporter: java-junit
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            **/build/test-results/test/
+            **/build/reports/tests/test/
