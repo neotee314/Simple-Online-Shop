@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="de17652a-30d8-4370-8f63-5af961701f2a" name="Changes" comment="add controller and some more tests" />
+    <list default="true" id="de17652a-30d8-4370-8f63-5af961701f2a" name="Changes" comment="update ci" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -446,7 +446,8 @@
     <MESSAGE value="update project" />
     <MESSAGE value="implement delivery use cases" />
     <MESSAGE value="add controller and some more tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="add controller and some more tests" />
+    <MESSAGE value="update ci" />
+    <option name="LAST_COMMIT_MESSAGE" value="update ci" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

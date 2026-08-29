@@ -12,37 +12,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 26 (Early Access)
+      - name: Set up JDK 26
         uses: actions/setup-java@v5
         with:
           java-version: '26-ea'
           distribution: 'oracle'
           cache: gradle
 
-      - name: Grant execute permission to gradlew
-        run: chmod +x gradlew
-
-      - name: Run tests with Testcontainers
+      - name: Run tests
         run: ./gradlew test --no-daemon
-        env:
-          TESTCONTAINERS_RYUK_DISABLED: true
 
-      - name: Publish test results
+      - name: Test report
         if: always()
         uses: dorny/test-reporter@v2
         with:
           name: JUnit Tests
           path: '**/build/test-results/test/TEST-*.xml'
           reporter: java-junit
-
-      - name: Upload test reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-reports
-          path: |
-            **/build/test-results/test/
-            **/build/reports/tests/test/
