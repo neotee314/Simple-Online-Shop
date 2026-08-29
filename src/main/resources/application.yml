@@ -1,67 +1,15 @@
-name: CI
+spring:
+  application:
+    name: simple-online-shop
 
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ecommerce
+    username: postgres
+    password: postgres
 
-jobs:
-  test:
-    name: Run Tests
-    runs-on: ubuntu-latest
+  jpa:
+    hibernate:
+      ddl-auto: update
 
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_DB: ecommerce
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@v5
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: gradle
-
-      - name: Grant execute permission to gradlew
-        run: chmod +x gradlew
-
-      - name: Run tests
-        run: ./gradlew test --no-daemon
-        env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/ecommerce
-          SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: postgres
-          SPRING_PROFILES_ACTIVE: test
-          TESTCONTAINERS_RYUK_DISABLED: true
-
-      - name: Publish test results
-        if: always()
-        uses: dorny/test-reporter@v2
-        with:
-          name: JUnit Tests
-          path: '**/build/test-results/test/TEST-*.xml'
-          reporter: java-junit
-
-      - name: Upload test reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-reports
-          path: |
-            **/build/test-results/test/
-            **/build/reports/tests/test/
+server:
+  port: 8080
