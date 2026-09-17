@@ -1,244 +1,283 @@
-##  Project: eCommerce Platform
+# Simple Online Shop
 
-This project represents the backend system of a modular and scalable online shop. The system is designed and implemented from scratch by myself, simulating a real-world scenario where a software company (me, as a developer) is contracted to deliver an eCommerce platform for a small shop that sells non-fragile, non-perishable items.
+Backend service for a modular online shop. The application exposes a REST API for product catalog management, client registration, shopping baskets, orders, stock, storage units, and delivery packages.
 
----
+The codebase is organized around Domain-Driven Design (DDD) concepts. Domain rules live inside the relevant bounded context, while application services coordinate use cases and REST controllers provide the HTTP interface.
 
-##  System Overview
+## Features
 
-The platform allows clients to browse products (called "products"), add them to a shopping basket, and place orders. These orders are fulfilled by a smart delivery system using one or more storage units (warehouses). The design follows Domain-Driven Design (DDD) patterns, ensuring business logic is cleanly separated and encapsulated.
+- Product catalog management with sales-price and stock updates
+- Client registration and lookup by email or ID
+- Shopping baskets with stock reservation and checkout
+- Order lifecycle management: submit, cancel, and deliver
+- Multiple storage units with per-location stock levels
+- Delivery-package allocation across storage units
+- Delivery-package status tracking
+- PostgreSQL persistence through Spring Data JPA
+- OpenAPI/Swagger documentation
+- Unit, integration, architecture, and Testcontainers-based tests
 
----
+## Architecture
 
-###  Domain Structure
+The application is split into bounded contexts under `src/main/java/com/neotee/ecommercesystem/shopsystem`:
 
-#### `Product` – Products
+| Context | Responsibility |
+| --- | --- |
+| `client` | Client registration and client data |
+| `product` | Product catalog and sales prices |
+| `shoppingbasket` | Basket contents, reservations, and checkout |
+| `order` | Order creation and lifecycle |
+| `storageunit` | Warehouses and inventory |
+| `deliverypackage` | Allocation of order items into packages |
+| `delivery` | Delivery lookup and package status |
+| `payment` | Payment records and payment totals |
 
-Each product has a name, description, size, purchase price, and sales price. A product can exist in multiple storage units, each tracking its stock level.
+Shared domain primitives such as IDs, money, email addresses, and postal codes are located in `domainprimitives`.
 
-#### `Client`
+![System architecture](images/uml_structure.bmp)
 
-A client has a name, email, and home address (street, city, zip code). The email uniquely identifies the client—no username system is used.
+### Typical checkout flow
 
-#### `ShoppingBasket`
+1. Register a client.
+2. Create or retrieve the client's shopping basket.
+3. Add products to the basket. Available stock is reserved.
+4. Check out the basket to create an order.
+5. Allocate order items to one or more storage units.
+6. Track delivery packages and update their status.
 
-When a client wants to buy something, they add it to a shopping basket. This reserves the stock and prevents others from buying it. Each shopping basket contains parts (products and their quantities). There is no time limit on reservations. Clients can remove items or check out at any time.
+## Technology Stack
 
-#### `Order`
+- Java 26
+- Spring Boot 4.1.1
+- Spring Web MVC
+- Spring Data JPA and Hibernate
+- PostgreSQL 16
+- Gradle 9.4.1
+- JUnit 5, Mockito, ArchUnit, and Testcontainers
+- Springdoc OpenAPI
+- Lombok
 
-Upon checkout, a shopping basket becomes an order. Orders contain parts (product references and quantity) and are fulfilled via delivery packages.
+## Prerequisites
 
-#### `StorageUnit`
+- JDK 26
+- Docker and Docker Compose
+- Git
 
-A warehouse that holds products. Initially, the system had a single storage unit. Later, I extended it to support multiple distributed units across Germany. Each unit tracks its own inventory of products (stock levels).
+The Gradle wrapper is included, so a system-wide Gradle installation is not required.
 
-#### `DeliveryPackage`
+## Getting Started
 
-When an order is placed, the system analyzes which storage units can fulfill the order. The system creates one or more delivery packages:
+### 1. Clone the repository
 
-- Each delivery package comes from a single storage unit.
-- The algorithm attempts to minimize the number of packages.
-- If multiple units qualify, the closest (based on zip code) is selected.
+```bash
+git clone https://github.com/neotee314/Simple-Online-Shop.git
+cd Simple-Online-Shop
+```
 
----
+### 2. Start PostgreSQL
 
-## Database Schema
+The included Compose file starts the database expected by the application:
 
-1. **Thing**:
-    - ThingID (Primary Key)
-    - Name
-    - Description
-    - Size
-    - PurchasePrice
-    - SalesPrice
-    - StockQuantity
+```bash
+docker compose up -d postgres
+```
 
-2. **Clients**:
-    - ClientID (Primary Key)
-    - Name
-    - Email (Unique)
-    - Address (Street, City, Zip Code)
+The default development database configuration is:
 
-3. **Orders**:
-    - OrderID (Primary Key)
-    - ClientID (Foreign Key)
-    - Date
-    - Status (e.g., pending, completed)
+| Setting | Value |
+| --- | --- |
+| Host | `localhost` |
+| Port | `5432` |
+| Database | `ecommerce` |
+| Username | `postgres` |
+| Password | `postgres` |
+
+### 3. Run the application
 
-4. **OrderParts**:
-    - OrderPartID (Primary Key)
-    - OrderID (Foreign Key)
-    - ProductID (Foreign Key)
-    - Quantity
+On Windows:
+
+```powershell
+.\gradlew.bat bootRun
+```
+
+On Linux or macOS:
+
+```bash
+./gradlew bootRun
+```
+
+The API is available at `http://localhost:8080`.
+
+Spring JPA is configured with `ddl-auto: update` for local development. Use an explicit migration strategy before deploying to a production environment.
+
+## Docker
+
+The repository contains a multi-stage `Dockerfile` for packaging the application:
+
+```bash
+docker build -t simple-online-shop .
+docker run --rm -p 8080:8080 simple-online-shop
+```
+
+The container expects PostgreSQL to be reachable using the datasource settings in `src/main/resources/application.yml`. When running both services in Compose, configure the application datasource to use the database service name (`postgres`) instead of `localhost`.
+
+## REST API
+
+All endpoints use the `/api/v1` prefix and exchange JSON unless stated otherwise. IDs are UUIDs.
+
+### Clients
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/api/v1/clients/all` | List all clients |
+| `GET` | `/api/v1/clients?email={email}` | Find a client by email |
+| `GET` | `/api/v1/clients/{id}` | Find a client by ID |
+| `POST` | `/api/v1/clients` | Register a client |
+| `PUT` | `/api/v1/clients/{id}` | Update a client |
+| `DELETE` | `/api/v1/clients/{id}` | Delete a client |
+
+Example request:
+
+```bash
+curl -X POST http://localhost:8080/api/v1/clients \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Ada Lovelace",
+    "email": "ada@example.com",
+    "street": "1 Analytical Engine Way",
+    "city": "London",
+    "zipCode": "NW1 6XE"
+  }'
+```
 
-5. **StorageUnits**:
-    - StorageUnitID (Primary Key)
-    - Name
-    - Address (Street, City, Zip Code)
+### Products
 
-6. **DeliveryPackages**:
-    - DeliveryPackageID (Primary Key)
-    - OrderID (Foreign Key)
-    - StorageUnitID (Foreign Key)
-    -
-7. **DeliveryPackagePart**:
-    - DeliveryPackagePartID (Primary Key)
-    - OrderID (Foreign Key)
-    - ThingID (Foreign Key)
-
-
-
-###  Business Rules
-
-- **Stock availability**: Products can only be purchased if their stock > 0.
-- **Reservation**: Items in shopping baskets are reserved and hidden from others.
-- **No returns**: Returns are handled outside the system (via email).
-- **Manual stock control**: Admins can add/remove/update products and their stock manually.
-- **Delivery logic**: Delivery packages must be optimized for cost and proximity.
-
----
-
-##  System Architecture
-
-- ![System Architeture](images/uml_structure.bmp)
-
-###  Example Flow
-
-1. A client registers with name, email, and address.
-2. They search for products and add items to their shopping basket.
-3. The stock for selected items is reserved.
-4. When they check out, an order is created.
-5. The system determines the best warehouses to fulfill the order and creates delivery packages.
-6. The order and package details are stored and retrievable via the REST API.
-
----
-
-###  Development Principles
-
--  Domain-Driven Design (DDD)
--  Clean Code practices
--  SOLID principles (SRP, OCP, DIP)
--  Layered architecture (domain, application, infrastructure, interface)
--  Full unit and integration testing
--  RESTful API design
-
----
-
-##  REST API Overview
-
-###  Shopping System
-
-| Endpoint                                        | Method | Description                          |
-| ----------------------------------------------- | ------ | ------------------------------------ |
-| `/clients?email=...`                            | GET    | Fetch client by email                |
-| `/shoppingBaskets?clientId=...`                 | GET    | Get shopping basket for a client     |
-| `/shoppingBaskets/{basket-id}/parts`            | POST   | Add a product to shopping basket       |
-| `/shoppingBaskets/{basket-id}/parts/{product-id}` | DELETE | Remove product from basket             |
-| `/shoppingBaskets/{basket-id}/checkout`         | POST   | Checkout the basket and create order |
-| `/orders?clientId=...`                          | GET    | Get all orders of client             |
-| `/orders?clientId=...&filter=latest`            | GET    | Get latest order of client           |
-| `/deliveryPackages?orderId=...`                 | GET    | Get delivery packages for an order   |
-
-###  Catalog & Stock Management
-
-| Endpoint                                         | Method | Description                                          |
-| ------------------------------------------------ | ------ | ---------------------------------------------------- |
-| `/products?name=...`                               | GET    | Search products by name                                |
-| `/products/{product-id}`                             | GET    | Get product by ID                                      |
-| `/products/{product-id}`                             | PATCH  | Change sales price                                   |
-| `/storageUnits/{unit-id}/stockLevels/{product-id}` | PATCH  | Change stock level for a product                       |
-| `/stockLevels?productId=...`                       | GET    | Get stock levels of a product across all storage units |
-| `/storageUnits/{unit-id}`                        | PATCH  | Change storage unit name                             |
-
-###  Client Management
-
-| Endpoint               | Method | Description           |
-| ---------------------- | ------ | --------------------- |
-| `/clients/{client-id}` | PATCH  | Update client address |
-| `/clients/{client-id}` | DELETE | Delete client data    |
-
----
-
-##  Tech Stack
-
-- Java 21 • Spring Boot • JPA (Hibernate)
-- REST (JSON over HTTP)
-- Gradle
-- JUnit 5 • Mockito
-- H2
-- Postman • IntelliJ
-
----
-
-##  Entity Relationships
-
-- `Client` → owns → `ShoppingBasket`
-- `ShoppingBasket` → contains → `ShoppingBasketParts`
-- `ShoppingBasket` → becomes → `Order`
-- `Order` → fulfilled by → `DeliveryPackages`
-- `DeliveryPackage` → sent from → `StorageUnit`
-- `StorageUnit` → contains → `StockLevels`
-- `StockLevel` → tracks → `Product`
-- `OrderPart`, `DeliveryPackagePart` → reference → `Product`
-
----
-
-
-
-##  Scalability & Extensibility
-
-This project is highly modular and can be extended with:
-
-- User roles (admin, customer)
-- Payment systems
-- Return processing
-- Notification systems
-
-It is also ready for containerization using Docker and Kubernetes.
-
----
-
-## 🐳 Docker Usage
-
-This project includes a `Dockerfile` in the root directory. You can easily build and run the application inside a Docker container by following these steps:
-
-### Build the project
-
-First, build the Java project using Gradle (make sure you have Gradle installed or use the Gradle wrapper):
-
-
-./gradlew build
-
-
-### Build the Docker image
-
-Use Docker to build an image named `ecommerce-app`:
-
-
-docker build -t ecommerce-app .
-
-
-### Run the Docker container
-
-Run the Docker container, mapping the container port 8080 to your local machine’s port 8080:
-
-
-docker run -p 8080:8080 ecommerce-app
-
-
-### Access the application
-
-Open your browser and go to:
-
-
-http://localhost:8080/my-e-commerce
-
-
-
-##  Contact
-
-- ✉ Email: abheidari99@gmail.com
-
----
-
-© 2025 – All rights reserved by Abolfazl Heidari
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/api/v1/products` | List all products |
+| `GET` | `/api/v1/products/search?name={name}` | Search products by name |
+| `GET` | `/api/v1/products/{id}` | Get a product |
+| `POST` | `/api/v1/products` | Add a product |
+| `PATCH` | `/api/v1/products/{id}/price` | Change the sales price |
+| `PATCH` | `/api/v1/products/{id}/stock?quantity={quantity}` | Update product stock |
+| `GET` | `/api/v1/products/{id}/salesPrice` | Get the current sales price |
+| `DELETE` | `/api/v1/products/{id}` | Remove a product |
+| `DELETE` | `/api/v1/products/all` | Delete the entire catalog |
+
+### Shopping baskets and orders
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/api/v1/shoppingBaskets?clientId={clientId}` | Get a client's basket |
+| `GET` | `/api/v1/shoppingBaskets/{basketId}` | Get a basket by ID |
+| `POST` | `/api/v1/shoppingBaskets/{basketId}/parts` | Add a product and quantity |
+| `DELETE` | `/api/v1/shoppingBaskets/{basketId}/parts/{productId}` | Remove a product |
+| `DELETE` | `/api/v1/shoppingBaskets/{basketId}/parts/{productId}/quantity/{quantity}` | Remove a quantity |
+| `DELETE` | `/api/v1/shoppingBaskets/{basketId}/clear` | Clear a basket |
+| `POST` | `/api/v1/shoppingBaskets/{basketId}/checkout` | Convert a basket into an order |
+| `GET` | `/api/v1/orders/{id}` | Get an order |
+| `GET` | `/api/v1/orders/history?email={email}` | Get a client's order history |
+| `PATCH` | `/api/v1/orders/{id}/submit` | Submit an order |
+| `PATCH` | `/api/v1/orders/{id}/cancel` | Cancel an order |
+| `PATCH` | `/api/v1/orders/{id}/deliver` | Mark an order as delivered |
+
+Add-to-basket request body:
+
+```json
+{
+  "productId": "00000000-0000-0000-0000-000000000000",
+  "quantity": 2
+}
+```
+
+### Storage and stock
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/api/v1/storageUnits` | List storage units |
+| `GET` | `/api/v1/storageUnits/{id}` | Get a storage unit |
+| `POST` | `/api/v1/storageUnits` | Create a storage unit |
+| `POST` | `/api/v1/storageUnits/{storageUnitId}/stocks/{productId}/add?quantity={quantity}` | Add stock |
+| `POST` | `/api/v1/storageUnits/{storageUnitId}/stocks/{productId}/remove?quantity={quantity}` | Remove stock |
+| `PUT` | `/api/v1/storageUnits/{storageUnitId}/stocks/{productId}?newQuantity={quantity}` | Set stock |
+| `GET` | `/api/v1/storageUnits/{storageUnitId}/stocks/{productId}` | Get stock at one location |
+| `GET` | `/api/v1/storageUnits/stocks/total/{productId}` | Get total available stock |
+
+### Delivery and delivery packages
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/api/v1/deliveries/{deliveryId}` | Get a delivery |
+| `GET` | `/api/v1/deliveries/{deliveryId}/packages` | List packages for a delivery |
+| `GET` | `/api/v1/deliveries/packages/{packageId}/status` | Get package status |
+| `PATCH` | `/api/v1/deliveries/packages/{packageId}/status` | Update package status |
+| `GET` | `/api/v1/deliveries/history?email={email}` | Get delivery history |
+| `GET` | `/api/v1/deliveryPackages?orderId={orderId}` | List packages for an order |
+| `GET` | `/api/v1/deliveryPackages/order/{orderId}` | List packages for an order |
+| `GET` | `/api/v1/deliveryPackages/order/{orderId}/storageUnit/{storageUnitId}` | Get a package by order and storage unit |
+
+Valid delivery-package statuses are `NOT_SHIPPED`, `IN_TRANSIT`, and `DELIVERED`.
+
+## API Documentation
+
+When the application is running, OpenAPI documentation is available at:
+
+- Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+- OpenAPI JSON: `http://localhost:8080/v3/api-docs`
+
+## Configuration
+
+Application defaults are defined in `src/main/resources/application.yml`. Override database settings with Spring environment variables or command-line properties when running outside the default local setup:
+
+```bash
+./gradlew bootRun --args="--spring.datasource.url=jdbc:postgresql://localhost:5432/ecommerce"
+```
+
+Do not commit production credentials. Use environment-specific configuration or a secrets manager for deployed environments.
+
+## Testing
+
+Run the full test suite with the Gradle wrapper:
+
+```powershell
+.\gradlew.bat test
+```
+
+```bash
+./gradlew test
+```
+
+Integration tests use Testcontainers and therefore require a working Docker installation.
+
+## Project Layout
+
+```text
+src/
+  main/
+    java/com/neotee/ecommercesystem/
+      domainprimitives/     Shared value objects and identifiers
+      events/                Domain events
+      exceptions/            API and domain exception handling
+      shopsystem/            Bounded contexts
+      usecases/              Application use-case contracts
+    resources/
+      application.yml        Runtime configuration
+  test/                      Unit, integration, architecture, and REST tests
+images/                      Architecture diagrams
+docker-compose.yml           Local PostgreSQL service
+Dockerfile                   Container build definition
+build.gradle                 Gradle build and dependency configuration
+```
+
+## Development Guidelines
+
+- Keep business invariants inside domain objects and domain services.
+- Keep controllers focused on HTTP translation and validation.
+- Use application services to coordinate use cases across aggregates.
+- Prefer domain primitives over raw strings and numbers for business concepts.
+- Add or update tests when changing business behavior.
+- Keep API changes backward-compatible unless a versioned endpoint is introduced.
+
+## License and Contact
+
+This project is maintained by Abolfazl Heidari. For questions about the project, contact `abheidari99@gmail.com`.
